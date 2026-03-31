@@ -27,7 +27,7 @@ const MusicContext = createContext<MusicContextType | undefined>(undefined);
 // Hardcoded Lofi/Chill tracks
 // Hardcoded Favorite Tracks
 const PLAYLIST: Track[] = [
-  { id: "dvgZkm1xWPE", title: "Viva La Vida", artist: "Coldplay" },
+  { id: "y4zdDXPYo0I", title: "Viva La Vida", artist: "Coldplay" },
 ];
 
 declare global {
@@ -49,6 +49,7 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   
   const playerRef = useRef<any>(null);
   const [isApiReady, setIsApiReady] = useState(false);
+  const [isPlayerReady, setIsPlayerReady] = useState(false);
   const nextTrackRef = useRef<() => void>(() => {});
 
   useEffect(() => {
@@ -56,6 +57,9 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (!window.YT) {
       const tag = document.createElement("script");
       tag.src = "https://www.youtube.com/iframe_api";
+      tag.onerror = () => {
+        console.error("MusicContext: Failed to load YouTube IFrame API. This is likely due to an AdBlocker or network restriction.");
+      };
       const firstScriptTag = document.getElementsByTagName("script")[0];
       firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
 
@@ -86,12 +90,16 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           fs: 0,
           modestbranding: 1,
           rel: 0,
+          enablejsapi: 1,
+          origin: typeof window !== 'undefined' ? window.location.origin : '',
         },
         events: {
           onReady: (event: any) => {
             // Force load the correct track immediately
-            event.target.cueVideoById(PLAYLIST[0].id);
-            setIsApiReady(true);
+            if (event.target && typeof event.target.cueVideoById === 'function') {
+              event.target.cueVideoById(PLAYLIST[0].id);
+            }
+            setIsPlayerReady(true);
           },
           onStateChange: (event: any) => {
             // YT.PlayerState.PLAYING = 1, PAUSED = 2, ENDED = 0
@@ -106,35 +114,44 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Handle case where playlist or index changes while player exists
   useEffect(() => {
-    if (playerRef.current && playerRef.current.loadVideoById) {
+    if (isPlayerReady && playerRef.current && typeof playerRef.current.loadVideoById === "function") {
       playerRef.current.loadVideoById(PLAYLIST[currentTrackIndex].id);
       playerRef.current.pauseVideo();
     }
-  }, [currentTrackIndex, isApiReady]);
+  }, [currentTrackIndex, isPlayerReady]);
 
   const togglePlay = () => {
-    if (!playerRef.current) return;
+    if (!isPlayerReady || !playerRef.current) return;
+    
     if (isPlaying) {
-      playerRef.current.pauseVideo();
+      if (typeof playerRef.current.pauseVideo === "function") {
+        playerRef.current.pauseVideo();
+      }
     } else {
-      playerRef.current.playVideo();
+      if (typeof playerRef.current.playVideo === "function") {
+        playerRef.current.playVideo();
+      }
     }
   };
 
   const setVolume = (v: number) => {
     const vol = Math.max(0, Math.min(1, v));
     setVolumeState(vol);
-    if (playerRef.current) {
+    if (isPlayerReady && playerRef.current && typeof playerRef.current.setVolume === "function") {
       playerRef.current.setVolume(vol * 100);
     }
   };
 
   const toggleMute = () => {
-    if (!playerRef.current) return;
+    if (!isPlayerReady || !playerRef.current) return;
     if (isMuted) {
-      playerRef.current.unMute();
+      if (typeof playerRef.current.unMute === "function") {
+        playerRef.current.unMute();
+      }
     } else {
-      playerRef.current.mute();
+      if (typeof playerRef.current.mute === "function") {
+        playerRef.current.mute();
+      }
     }
     setIsMuted(!isMuted);
   };
@@ -142,9 +159,11 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const nextTrack = () => {
     const nextIndex = (currentTrackIndex + 1) % PLAYLIST.length;
     setCurrentTrackIndex(nextIndex);
-    if (playerRef.current) {
+    if (isPlayerReady && playerRef.current && typeof playerRef.current.loadVideoById === "function") {
       playerRef.current.loadVideoById(PLAYLIST[nextIndex].id);
-      playerRef.current.playVideo();
+      if (typeof playerRef.current.playVideo === "function") {
+        playerRef.current.playVideo();
+      }
     }
   };
 
@@ -158,9 +177,11 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const prevTrack = () => {
     const prevIndex = (currentTrackIndex - 1 + PLAYLIST.length) % PLAYLIST.length;
     setCurrentTrackIndex(prevIndex);
-    if (playerRef.current) {
+    if (isPlayerReady && playerRef.current && typeof playerRef.current.loadVideoById === "function") {
       playerRef.current.loadVideoById(PLAYLIST[prevIndex].id);
-      playerRef.current.playVideo();
+      if (typeof playerRef.current.playVideo === "function") {
+        playerRef.current.playVideo();
+      }
     }
   };
 
