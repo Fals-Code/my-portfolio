@@ -21,97 +21,244 @@ export default function GamePage() {
 
     // --- Three.js Setup ---
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x0a0a0a, 0.05);
+    scene.fog = new THREE.Fog(0x050505, 10, 180); // Lighter Fog for much better visibility
 
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    containerRef.current.appendChild(renderer.domElement);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    if (containerRef.current) {
+      containerRef.current.appendChild(renderer.domElement);
+    }
 
     // --- Lights ---
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    // Increase light intensity to make everything pop
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
     scene.add(ambientLight);
-    const pointLight = new THREE.PointLight(0xe8533a, 2, 50);
+    const pointLight = new THREE.PointLight(0xe8533a, 4, 100);
     scene.add(pointLight);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    dirLight.position.set(10, 20, 10);
+    scene.add(dirLight);
 
-    // --- Player ---
-    const playerGeometry = new THREE.BoxGeometry(1, 1, 1);
-    const playerMaterial = new THREE.MeshStandardMaterial({ color: 0xe8533a, emissive: 0xe8533a, emissiveIntensity: 0.5 });
-    const player = new THREE.Mesh(playerGeometry, playerMaterial);
-    player.position.y = 0.5;
-    scene.add(player);
+    // --- High-Fidelity Character (Hero) ---
+    const playerGroup = new THREE.Group();
+    const bodyGeo = new THREE.BoxGeometry(0.5, 0.8, 0.4);
+    const headGeo = new THREE.BoxGeometry(0.35, 0.35, 0.35);
+    const limbGeo = new THREE.BoxGeometry(0.2, 0.5, 0.2);
+    const mainMat = new THREE.MeshStandardMaterial({ color: 0xe8533a, emissive: 0xe8533a, emissiveIntensity: 1.5 });
+    
+    const body = new THREE.Mesh(bodyGeo, mainMat);
+    body.position.y = 0.5;
+    const head = new THREE.Mesh(headGeo, mainMat);
+    head.position.y = 1.15;
+    const lLeg = new THREE.Mesh(limbGeo, mainMat); lLeg.position.set(-0.15, 0.25, 0);
+    const rLeg = new THREE.Mesh(limbGeo, mainMat); rLeg.position.set(0.15, 0.25, 0);
 
-    // --- Ground/Road ---
-    const roadGeometry = new THREE.PlaneGeometry(10, 1000, 1, 1);
-    const roadMaterial = new THREE.MeshStandardMaterial({ color: 0x111111 });
-    const road = new THREE.Mesh(roadGeometry, roadMaterial);
-    road.rotation.x = -Math.PI / 2;
-    scene.add(road);
+    playerGroup.add(body, head, lLeg, rLeg);
+    scene.add(playerGroup);
 
-    // --- Obstacles ---
-    const obstacles: THREE.Mesh[] = [];
-    const spawnObstacle = () => {
-      const geometry = new THREE.BoxGeometry(1, Math.random() * 2 + 1, 1);
-      const material = new THREE.MeshStandardMaterial({ color: 0x3b82f6 });
-      const obstacle = new THREE.Mesh(geometry, material);
-      obstacle.position.x = Math.random() * 8 - 4;
-      obstacle.position.z = -100;
-      obstacle.position.y = geometry.parameters.height / 2;
-      scene.add(obstacle);
-      obstacles.push(obstacle);
+    // --- Detailed Subway Environment ---
+    const LANES = [-3.5, 0, 3.5];
+    const roadWidth = 14;
+    const groundGeo = new THREE.PlaneGeometry(roadWidth, 2000);
+    const groundMat = new THREE.MeshStandardMaterial({ color: 0x0a0a0a, roughness: 0.1, metalness: 0.9 });
+    const ground = new THREE.Mesh(groundGeo, groundMat); ground.rotation.x = -Math.PI / 2;
+    scene.add(ground);
+
+    // Rails
+    const railGeo = new THREE.BoxGeometry(0.1, 0.1, 2000);
+    const railMat = new THREE.MeshStandardMaterial({ color: 0x444444, metalness: 1 });
+    [-4, -3, -0.5, 0.5, 3, 4].forEach(x => {
+        const rail = new THREE.Mesh(railGeo, railMat);
+        rail.position.set(x, 0.05, 0);
+        scene.add(rail);
+    });
+
+    // Sleepers (Moving track planks)
+    const sleepers: THREE.Mesh[] = [];
+    const sleeperGeo = new THREE.BoxGeometry(10, 0.1, 0.4);
+    const sleeperMat = new THREE.MeshStandardMaterial({ color: 0x222222 });
+    for (let i = 0; i < 40; i++) {
+        const sleeper = new THREE.Mesh(sleeperGeo, sleeperMat);
+        sleeper.position.set(0, 0, -i * 5);
+        scene.add(sleeper);
+        sleepers.push(sleeper);
+    }
+
+    // Tunnel Pillars (Side Walls Scenery)
+    const scenery: THREE.Group[] = [];
+    const spawnPillar = (z: number) => {
+        const group = new THREE.Group();
+        const pillarGeo = new THREE.BoxGeometry(0.5, 10, 0.5);
+        const neonMat = new THREE.MeshStandardMaterial({ color: 0x3b82f6, emissive: 0x3b82f6, emissiveIntensity: 2 });
+        const leftP = new THREE.Mesh(pillarGeo, neonMat); leftP.position.set(-8, 5, z);
+        const rightP = new THREE.Mesh(pillarGeo, neonMat); rightP.position.set(8, 5, z);
+        group.add(leftP, rightP);
+        scene.add(group);
+        scenery.push(group);
+    };
+    for (let i = 0; i < 15; i++) spawnPillar(-i * 15);
+
+    // --- High-Fidelity Obstacles ---
+    const obstacles: THREE.Group[] = [];
+    const coins: THREE.Mesh[] = [];
+
+    const spawnTrain = (lane: number) => {
+      const group = new THREE.Group();
+      // Main Body
+      const bodyGeo = new THREE.BoxGeometry(2.8, 3.5, 12);
+      const bodyMat = new THREE.MeshStandardMaterial({ color: 0xff5f56, emissive: 0xff5f56, emissiveIntensity: 0.1 });
+      const train = new THREE.Mesh(bodyGeo, bodyMat);
+      train.position.y = 1.75;
+      // Windows / Lights
+      const windowGeo = new THREE.BoxGeometry(3, 0.8, 1);
+      const lightMat = new THREE.MeshStandardMaterial({ color: 0xffbd2e, emissive: 0xffbd2e, emissiveIntensity: 1 });
+      const frontWin = new THREE.Mesh(windowGeo, lightMat);
+      frontWin.position.set(0, 2.5, -5.6);
+      group.add(train, frontWin);
+      group.position.set(LANES[lane], 0, -200);
+      scene.add(group);
+      obstacles.push(group);
     };
 
-    // --- Movement Logic ---
-    let playerX = 0;
+    const spawnHurdle = (lane: number) => {
+      const group = new THREE.Group();
+      const barGeo = new THREE.BoxGeometry(3, 0.4, 0.4);
+      const stripeMat = new THREE.MeshStandardMaterial({ color: 0xffbd2e });
+      const bar = new THREE.Mesh(barGeo, stripeMat); bar.position.y = 0.8;
+      const legGeo = new THREE.BoxGeometry(0.2, 0.8, 0.2);
+      const lLeg = new THREE.Mesh(legGeo, stripeMat); lLeg.position.set(-1.4, 0.4, 0);
+      const rLeg = new THREE.Mesh(legGeo, stripeMat); rLeg.position.set(1.4, 0.4, 0);
+      group.add(bar, lLeg, rLeg);
+      group.position.set(LANES[lane], 0, -200);
+      scene.add(group);
+      obstacles.push(group);
+    };
+
+    const spawnCoin = (lane: number) => {
+      const geo = new THREE.CylinderGeometry(0.4, 0.4, 0.1, 32);
+      const mat = new THREE.MeshStandardMaterial({ color: 0x27c93f, emissive: 0x27c93f, emissiveIntensity: 2 });
+      const coin = new THREE.Mesh(geo, mat);
+      coin.rotation.x = Math.PI / 2;
+      coin.position.set(LANES[lane], 1.2, -200);
+      scene.add(coin);
+      coins.push(coin);
+    };
+
+    // --- State & Movement Logic ---
+    let currentLane = 1;
+    let targetX = LANES[1];
+    let isJumping = false;
+    let jumpVel = 0;
+    const gravity = -0.015;
+    let isSliding = false;
+    let slideT = 0;
+    let speed = 1.0;
+    let internalS = 0;
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") playerX -= 0.5;
-      if (e.key === "ArrowRight") playerX += 0.5;
+      if (gameState !== "playing") return;
+      if (e.key === "ArrowLeft" && currentLane > 0) { currentLane--; targetX = LANES[currentLane]; }
+      if (e.key === "ArrowRight" && currentLane < 2) { currentLane++; targetX = LANES[currentLane]; }
+      if (e.key === "ArrowUp" && !isJumping && !isSliding) { isJumping = true; jumpVel = 0.38; }
+      if (e.key === "ArrowDown" && !isJumping && !isSliding) { isSliding = true; slideT = 35; }
     };
     window.addEventListener("keydown", handleKeyDown);
 
     // --- Animation Loop ---
     let frameId: number;
-    let speed = 0.5;
-    let internalScore = 0;
-
     const animate = () => {
       frameId = requestAnimationFrame(animate);
 
-      // Smooth move
-      playerX = Math.max(-4.5, Math.min(4.5, playerX));
-      player.position.x += (playerX - player.position.x) * 0.1;
+      // Player Movement
+      playerGroup.position.x += (targetX - playerGroup.position.x) * 0.15;
+      
+      // Running Body Bob
+      if (!isJumping && !isSliding) {
+        playerGroup.position.y = Math.abs(Math.sin(Date.now() * 0.01)) * 0.1;
+        lLeg.rotation.x = Math.sin(Date.now() * 0.01) * 0.5;
+        rLeg.rotation.x = -Math.sin(Date.now() * 0.01) * 0.5;
+      }
 
-      // Move obstacles
-      obstacles.forEach((obs, index) => {
+      if (isJumping) {
+        playerGroup.position.y += jumpVel;
+        jumpVel += gravity;
+        if (playerGroup.position.y <= 0) { playerGroup.position.y = 0; isJumping = false; }
+      }
+
+      if (isSliding) {
+        playerGroup.scale.y = 0.4;
+        slideT--;
+        if (slideT <= 0) { playerGroup.scale.y = 1; isSliding = false; }
+      }
+
+      // Scrolling Scenery
+      sleepers.forEach(s => {
+          s.position.z += speed;
+          if (s.position.z > 10) s.position.z = -180;
+      });
+      scenery.forEach(p => {
+          p.position.z += speed;
+          if (p.position.z > 10) p.position.z = -180;
+      });
+
+      // Move & Collect Coins
+      coins.forEach((c, i) => {
+        c.position.z += speed;
+        c.rotation.y += 0.05;
+        if (Math.abs(c.position.x - playerGroup.position.x) < 1 && 
+            Math.abs(c.position.z - playerGroup.position.z) < 2 &&
+            Math.abs(c.position.y - (playerGroup.position.y + 0.6)) < 2) {
+          scene.remove(c); coins.splice(i, 1);
+          internalS += 100; setScore(internalS);
+        }
+        if (c.position.z > 20) { scene.remove(c); coins.splice(i, 1); }
+      });
+
+      // Move & Collision Obstacles
+      obstacles.forEach((obs, i) => {
         obs.position.z += speed;
         
-        // Collision
-        if (Math.abs(obs.position.z - player.position.z) < 1 && Math.abs(obs.position.x - player.position.x) < 1) {
-          setGameState("gameover");
-          cancelAnimationFrame(frameId);
-        }
+        obs.children.forEach(child => {
+            if (!(child instanceof THREE.Mesh)) return;
+            const worldPos = new THREE.Vector3();
+            child.getWorldPosition(worldPos);
+            
+            const dx = Math.abs(worldPos.x - playerGroup.position.x);
+            const dz = Math.abs(worldPos.z - playerGroup.position.z);
+            const dy = Math.abs(worldPos.y - (playerGroup.position.y+0.6));
 
-        // Clean up
-        if (obs.position.z > 10) {
+            const bX = (child.geometry as THREE.BoxGeometry).parameters.width / 2 + 0.3;
+            const bZ = (child.geometry as THREE.BoxGeometry).parameters.depth / 2 + 0.3;
+            const bY = (child.geometry as THREE.BoxGeometry).parameters.height / 2 + (isSliding ? 0.3 : 0.6);
+
+            if (dx < bX && dz < bZ && dy < bY) { setGameState("gameover"); cancelAnimationFrame(frameId); }
+        });
+
+        if (obs.position.z > 30) {
           scene.remove(obs);
-          obstacles.splice(index, 1);
-          internalScore += 10;
-          setScore(internalScore);
-          speed += 0.001;
+          obstacles.splice(i, 1);
+          internalS += 10; setScore(internalS);
         }
       });
 
-      // Spawn
-      if (Math.random() < 0.03) spawnObstacle();
+      // Spawning
+      if (Math.random() < 0.015) {
+          const rand = Math.random();
+          const lane = Math.floor(Math.random() * 3);
+          if (rand < 0.4) spawnTrain(lane);
+          else spawnHurdle(lane);
+      }
+      if (Math.random() < 0.01) spawnCoin(Math.floor(Math.random()*3));
 
-      // Camera follow
-      camera.position.set(0, 5, 10);
-      camera.lookAt(player.position);
-      pointLight.position.copy(player.position).add(new THREE.Vector3(0, 2, 0));
+      speed += 0.0001;
+      camera.position.set(0, 5, 12);
+      camera.lookAt(new THREE.Vector3(playerGroup.position.x * 0.3, 1, -15));
+      pointLight.position.copy(playerGroup.position).add(new THREE.Vector3(0, 3, -2));
 
       renderer.render(scene, camera);
     };
-
     animate();
 
     // --- Resize ---
@@ -161,8 +308,12 @@ export default function GamePage() {
           >
             <div className="text-center space-y-8 max-w-md px-6">
               <div className="space-y-4">
-                <h1 className="text-5xl font-syne font-extrabold text-white">Code Runner</h1>
-                <p className="text-text-muted">Gunakan panah <span className="text-accent">Kiri & Kanan</span> untuk menghindari bug (kotak biru) dalam sistem.</p>
+                <h1 className="text-5xl font-syne font-extrabold text-white">Subway Runner</h1>
+                <p className="text-text-muted">
+                  <span className="text-accent">Panah Kiri/Kanan</span> pindah jalur.<br />
+                  <span className="text-accent">Panah Atas</span> Lompat rintangan rendah.<br />
+                  <span className="text-accent">Panah Bawah</span> Sleding rintangan tinggi.
+                </p>
               </div>
               <button 
                 onClick={() => setGameState("playing")}
@@ -182,7 +333,7 @@ export default function GamePage() {
           >
             <div className="text-center space-y-8 max-w-md px-6">
               <div className="space-y-4">
-                <h2 className="text-5xl font-syne font-extrabold text-white">Bug Detected!</h2>
+                <h2 className="text-5xl font-syne font-extrabold text-white">Kena Rintangan!</h2>
                 <div className="flex items-center justify-center gap-8 py-4">
                   <div>
                     <div className="text-2xl font-bold text-white">{score}</div>
