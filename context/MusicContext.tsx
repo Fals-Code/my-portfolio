@@ -25,12 +25,9 @@ interface MusicContextType {
 const MusicContext = createContext<MusicContextType | undefined>(undefined);
 
 // Hardcoded Lofi/Chill tracks
+// Hardcoded Favorite Tracks
 const PLAYLIST: Track[] = [
-  { id: "jfKfPfyJRdk", title: "lofi hip hop radio - beats to relax/study to", artist: "Lofi Girl" },
-  { id: "5qap5aO4i9A", title: "lofi hip hop radio - beats to sleep/chill to", artist: "Lofi Girl" },
-  { id: "n61ULEU7CO4", title: "Chill Lofi Beats", artist: "ChilledCow" },
-  { id: "7NOSDKb0HQH", title: "Night City Lofi", artist: "Dreamy" },
-  { id: "kgx4WGK0o9k", title: "Sunset Vibes", artist: "Lofi Records" },
+  { id: "dvgZkm1xWPE", title: "Viva La Vida", artist: "Coldplay" },
 ];
 
 declare global {

@@ -189,3 +189,42 @@ body.intro-running .hide-on-intro {
     padding-bottom: 5rem;
   }
 }
+
+/* View Transitions API - Theme Toggle Effect */
+::view-transition-group(root) {
+  animation-duration: 0.8s;
+  animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+::view-transition-new(root) {
+  animation-name: reveal-light;
+  z-index: 999;
+}
+
+::view-transition-old(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  z-index: 1;
+}
+
+[data-theme="dark"]::view-transition-new(root) {
+  animation-name: reveal-dark;
+}
+
+@keyframes reveal-light {
+  from {
+    clip-path: circle(0% at var(--transition-x, 50%) var(--transition-y, 50%));
+  }
+  to {
+    clip-path: circle(150% at var(--transition-x, 50%) var(--transition-y, 50%));
+  }
+}
+
+@keyframes reveal-dark {
+  from {
+    clip-path: circle(0% at var(--transition-x, 50%) var(--transition-y, 50%));
+  }
+  to {
+    clip-path: circle(150% at var(--transition-x, 50%) var(--transition-y, 50%));
+  }
+}

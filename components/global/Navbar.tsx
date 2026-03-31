@@ -51,7 +51,7 @@ export default function Navbar() {
             </Link>
           ))}
           <button 
-            onClick={toggleTheme} 
+            onClick={(e) => toggleTheme(e)} 
             className="p-3 rounded-2xl glass-panel hover:bg-white/5 transition-all"
           >
             {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -60,7 +60,7 @@ export default function Navbar() {
 
         {/* Mobile Toggle */}
         <div className="md:hidden flex items-center gap-4">
-          <button onClick={toggleTheme} className="p-3 rounded-2xl glass-panel">
+          <button onClick={(e) => toggleTheme(e)} className="p-3 rounded-2xl glass-panel">
             {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
           <button onClick={() => setIsOpen(!isOpen)} className="p-2">

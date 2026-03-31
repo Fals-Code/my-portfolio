@@ -5,7 +5,7 @@ import { Theme } from "@/types";
 
 interface ThemeContextType {
   theme: Theme;
-  toggleTheme: () => void;
+  toggleTheme: (e?: React.MouseEvent) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -32,11 +32,34 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setMounted(true);
   }, []);
 
-  const toggleTheme = () => {
+  const toggleTheme = (e?: React.MouseEvent) => {
     const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-    localStorage.setItem("falah-theme", newTheme);
-    document.documentElement.setAttribute("data-theme", newTheme);
+
+    // Fallback for browsers that don't support View Transitions API
+    if (!(document as any).startViewTransition) {
+      setTheme(newTheme);
+      localStorage.setItem("falah-theme", newTheme);
+      document.documentElement.setAttribute("data-theme", newTheme);
+      return;
+    }
+
+    // Set transition origin if event is provided
+    if (e) {
+      const x = e.clientX;
+      const y = e.clientY;
+      document.documentElement.style.setProperty("--transition-x", `${x}px`);
+      document.documentElement.style.setProperty("--transition-y", `${y}px`);
+    } else {
+      // Default to center if no event (e.g., keyboard toggle)
+      document.documentElement.style.setProperty("--transition-x", "50%");
+      document.documentElement.style.setProperty("--transition-y", "50%");
+    }
+
+    (document as any).startViewTransition(() => {
+      setTheme(newTheme);
+      localStorage.setItem("falah-theme", newTheme);
+      document.documentElement.setAttribute("data-theme", newTheme);
+    });
   };
 
   return (

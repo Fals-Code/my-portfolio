@@ -94,14 +94,14 @@ export default function ProjectsSection() {
 
                   {/* Thumbnail / Header */}
                   {proj.image ? (
-                    <div className="w-full aspect-video md:aspect-[4/3] relative rounded-t-2xl md:rounded-2xl overflow-hidden mb-6 -mt-6 -mx-6 md:mt-0 md:mx-0 w-[calc(100%+3rem)] md:w-full">
+                    <div className="w-full aspect-video md:aspect-[16/10] relative rounded-2xl overflow-hidden mb-6 group-hover:shadow-2xl transition-all duration-500">
                        <Image 
                          src={proj.image} 
                          alt={proj.title} 
                          fill 
-                         className="object-cover group-hover:scale-110 transition-transform duration-700 unoptimized"
+                         className="object-cover group-hover:scale-105 transition-transform duration-700 unoptimized"
                        />
-                       <div className="absolute inset-0 bg-gradient-to-t from-bg to-transparent opacity-60 md:opacity-20 transition-opacity duration-500 group-hover:opacity-60" />
+                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     </div>
                   ) : (
                     <div className="flex items-start justify-between mb-8 px-4 pt-4">
@@ -115,23 +115,25 @@ export default function ProjectsSection() {
                   )}
 
                   {/* Content (Title & Desc) */}
-                  <div className="flex-1 space-y-4 px-2">
+                  <div className="flex-1 space-y-4">
                     <div className="flex justify-between items-start gap-4">
                       <h3 className="text-2xl font-syne font-extrabold text-[var(--text)] group-hover:text-accent transition-colors leading-tight">
                         {proj.title}
                       </h3>
-                      <Link href={proj.github} target="_blank" className="p-2 glass-panel rounded-xl hover:text-accent transition-colors z-10 shrink-0 border-white/5 bg-white/5">
-                        <GitHub className="w-5 h-5" />
-                      </Link>
+                      <div className="flex items-center gap-2">
+                        <Link href={proj.github} target="_blank" className="p-2 glass-panel rounded-xl hover:text-accent transition-colors z-10 shrink-0 border-white/5 bg-white/5">
+                          <GitHub className="w-5 h-5" />
+                        </Link>
+                      </div>
                     </div>
-                    <p className="text-sm text-text-muted leading-relaxed">
+                    <p className="text-[15px] text-text-muted leading-relaxed font-medium">
                       {proj.description}
                     </p>
                     
                     {/* Tech Tags */}
                     <div className="flex flex-wrap gap-2 pt-2">
                       {proj.tech?.map((t) => (
-                        <span key={t} className="text-[10px] font-bold uppercase tracking-tighter text-accent/80 bg-accent/5 px-3 py-1 rounded-lg border border-accent/10">
+                        <span key={t} className="text-[10px] font-bold uppercase tracking-widest text-accent/80 bg-accent/5 px-3 py-1.5 rounded-lg border border-accent/10">
                           {t}
                         </span>
                       ))}

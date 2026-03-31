@@ -8,6 +8,7 @@ import { Download, Terminal, Mail, Globe, ArrowRight, Gamepad2 } from "lucide-re
 import { GitHub, Instagram } from "@/components/ui/Icons";
 import Magnetic from "@/components/ui/Magnetic";
 import { fadeReveal } from "@/lib/motion-tokens";
+import CodeAnimation from "./CodeAnimation";
 
 /**
  * Hero Section (Home Page)
@@ -20,8 +21,15 @@ export default function HeroSection() {
       <div className="absolute inset-0 mesh-bg opacity-30 pointer-events-none" />
 
       <div className="container mx-auto px-6 relative z-10">
-        <div className="max-w-5xl space-y-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-8 lg:items-start max-w-7xl mx-auto">
           
+          {/* Right Column: Code Animation (Top on Mobile) */}
+          <div className="order-1 lg:order-2 w-full flex justify-center lg:justify-end lg:pt-32">
+            <CodeAnimation />
+          </div>
+
+          {/* Left Column: Greeting & Info */}
+          <div className="order-2 lg:order-1 space-y-8 md:space-y-10 flex flex-col items-center lg:items-start text-center lg:text-left">
           {/* Status Label */}
           <motion.div 
             initial="hidden"
@@ -69,7 +77,7 @@ export default function HeroSection() {
             animate="visible"
             variants={fadeReveal}
             custom={3}
-            className="flex flex-wrap gap-6 pt-6"
+            className="flex flex-wrap justify-center lg:justify-start gap-4 md:gap-6 pt-6 w-full"
           >
             <Magnetic>
               <Button variant="primary" size="lg" asChild className="rounded-full px-10 group">
@@ -102,9 +110,9 @@ export default function HeroSection() {
             animate="visible"
             variants={fadeReveal}
             custom={4}
-            className="flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-12 pt-12 mt-12 border-t border-white/5"
+            className="flex flex-col lg:flex-row items-center lg:items-start gap-6 lg:gap-12 pt-10 mt-10 border-t border-white/5 w-full"
           >
-            <div className="flex items-center gap-4">
+            <div className="flex flex-wrap justify-center lg:justify-start items-center gap-4">
               {[
                 { Icon: GitHub, href: "https://github.com/falah" },
                 { Icon: Globe, href: "https://linkedin.com/in/falah" },
@@ -124,6 +132,7 @@ export default function HeroSection() {
           </motion.div>
         </div>
       </div>
+    </div>
 
       {/* Lighting Effects */}
       <div className="absolute top-0 -right-1/4 w-[600px] h-[600px] bg-accent/5 rounded-full blur-[150px] -translate-y-1/2 pointer-events-none" />
