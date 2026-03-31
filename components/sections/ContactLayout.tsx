@@ -33,7 +33,7 @@ function ContactForm() {
         setStatus("error");
         return;
       }
-      const response = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+      const response = await fetch(`https://formspree.io/f/xbdaeavv`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
