@@ -19,6 +19,9 @@ import {
 import Image from "next/image";
 import TiltCard from "./ui/TiltCard";
 import LiveStatus from "./ui/LiveStatus";
+import { GitHub, Instagram } from "./ui/Icons";
+import { springBouncy } from "@/lib/motion-tokens";
+import { useGitHub } from "@/hooks/useGitHub";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -31,17 +34,17 @@ const containerVariants = {
 };
 
 const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
+  hidden: { y: 30, opacity: 0 },
   visible: {
     y: 0,
     opacity: 1,
-    transition: {
-      duration: 0.6,
-    },
+    transition: springBouncy, // Character entrance
   },
 };
 
 export default function BentoGrid() {
+  const { stats, isLoading } = useGitHub();
+
   return (
     <motion.div
       variants={containerVariants}
@@ -70,14 +73,14 @@ export default function BentoGrid() {
                     unoptimized 
                   />
                 </div>
-                <div className="px-4 py-2 rounded-full border border-green-500/20 bg-green-500/5 text-[10px] font-bold uppercase tracking-widest text-green-400 flex items-center gap-2">
+                <div className="px-4 py-2 rounded-full border border-green-500/20 bg-green-500/5 text-[11px] font-bold uppercase tracking-widest text-green-400 flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                   Available for Work
                 </div>
               </div>
               
               <div className="space-y-4">
-                <h1 className="text-5xl font-bold tracking-tight text-white leading-tight font-syne">
+                <h1 className="text-5xl font-bold tracking-tight text-[var(--text)] leading-tight font-syne">
                   Ahmad Mathlaul <br />
                   <span className="text-neutral-500">Falah</span>
                 </h1>
@@ -91,11 +94,11 @@ export default function BentoGrid() {
             </div>
 
             <div className="flex flex-wrap gap-3 mt-12">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-2xl border border-border bg-white/[0.02] text-xs font-bold text-text-muted uppercase tracking-wider">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-2xl border border-border bg-white/[0.02] text-[11px] font-bold text-text-muted uppercase tracking-wider">
                 <MapPin className="w-3.5 h-3.5 text-accent" />
                 Gresik — Surabaya
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-2xl border border-border bg-white/[0.02] text-xs font-bold text-text-muted uppercase tracking-wider">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-2xl border border-border bg-white/[0.02] text-[11px] font-bold text-text-muted uppercase tracking-wider">
                 <Briefcase className="w-3.5 h-3.5 text-accent" />
                 Backend Precision
               </div>
@@ -113,16 +116,16 @@ export default function BentoGrid() {
           <div className="p-10 h-full flex flex-col justify-between relative z-10">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent">Featured Project</span>
+                <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent">Featured Project</span>
                 <div className="h-px w-8 bg-accent/30" />
               </div>
-              <h3 className="text-3xl font-bold text-white group-hover:text-accent transition-colors font-syne">RSHP – Hospital Info System</h3>
+              <h3 className="text-3xl font-bold text-[var(--text)] group-hover:text-accent transition-colors font-syne">RSHP – Hospital Info System</h3>
               <p className="mt-3 text-text-muted max-w-sm">Digitalisasi registrasi pasien dan jadwal dokter secara real-time.</p>
             </div>
             
             <div className="flex items-center gap-3">
               {['Laravel', 'MySQL', 'Eloquent'].map(tag => (
-                <span key={tag} className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-[10px] font-bold text-text-muted uppercase tracking-tighter">
+                <span key={tag} className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-[11px] font-bold text-text-muted uppercase tracking-tighter">
                   {tag}
                 </span>
               ))}
@@ -147,29 +150,34 @@ export default function BentoGrid() {
         <TiltCard className="p-1 glass-panel">
           <div className="p-8 h-full flex flex-col justify-between">
             <div className="flex items-center justify-between">
-              <h3 className="text-[10px] font-bold uppercase tracking-widest text-text-muted">GitHub Stats</h3>
-              <Terminal className="w-4 h-4 text-accent" />
+              <h3 className="text-[11px] font-bold uppercase tracking-widest text-text-muted">GitHub Stats</h3>
+              <a href="https://github.com/Fals-Code" target="_blank" rel="noopener noreferrer">
+                <Terminal className="w-4 h-4 text-accent hover:scale-110 transition-transform" />
+              </a>
             </div>
             <div className="space-y-4">
               <div className="flex items-end justify-between">
-                <span className="text-4xl font-bold text-white font-syne">12+</span>
-                <span className="text-[10px] text-text-muted mb-1 font-bold uppercase">Repos</span>
+                <span className="text-4xl font-bold text-[var(--text)] font-syne">
+                  {isLoading ? "..." : stats.repositories}
+                </span>
+                <span className="text-[11px] text-text-muted mb-1 font-bold uppercase">Repos</span>
               </div>
               <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                 <motion.div 
                   initial={{ width: 0 }}
-                  animate={{ width: "66%" }}
+                  animate={{ width: isLoading ? "20%" : `${Math.min((stats.repositories / 30) * 100, 100)}%` }}
+                  transition={{ duration: 1.2, ease: "easeOut" }}
                   className="h-full bg-accent/50" 
                 />
               </div>
-              <div className="flex justify-between text-[10px] font-bold uppercase tracking-tighter text-text-muted">
+              <div className="flex justify-between text-[11px] font-bold uppercase tracking-tighter text-text-muted">
                 <div className="flex items-center gap-1.5">
                   <div className="w-2 h-2 rounded-full bg-accent" />
-                  Stars: 5
+                  Stars: {isLoading ? "..." : stats.stars}
                 </div>
                 <div className="flex items-center gap-1.5">
                   <div className="w-2 h-2 rounded-full bg-blue-500" />
-                  Followers: 8
+                  Followers: {isLoading ? "..." : stats.followers}
                 </div>
               </div>
             </div>
@@ -185,14 +193,17 @@ export default function BentoGrid() {
         <TiltCard className="p-1 glass-panel">
           <div className="grid grid-cols-2 gap-3 h-full p-6">
             {[
-              { name: "LinkedIn", Icon: Globe, href: "#", color: "hover:bg-blue-600/10 hover:text-blue-400" },
-              { name: "GitHub", Icon: Globe, href: "#", color: "hover:bg-white/10 hover:text-white" },
-              { name: "Instagram", Icon: MessageCircle, href: "#", color: "hover:bg-pink-600/10 hover:text-pink-400" },
-              { name: "Mail", Icon: Mail, href: "#", color: "hover:bg-accent/10 hover:text-accent" }
+              { name: "LinkedIn", Icon: Globe, href: "https://linkedin.com/in/falah", color: "hover:bg-blue-600/10 hover:text-blue-400" },
+              { name: "GitHub", Icon: GitHub, href: "https://github.com/Fals-Code", color: "hover:bg-white/10 hover:text-white" },
+              { name: "Instagram", Icon: Instagram, href: "https://instagram.com/falahh.am", color: "hover:bg-pink-600/10 hover:text-pink-400" },
+              { name: "Mail", Icon: Mail, href: "mailto:ahmadmathlaulfalah14@gmail.com", color: "hover:bg-accent/10 hover:text-accent" }
             ].map((social) => (
               <a
                 key={social.name}
                 href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={social.name}
                 className={`flex items-center justify-center rounded-2xl border border-border bg-white/[0.02] transition-all duration-300 group ${social.color}`}
               >
                 <social.Icon className="w-5 h-5 opacity-50 group-hover/card:opacity-100 group-hover:opacity-100 transition-opacity" />
@@ -218,8 +229,8 @@ export default function BentoGrid() {
             
             <div className="relative pl-8 space-y-2 border-l border-border">
               <div className="absolute top-0 left-[-5.5px] w-2.5 h-2.5 rounded-full bg-accent shadow-[0_0_10px_rgba(232,83,58,0.5)]" />
-              <p className="text-[10px] font-bold text-accent uppercase tracking-widest">2024 — Present</p>
-              <h4 className="text-lg font-bold text-white leading-snug font-syne">
+              <p className="text-[11px] font-bold text-accent uppercase tracking-widest">2024 — Present</p>
+              <h4 className="text-lg font-bold text-[var(--text)] leading-snug font-syne">
                 D4 Teknik Informatika <br />
                 <span className="text-neutral-500 font-medium">Universitas Airlangga</span>
               </h4>
@@ -236,8 +247,8 @@ export default function BentoGrid() {
         <TiltCard className="p-1 glass-panel">
           <div className="p-10 h-full flex flex-col">
             <div className="flex items-center gap-3 mb-10">
-              <div className="px-4 py-2 glass-panel rounded-full text-xs font-bold flex items-center gap-2">
-              <MapPin className="w-3.5 h-3.5 text-accent" /> Surabaya, Indonesia
+              <div className="px-4 py-2 glass-panel rounded-full text-[11px] font-bold flex items-center gap-2">
+              <MapPin className="w-3.5 h-3.5 text-accent" /> Surabaya, ID
             </div>
               <h3 className="font-bold text-lg uppercase tracking-tight font-syne">Mastery</h3>
             </div>
@@ -254,7 +265,7 @@ export default function BentoGrid() {
                 <div key={tech.name} className="flex items-center gap-4 group cursor-default">
                   <div className="w-1.5 h-1.5 rounded-full bg-border group-hover:bg-accent transition-colors" />
                   <div>
-                    <p className="text-sm font-bold text-text-muted group-hover:text-white transition-colors">{tech.name}</p>
+                    <p className="text-sm font-bold text-text-muted group-hover:text-[var(--text)] transition-colors">{tech.name}</p>
                     <div className="h-px w-0 group-hover:w-full bg-accent/30 transition-all duration-500 mt-1" />
                   </div>
                 </div>

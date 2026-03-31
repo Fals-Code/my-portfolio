@@ -39,7 +39,7 @@ export default function LiveStatus() {
       </div>
 
       <div className="space-y-1">
-        <p className="text-3xl font-mono font-bold text-white tracking-widest">
+        <p className="text-3xl font-mono font-bold text-[var(--text)] tracking-widest">
           {time || "00:00:00"}
         </p>
         <div className="flex items-center gap-1 text-text-muted">

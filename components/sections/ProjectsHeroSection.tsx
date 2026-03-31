@@ -9,13 +9,13 @@ import { motion } from "framer-motion";
  */
 export default function ProjectsHeroSection() {
   return (
-    <section className="container mx-auto px-6 py-24 md:py-32">
+    <section className="container mx-auto px-6 pt-28 md:pt-32 pb-8">
       <div className="max-w-3xl space-y-8">
         <SectionLabel>What I've Built</SectionLabel>
         <motion.h1 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-4xl md:text-6xl font-syne font-extrabold leading-tight text-white"
+          className="text-4xl md:text-6xl font-syne font-extrabold leading-tight text-[var(--text)]"
         >
           My <GradientText>Projects</GradientText>
         </motion.h1>

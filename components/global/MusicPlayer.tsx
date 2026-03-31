@@ -38,7 +38,7 @@ export default function MusicPlayer() {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="fixed bottom-10 left-10 z-[60]">
+    <div className="fixed bottom-4 left-4 md:bottom-6 md:left-6 z-[60] hide-on-intro">
       <div className="relative group">
         <AnimatePresence>
           {isExpanded && (
@@ -54,7 +54,7 @@ export default function MusicPlayer() {
                   <MusicIcon className="w-4 h-4 animate-pulse" />
                   <span className="text-[10px] font-bold uppercase tracking-[0.3em]">Now Playing</span>
                 </div>
-                <h4 className="text-base font-syne font-extrabold text-white truncate px-0">{currentTrack?.title}</h4>
+                <h4 className="text-base font-syne font-extrabold text-[var(--text)] truncate px-0">{currentTrack?.title}</h4>
                 <p className="text-[12px] text-text-muted truncate font-bold uppercase tracking-widest">{currentTrack?.artist}</p>
               </div>
 
@@ -62,7 +62,7 @@ export default function MusicPlayer() {
               <div className="flex items-center justify-between px-4 py-3 bg-white/5 rounded-2xl border border-white/5">
                 <div className="flex items-center gap-3">
                   <Waves className={`w-4 h-4 ${sfxEnabled ? "text-accent" : "text-text-muted"}`} />
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-white">System SFX</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--text)]">System SFX</span>
                 </div>
                 <button 
                   onClick={toggleSfx}
@@ -78,7 +78,7 @@ export default function MusicPlayer() {
               {/* Volume Control */}
               <div className="space-y-4 pt-2 border-t border-white/5">
                 <div className="flex items-center justify-between">
-                  <button onClick={toggleMute} className="text-text-muted hover:text-white transition-colors">
+                  <button onClick={toggleMute} className="text-text-muted hover:text-[var(--text)] transition-colors">
                     {isMuted || volume === 0 ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
                   </button>
                   <span className="text-[10px] font-mono text-text-muted">{Math.round(volume * 100)}%</span>
@@ -121,31 +121,42 @@ export default function MusicPlayer() {
           )}
         </AnimatePresence>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={togglePlay}
-            className={`p-6 rounded-[2rem] shadow-xl flex items-center justify-center transition-all ${
+            className={`p-4 rounded-[1.2rem] shadow-xl flex items-center justify-center transition-all ${
               isPlaying 
                 ? "bg-accent text-white shadow-accent/20" 
-                : "glass-panel bg-white/5 border-white/5 text-text cursor-pointer hover:bg-white/10"
+                : "glass-panel bg-[var(--bg)]/10 border-[var(--border)] cursor-pointer hover:bg-white/10"
             }`}
           >
             {isPlaying ? (
-              <Pause className="w-8 h-8 fill-current" />
+              <Pause className="w-5 h-5 md:w-6 md:h-6 fill-current" />
             ) : (
-              <Play className="w-8 h-8 fill-current ml-1" />
+              <Play className="w-5 h-5 md:w-6 md:h-6 fill-current ml-0.5" />
             )}
           </motion.button>
 
+          {/* Track info - visible only on md+ when playing */}
+          {isPlaying && currentTrack && (
+            <div className="hidden md:block max-w-[130px] overflow-hidden">
+              <p className="text-[10px] font-bold text-[var(--text)] truncate leading-tight"
+                title={currentTrack.title}>
+                {currentTrack.title}
+              </p>
+              <p className="text-[9px] text-text-muted truncate">{currentTrack.artist}</p>
+            </div>
+          )}
+
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className={`p-4 glass-panel rounded-[1.5rem] hover:bg-white/10 transition-all border border-white/5 ${
-              isExpanded ? "bg-white/10 border-accent/20" : "bg-white/5"
+            className={`p-3 glass-panel rounded-[1rem] hover:bg-white/10 transition-all border border-[var(--border)] ${
+              isExpanded ? "bg-white/10 border-accent/20" : "bg-[var(--bg)]/10"
             }`}
           >
-            {isExpanded ? <ChevronDown className="w-6 h-6" /> : <ChevronUp className="w-6 h-6" />}
+            {isExpanded ? <ChevronDown className="w-5 h-5" /> : <ChevronUp className="w-5 h-5" />}
           </button>
         </div>
       </div>

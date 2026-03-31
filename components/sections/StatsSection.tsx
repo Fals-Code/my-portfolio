@@ -33,7 +33,7 @@ function Counter({ value, label }: { value: number; label: string }) {
 
   return (
     <div ref={containerRef} className="text-center p-8 space-y-2 opacity-0 -translate-y-4 transition-all duration-700">
-      <div className="text-4xl md:text-5xl font-syne font-extrabold text-white tracking-tight">
+      <div className="text-4xl md:text-5xl font-syne font-extrabold text-[var(--text)] tracking-tight">
         {count}
         <span className="text-accent">+</span>
       </div>

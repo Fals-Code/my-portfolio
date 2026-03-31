@@ -14,7 +14,7 @@ export default function TimelineSection() {
     <section className="container mx-auto px-6 section-pad">
       <div className="grid grid-cols-1 lg:grid-cols-2 grid-airy">
         <div className="space-y-4 mb-16 text-center">
-          <h2 className="text-3xl md:text-5xl font-syne font-extrabold text-white">
+          <h2 className="text-3xl md:text-5xl font-syne font-extrabold text-[var(--text)]">
             My <GradientText>Journey</GradientText>
           </h2>
           <p className="text-text-muted text-sm uppercase tracking-widest font-bold">Education & Projects</p>
@@ -47,7 +47,7 @@ export default function TimelineSection() {
                       {item.date}
                     </div>
                     <div className="space-y-1">
-                      <h3 className="text-xl font-syne font-bold text-white group-hover:text-accent transition-colors">
+                      <h3 className="text-xl font-syne font-bold text-[var(--text)] group-hover:text-accent transition-colors">
                         {item.title}
                       </h3>
                       <p className="text-sm font-bold text-text-muted">{item.place}</p>

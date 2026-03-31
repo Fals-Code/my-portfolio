@@ -65,7 +65,7 @@ export default function CommandPalette() {
               <input
                 autoFocus
                 placeholder="Search levels, projects, or sections..."
-                className="bg-transparent border-none outline-none text-white w-full placeholder:text-text-muted font-syne"
+                className="bg-transparent border-none outline-none text-[var(--text)] w-full placeholder:text-text-muted font-syne"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
               />
@@ -87,7 +87,7 @@ export default function CommandPalette() {
                       <div className="p-2 bg-white/5 rounded-lg group-hover:bg-accent/10 group-hover:text-accent transition-colors">
                         {item.icon}
                       </div>
-                      <span className="font-syne font-medium text-white">{item.name}</span>
+                      <span className="font-syne font-medium text-[var(--text)]">{item.name}</span>
                       <span className="ml-auto text-[10px] text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">Jump to {item.name}</span>
                     </button>
                   ))}

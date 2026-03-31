@@ -27,7 +27,13 @@ function ContactForm() {
 
     setStatus("loading");
     try {
-      const response = await fetch("https://formspree.io/f/YOUR_FORM_ID", {
+      const FORMSPREE_ID = process.env.NEXT_PUBLIC_FORMSPREE_ID;
+      if (!FORMSPREE_ID) {
+        console.error("NEXT_PUBLIC_FORMSPREE_ID not set in .env.local");
+        setStatus("error");
+        return;
+      }
+      const response = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
@@ -46,18 +52,18 @@ function ContactForm() {
 
   return (
     <GlassPanel className="p-8 md:p-12 space-y-8">
-      <h3 className="text-2xl font-syne font-bold text-white">Send a Message</h3>
+      <h3 className="text-2xl font-syne font-bold text-[var(--text)]">Send a Message</h3>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted px-2">Nama</label>
+          <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted px-2">Name</label>
           <input 
             type="text" 
             name="name"
             value={formData.name}
             onChange={handleChange}
             placeholder="Your Name"
-            className="w-full bg-white/5 border border-border rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-accent transition-all text-white"
+            className="w-full bg-white/5 border border-border rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-accent transition-all text-[var(--text)]"
           />
         </div>
         <div className="space-y-2">
@@ -68,32 +74,32 @@ function ContactForm() {
             value={formData.email}
             onChange={handleChange}
             placeholder="your@email.com"
-            className="w-full bg-white/5 border border-border rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-accent transition-all text-white"
+            className="w-full bg-white/5 border border-border rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-accent transition-all text-[var(--text)]"
           />
         </div>
       </div>
 
       <div className="space-y-2">
-        <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted px-2">Subjek</label>
+        <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted px-2">Subject</label>
         <input 
           type="text" 
           name="subject"
           value={formData.subject}
           onChange={handleChange}
           placeholder="What's this about?"
-          className="w-full bg-white/5 border border-border rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-accent transition-all text-white"
+          className="w-full bg-white/5 border border-border rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-accent transition-all text-[var(--text)]"
         />
       </div>
 
       <div className="space-y-2">
-        <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted px-2">Pesan</label>
+        <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted px-2">Message</label>
         <textarea 
           name="message"
           rows={5}
           value={formData.message}
           onChange={handleChange}
           placeholder="Tell me more..."
-          className="w-full bg-white/5 border border-border rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-accent transition-all text-white min-h-[120px] resize-none"
+          className="w-full bg-white/5 border border-border rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-accent transition-all text-[var(--text)] min-h-[120px] resize-none"
         />
       </div>
 
@@ -138,7 +144,7 @@ function ContactSidebar() {
   return (
     <div className="space-y-8">
       <GlassPanel className="p-8 space-y-8">
-        <h3 className="text-xl font-syne font-bold text-white">Contact Info</h3>
+        <h3 className="text-xl font-syne font-bold text-[var(--text)]">Contact Info</h3>
         <div className="space-y-6">
           {items.map((item) => (
             <a 
@@ -152,7 +158,7 @@ function ContactSidebar() {
               </div>
               <div className="space-y-1">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-text-muted">{item.label}</p>
-                <p className="text-sm font-medium text-white group-hover:text-accent transition-colors">{item.value}</p>
+                <p className="text-sm font-medium text-[var(--text)] group-hover:text-accent transition-colors">{item.value}</p>
               </div>
             </a>
           ))}
@@ -163,7 +169,7 @@ function ContactSidebar() {
         <div className="flex items-center gap-4">
           <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
           <div className="space-y-1">
-            <h4 className="text-sm font-bold text-white">Currently Available</h4>
+            <h4 className="text-sm font-bold text-[var(--text)]">Currently Available</h4>
             <p className="text-xs text-text-muted">Open to freelance & collaborations.</p>
           </div>
         </div>

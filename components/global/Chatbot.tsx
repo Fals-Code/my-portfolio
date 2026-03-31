@@ -41,7 +41,7 @@ export default function Chatbot() {
   };
 
   return (
-    <div className="fixed bottom-10 right-10 z-[60]">
+    <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[60] hide-on-intro">
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -85,13 +85,13 @@ export default function Chatbot() {
             <div className="flex-1 overflow-y-auto p-8 space-y-6 custom-scrollbar scroll-smooth">
               {messages.map((msg) => (
                 <div key={msg.id} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                  <div className={`max-w-[85%] p-5 rounded-[2rem] text-sm leading-relaxed ${
+                  <div className={`max-w-[80%] px-5 py-3.5 rounded-3xl text-[13px] md:text-sm leading-relaxed shadow-sm ${
                     msg.role === "user" 
-                      ? "bg-accent text-white shadow-xl shadow-accent/10" 
-                      : "bg-white/5 border border-white/5 text-text"
+                      ? "bg-accent text-white rounded-br-sm shadow-accent/20" 
+                      : "bg-white/5 border border-white/5 text-[var(--text)] rounded-bl-sm"
                   }`}>
                     {msg.content}
-                    <div className={`text-[9px] mt-2 font-bold uppercase opacity-50 ${msg.role === "user" ? "text-right" : "text-left"}`}>
+                    <div className={`text-[9px] mt-1 font-bold uppercase opacity-50 ${msg.role === "user" ? "text-right text-white/70" : "text-left text-text-muted"}`}>
                       {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </div>
                   </div>
@@ -137,12 +137,12 @@ export default function Chatbot() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={toggleChat}
-        className="bg-accent text-white p-6 rounded-[2rem] shadow-xl hover:shadow-accent/30 transition-all flex items-center justify-center relative group"
+        className="bg-accent text-white p-4 rounded-[1.2rem] shadow-xl hover:shadow-accent/30 transition-all flex items-center justify-center relative group"
       >
-        {isOpen ? <X className="w-8 h-8" /> : (
+        {isOpen ? <X className="w-6 h-6" /> : (
           <>
-            <MessageSquare className="w-8 h-8 group-hover:scale-110 transition-transform duration-500" />
-            {!isOpen && <span className="absolute -top-1 -right-1 w-5 h-5 bg-white rounded-full flex items-center justify-center text-accent text-[11px] font-extrabold shadow-lg">1</span>}
+            <MessageSquare className="w-6 h-6 group-hover:scale-110 transition-transform duration-500" />
+            {!isOpen && <span className="absolute -top-1 -right-1 w-5 h-5 bg-white rounded-full flex items-center justify-center text-accent text-[10px] font-extrabold shadow-lg">1</span>}
           </>
         )}
       </motion.button>

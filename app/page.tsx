@@ -1,11 +1,13 @@
 import React from "react";
 import TerminalIntro from "@/components/sections/TerminalIntro";
 import HeroSection from "@/components/sections/HeroSection";
-import StatsSection from "@/components/sections/StatsSection";
+import ServicesSection from "@/components/sections/ServicesSection";
+import Link from "next/link";
+import { GradientText } from "@/components/ui/Primitives";
 
 /**
  * Portfolio Home Page
- * Built with Next.js 16 App Router.
+ * Built with Next.js App Router.
  */
 export default function HomePage() {
   return (
@@ -16,10 +18,24 @@ export default function HomePage() {
       {/* 2. Hero Section: Welcome & Core Identity */}
       <HeroSection />
 
-      {/* 3. Static Stats: Real-time GitHub data */}
-      <StatsSection />
-      
-      {/* Additional content could go here, like Featured Projects preview */}
+      {/* 3. Services: What I do */}
+      <ServicesSection />
+
+      {/* 4. CTA: Call to action */}
+      <section className="container mx-auto px-6 py-24 text-center space-y-8">
+        <h2 className="text-3xl md:text-5xl font-syne font-extrabold text-[var(--text)]">
+          Ready to build something <GradientText>great?</GradientText>
+        </h2>
+        <p className="text-text-muted text-lg max-w-lg mx-auto">
+          Let's create something you're proud of. I'm always open to new opportunities and collaborations.
+        </p>
+        <Link 
+          href="/contact"
+          className="inline-flex items-center gap-2 bg-accent text-white px-10 py-5 rounded-2xl text-xs font-bold uppercase tracking-widest hover:bg-accent-hover transition-all shadow-lg shadow-accent/20 hover:shadow-accent/40"
+        >
+          Start a Conversation →
+        </Link>
+      </section>
     </div>
   );
 }

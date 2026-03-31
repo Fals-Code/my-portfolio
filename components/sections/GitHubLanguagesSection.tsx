@@ -25,7 +25,7 @@ export default function GitHubLanguagesSection() {
       <div className="space-y-12">
         <div className="space-y-4">
           <SectionLabel>Skills</SectionLabel>
-          <h2 className="text-3xl md:text-5xl font-syne font-extrabold text-white">
+          <h2 className="text-3xl md:text-5xl font-syne font-extrabold text-[var(--text)]">
             Languages from GitHub
           </h2>
         </div>
@@ -66,7 +66,7 @@ export default function GitHubLanguagesSection() {
                   className="w-3 h-3 rounded-full shadow-[0_0_10px_currentColor]" 
                   style={{ backgroundColor: lang.color, color: lang.color }} 
                 />
-                <span className="font-syne font-bold text-sm text-white group-hover:text-accent transition-colors">
+                <span className="font-syne font-bold text-sm text-[var(--text)] group-hover:text-accent transition-colors">
                   {lang.name}
                 </span>
                 <span className="ml-auto text-[10px] font-mono text-text-muted">

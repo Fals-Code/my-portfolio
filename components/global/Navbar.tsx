@@ -27,14 +27,13 @@ export default function Navbar() {
     { label: "Home", href: "/" },
     { label: "About", href: "/about" },
     { label: "Projects", href: "/projects" },
-    { label: "Game", href: "/game" },
     { label: "Contact", href: "/contact" },
   ];
 
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${isScrolled ? "glass-panel py-3" : "bg-transparent py-10"}`}>
+    <nav className={`hide-on-intro fixed top-0 w-full z-50 transition-all duration-500 ${isScrolled || isOpen ? "glass-panel py-3" : "bg-transparent py-4 md:py-8"}`}>
       <div className="max-w-7xl mx-auto px-10 flex items-center justify-between">
-        <Link href="/" className="text-3xl font-syne font-extrabold text-white hover:text-accent transition-colors">
+        <Link href="/" className="text-3xl font-syne font-extrabold text-[var(--text)] hover:text-accent transition-colors">
           Falah.
         </Link>
 
@@ -84,8 +83,8 @@ export default function Navbar() {
                 key={link.href} 
                 href={link.href} 
                 onClick={() => setIsOpen(false)}
-                className={`block text-3xl font-syne font-extrabold ${
-                  pathname === link.href ? "text-accent" : "text-white"
+                className={`block w-fit text-sm font-bold uppercase tracking-[0.3em] pb-2 ${
+                  pathname === link.href ? "text-accent" : "text-[var(--text)]"
                 }`}
               >
                 {link.label}

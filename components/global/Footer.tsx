@@ -11,8 +11,8 @@ export default function Footer() {
           © {new Date().getFullYear()} Ahmad Mathlaul Falah. All rights reserved.
         </div>
         <div className="flex items-center gap-8 text-sm font-medium">
-          <a href="https://github.com/MathlaulFalah" target="_blank" className="hover:text-accent transition-colors">Github</a>
-          <a href="https://linkedin.com/in/AhmadFalah" target="_blank" className="hover:text-accent transition-colors">LinkedIn</a>
+          <a href="https://github.com/Fals-Code" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">Github</a>
+          <a href="https://linkedin.com/in/falah" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">LinkedIn</a>
           <Link href="/contact" className="hover:text-accent transition-colors">Contact</Link>
         </div>
       </div>

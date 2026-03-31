@@ -2,7 +2,7 @@
 
 import React from "react";
 import { services } from "@/data/services";
-import { GlassPanel, GradientText, SectionLabel } from "@/components/ui/Primitives";
+import { GlassPanel, GradientText } from "@/components/ui/Primitives";
 import { Code, Database, Terminal, Rocket } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -11,57 +11,50 @@ import { motion } from "framer-motion";
  */
 function ServiceIcon({ name }: { name: string }) {
   switch (name) {
-    case "code": return <Code className="w-6 h-6 text-accent" />;
-    case "database": return <Database className="w-6 h-6 text-accent" />;
-    case "terminal": return <Terminal className="w-6 h-6 text-accent" />;
-    case "rocket": return <Rocket className="w-6 h-6 text-accent" />;
-    default: return <Code className="w-6 h-6 text-accent" />;
+    case "code": return <Code className="w-5 h-5 text-accent" />;
+    case "database": return <Database className="w-5 h-5 text-accent" />;
+    case "terminal": return <Terminal className="w-5 h-5 text-accent" />;
+    case "rocket": return <Rocket className="w-5 h-5 text-accent" />;
+    default: return <Code className="w-5 h-5 text-accent" />;
   }
 }
 
 /**
- * Professional Services Section with Airy Layout.
+ * Compact "What I Do" snippet for the Home page.
  */
 export default function ServicesSection() {
   return (
-    <section className="container mx-auto px-6 section-pad">
-      <div className="space-y-16">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-          <div className="max-w-2xl space-y-4">
-            <SectionLabel>My Services</SectionLabel>
-            <h2 className="text-4xl md:text-5xl font-syne font-extrabold text-white">
-              How I Can Add Value To <GradientText>Your Project</GradientText>
-            </h2>
-            <p className="text-text-muted text-lg leading-relaxed">
-              Dari arsitektur database hingga integrasi pihak ketiga, saya membangun solusi backend yang kuat dan terukur.
-            </p>
-          </div>
+    <section className="container mx-auto px-6 py-24">
+      <div className="space-y-12 max-w-7xl mx-auto">
+        <div className="text-center space-y-4">
+          <h2 className="text-3xl md:text-5xl font-syne font-extrabold text-[var(--text)]">
+            What I <GradientText>Do</GradientText>
+          </h2>
+          <p className="text-text-muted text-base md:text-lg max-w-2xl mx-auto">
+            My core focus is on building robust and scalable backends that make frontend applications shine.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 grid-airy">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {services.map((service, idx) => (
             <motion.div
               key={service.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: idx * 0.1 }}
-              className="group/card"
+              transition={{ delay: idx * 0.1, duration: 0.5 }}
+              className="group h-full"
             >
-              <GlassPanel className="h-full group-hover/card:-translate-y-2 transition-transform duration-500 border-none bg-white/[0.03]">
-                <div className="p-10 space-y-8">
-                  <div className="w-16 h-16 rounded-2xl bg-accent/10 flex items-center justify-center group-hover/card:bg-accent/20 transition-colors">
-                    <ServiceIcon name={service.icon} />
-                  </div>
-                  <div className="space-y-4">
-                    <h3 className="text-xl font-syne font-bold text-white group-hover/card:text-accent transition-colors">
-                      {service.title}
-                    </h3>
-                    <p className="text-sm text-text-muted leading-relaxed">
-                      {service.description}
-                    </p>
-                  </div>
+              <GlassPanel className="h-full p-8 group-hover:-translate-y-2 transition-transform duration-300 flex flex-col items-center text-center">
+                <div className="w-12 h-12 mb-6 rounded-full bg-accent/5 flex items-center justify-center group-hover:bg-accent/20 group-hover:scale-110 transition-all">
+                  <ServiceIcon name={service.icon} />
                 </div>
+                <h3 className="text-lg font-syne font-bold text-[var(--text)] mb-3 group-hover:text-accent transition-colors">
+                  {service.title}
+                </h3>
+                <p className="text-sm text-text-muted leading-relaxed">
+                  {service.description}
+                </p>
               </GlassPanel>
             </motion.div>
           ))}

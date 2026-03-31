@@ -41,8 +41,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             {children}
           </main>
           {!isGamePage && <Footer />}
-          <MusicPlayer />
-          <Chatbot />
+          {!isGamePage && <MusicPlayer />}
+          {!isGamePage && <Chatbot />}
           <BackToTop />
           <CommandPalette />
         </ChatbotProvider>

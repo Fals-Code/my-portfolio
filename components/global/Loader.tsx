@@ -7,12 +7,25 @@ export default function Loader() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate loading time or wait for window load
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
+    const dismiss = () => setIsLoading(false);
 
-    return () => clearTimeout(timer);
+    // If the document is already fully loaded, dismiss immediately
+    if (document.readyState === "complete") {
+      // Small delay so the animation has time to render at least once
+      const t = setTimeout(dismiss, 300);
+      return () => clearTimeout(t);
+    }
+
+    // Otherwise wait for the actual load event
+    window.addEventListener("load", dismiss);
+
+    // Fallback: never show loader for more than 4s even on slow connections
+    const fallback = setTimeout(dismiss, 4000);
+
+    return () => {
+      window.removeEventListener("load", dismiss);
+      clearTimeout(fallback);
+    };
   }, []);
 
   return (

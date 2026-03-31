@@ -68,6 +68,7 @@ export interface CaseStudy {
   badgeColor?: string;
   title: string;
   subtitle: string;
+  heroImage?: string;
   meta: (string | number)[];
   github: string;
   kpis: string[];

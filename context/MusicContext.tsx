@@ -52,6 +52,7 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   
   const playerRef = useRef<any>(null);
   const [isApiReady, setIsApiReady] = useState(false);
+  const nextTrackRef = useRef<() => void>(() => {});
 
   useEffect(() => {
     // 1. Load the YouTube IFrame API script
@@ -94,7 +95,7 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             // YT.PlayerState.PLAYING = 1, PAUSED = 2, ENDED = 0
             if (event.data === 1) setIsPlaying(true);
             else if (event.data === 2) setIsPlaying(false);
-            else if (event.data === 0) nextTrack();
+            else if (event.data === 0) nextTrackRef.current();
           },
         },
       });
@@ -136,6 +137,9 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       playerRef.current.playVideo();
     }
   };
+
+  // Keep the ref in sync so the YouTube event handler always has a fresh reference
+  nextTrackRef.current = nextTrack;
 
   const toggleSfx = () => {
     setSfxEnabled(!sfxEnabled);

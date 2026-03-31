@@ -4,11 +4,12 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useSound } from "@/hooks/useSound";
 import { Slot } from "@radix-ui/react-slot";
+import { springSnappy, springBouncy } from "@/lib/motion-tokens";
 
 export const SectionLabel = ({ children }: { children: React.ReactNode }) => (
   <div className="inline-flex items-center gap-3 mb-6">
     <div className="w-8 h-px bg-accent/30" />
-    <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent">
+    <span className="text-[12px] font-bold uppercase tracking-[0.25em] text-accent">
       {children}
     </span>
   </div>
@@ -51,14 +52,15 @@ export const Button = ({
   };
 
   const sizes = {
-    sm: "px-6 py-3 text-[10px]",
-    md: "px-8 py-4 text-sm",
+    sm: "px-6 py-3 text-[11px]",
+    md: "px-8 py-4 text-[12px]",
     lg: "px-10 py-5 text-base"
   };
 
   const motionProps = asChild ? {} : {
     whileHover: { scale: 1.02 },
-    whileTap: { scale: 0.98 }
+    whileTap: { scale: 0.98 },
+    transition: springSnappy // Snappy character for button feedback
   };
 
   const handleInteraction = (e: React.MouseEvent) => {
@@ -71,7 +73,7 @@ export const Button = ({
       {...motionProps}
       onMouseEnter={() => playHover()}
       onClick={handleInteraction}
-      className={`rounded-2xl font-bold transition-all uppercase tracking-widest inline-flex items-center justify-center ${variants[variant]} ${sizes[size]} ${className}`}
+      className={`rounded-2xl font-bold transition-all uppercase tracking-[0.15em] inline-flex items-center justify-center ${variants[variant]} ${sizes[size]} ${className}`}
     >
       {children}
     </Comp>
