@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
  */
 export default function ContactHeroSection() {
   return (
-    <section className="container mx-auto px-6 pt-24 md:pt-24 pb-8">
+    <section className="container mx-auto px-6 pt-20 md:pt-12 pb-8">
       <div className="max-w-3xl space-y-8">
         <SectionLabel>Get In Touch</SectionLabel>
         <motion.h1 

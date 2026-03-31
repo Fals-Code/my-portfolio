@@ -49,7 +49,7 @@ const timeline = [
 
 export default function AboutPage() {
   return (
-    <div className="flex flex-col w-full min-h-screen overflow-x-hidden pt-24 md:pt-20 pb-32">
+    <div className="flex flex-col w-full min-h-screen overflow-x-hidden pt-16 md:pt-10 pb-32">
       
       {/* 1. Deep Dive Hero */}
       <section className="container mx-auto px-6 mb-24 max-w-4xl text-center">

@@ -88,6 +88,11 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           rel: 0,
         },
         events: {
+          onReady: (event: any) => {
+            // Force load the correct track immediately
+            event.target.cueVideoById(PLAYLIST[0].id);
+            setIsApiReady(true);
+          },
           onStateChange: (event: any) => {
             // YT.PlayerState.PLAYING = 1, PAUSED = 2, ENDED = 0
             if (event.data === 1) setIsPlaying(true);
@@ -98,6 +103,14 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       });
     }
   }, [isApiReady]);
+
+  // Handle case where playlist or index changes while player exists
+  useEffect(() => {
+    if (playerRef.current && playerRef.current.loadVideoById) {
+      playerRef.current.loadVideoById(PLAYLIST[currentTrackIndex].id);
+      playerRef.current.pauseVideo();
+    }
+  }, [currentTrackIndex, isApiReady]);
 
   const togglePlay = () => {
     if (!playerRef.current) return;
