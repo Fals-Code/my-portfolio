@@ -33,7 +33,7 @@ const timeline = [
   },
   {
     id: "proj-rshp",
-    year: "2024",
+    year: "2025",
     title: "Hospital Info System (RSHP)",
     place: "Academic Project",
     desc: "Mengembangkan sistem manajemen antrian pasien dan jadwal dokter secara real-time yang meminimalisir tabrakan jadwal dengan Laravel."
