@@ -2,14 +2,10 @@
 
 import { motion } from "framer-motion";
 import { 
-  ExternalLink, 
   Globe, 
   Mail, 
   MessageCircle, 
-  Share2, 
   Code2, 
-  Cpu, 
-  Layers, 
   User,
   ArrowUpRight,
   MapPin,
@@ -21,9 +17,8 @@ import {
   GitBranch
 } from "lucide-react";
 import Image from "next/image";
-
-// Using icons from Lucide that are definitely available in common versions
-// If brands are missing, we'll use fallbacks
+import TiltCard from "./ui/TiltCard";
+import LiveStatus from "./ui/LiveStatus";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -52,210 +47,233 @@ export default function BentoGrid() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-7xl mx-auto p-4 md:p-8"
+      className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-7xl mx-auto p-4 md:p-8"
     >
       {/* Profile Card (2x2) */}
       <motion.div
         variants={itemVariants}
-        className="md:col-span-2 md:row-span-2 bento-card p-10 flex flex-col justify-between group"
+        className="md:col-span-2 md:row-span-2 group"
       >
-        <div className="space-y-8">
-          <div className="flex items-start justify-between">
-            <div className="relative w-28 h-28 rounded-3xl overflow-hidden border-2 border-card-border group-hover:border-blue-500/30 transition-colors">
-              {/* Fallback image if /assets/imgs/falah.jpeg is missing */}
-              <div className="absolute inset-0 bg-neutral-900 flex items-center justify-center">
-                <User className="w-12 h-12 text-neutral-700" />
+        <TiltCard className="p-1 glass-panel">
+          <div className="p-10 h-full flex flex-col justify-between">
+            <div className="space-y-8">
+              <div className="flex items-start justify-between">
+                <div className="relative w-28 h-28 rounded-3xl overflow-hidden border-2 border-border/40 group-hover:border-accent/40 transition-colors duration-500">
+                  <div className="absolute inset-0 bg-neutral-900 flex items-center justify-center">
+                    <User className="w-12 h-12 text-neutral-700" />
+                  </div>
+                  <Image 
+                    src="/assets/imgs/falah.jpeg" 
+                    alt="Ahmad Mathlaul Falah" 
+                    fill 
+                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                    unoptimized 
+                  />
+                </div>
+                <div className="px-4 py-2 rounded-full border border-green-500/20 bg-green-500/5 text-[10px] font-bold uppercase tracking-widest text-green-400 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                  Available for Work
+                </div>
               </div>
-              <Image 
-                src="/assets/imgs/falah.jpeg" 
-                alt="Ahmad Mathlaul Falah" 
-                fill 
-                className="object-cover group-hover:scale-110 transition-transform duration-700"
-                unoptimized // Just in case the file isn't in public yet
-              />
+              
+              <div className="space-y-4">
+                <h1 className="text-5xl font-bold tracking-tight text-white leading-tight font-syne">
+                  Ahmad Mathlaul <br />
+                  <span className="text-neutral-500">Falah</span>
+                </h1>
+                <p className="text-xl text-neutral-300 font-medium font-syne">
+                  Backend Developer
+                </p>
+                <p className="text-text-muted leading-relaxed max-w-md">
+                  Fokus pada arsitektur backend, clean code, dan pembangunan sistem scalable menggunakan Laravel.
+                </p>
+              </div>
             </div>
-            <div className="px-4 py-2 rounded-full border border-green-500/20 bg-green-500/5 text-[10px] font-bold uppercase tracking-widest text-green-400 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              Available for Work
-            </div>
-          </div>
-          
-          <div className="space-y-4">
-            <h1 className="text-5xl font-bold tracking-tight text-white leading-tight">
-              Ahmad Mathlaul <br />
-              <span className="text-neutral-500">Falah</span>
-            </h1>
-            <p className="text-xl text-neutral-400 font-medium">
-              Backend Developer
-            </p>
-            <p className="text-neutral-500 leading-relaxed max-w-md">
-              Fokus pada arsitektur backend, clean code, dan pembangunan sistem scalable menggunakan Laravel.
-            </p>
-          </div>
-        </div>
 
-        <div className="flex flex-wrap gap-3 mt-12">
-          <div className="flex items-center gap-2 px-4 py-2 rounded-2xl border border-card-border bg-white/[0.02] text-sm text-neutral-400">
-            <MapPin className="w-4 h-4 text-blue-400" />
-            Gresik — Surabaya, ID
+            <div className="flex flex-wrap gap-3 mt-12">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-2xl border border-border bg-white/[0.02] text-xs font-bold text-text-muted uppercase tracking-wider">
+                <MapPin className="w-3.5 h-3.5 text-accent" />
+                Gresik — Surabaya
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 rounded-2xl border border-border bg-white/[0.02] text-xs font-bold text-text-muted uppercase tracking-wider">
+                <Briefcase className="w-3.5 h-3.5 text-accent" />
+                Backend Precision
+              </div>
+            </div>
           </div>
-          <div className="flex items-center gap-2 px-4 py-2 rounded-2xl border border-card-border bg-white/[0.02] text-sm text-neutral-400">
-            <Briefcase className="w-4 h-4 text-purple-400" />
-            Backend Precision
-          </div>
-        </div>
+        </TiltCard>
       </motion.div>
 
       {/* Featured Project (2x1) */}
       <motion.div
         variants={itemVariants}
-        className="md:col-span-2 md:row-span-1 bento-card group cursor-pointer overflow-hidden"
+        className="md:col-span-2 md:row-span-1 group"
       >
-        <div className="p-10 h-full flex flex-col justify-between relative z-10">
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-400">Featured Project</span>
-              <div className="h-px w-8 bg-blue-500/30" />
+        <TiltCard className="p-1 glass-panel overflow-hidden">
+          <div className="p-10 h-full flex flex-col justify-between relative z-10">
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent">Featured Project</span>
+                <div className="h-px w-8 bg-accent/30" />
+              </div>
+              <h3 className="text-3xl font-bold text-white group-hover:text-accent transition-colors font-syne">RSHP – Hospital Info System</h3>
+              <p className="mt-3 text-text-muted max-w-sm">Digitalisasi registrasi pasien dan jadwal dokter secara real-time.</p>
             </div>
-            <h3 className="text-3xl font-bold text-white group-hover:text-blue-400 transition-colors">RSHP – Hospital Info System</h3>
-            <p className="mt-3 text-neutral-400 max-w-sm">Digitalisasi registrasi pasien dan jadwal dokter real-time.</p>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            {['Laravel', 'MySQL', 'Eloquent'].map(tag => (
-              <span key={tag} className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-[10px] font-medium text-neutral-300">
-                {tag}
-              </span>
-            ))}
-          </div>
+            
+            <div className="flex items-center gap-3">
+              {['Laravel', 'MySQL', 'Eloquent'].map(tag => (
+                <span key={tag} className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-[10px] font-bold text-text-muted uppercase tracking-tighter">
+                  {tag}
+                </span>
+              ))}
+            </div>
 
-          <div className="absolute top-10 right-10 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0">
-            <div className="p-3 rounded-full bg-blue-500 text-white shadow-lg shadow-blue-500/20">
-              <ArrowUpRight className="w-5 h-5" />
+            <div className="absolute top-10 right-10 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-4 group-hover:translate-x-0">
+              <div className="p-3 rounded-full bg-accent text-white shadow-lg shadow-accent/20">
+                <ArrowUpRight className="w-5 h-5" />
+              </div>
             </div>
           </div>
-        </div>
-        {/* Abstract Deco */}
-        <div className="absolute -bottom-16 -right-16 w-64 h-64 bg-blue-500/5 rounded-full blur-[80px] group-hover:bg-blue-500/10 transition-colors" />
+          {/* Abstract Deco */}
+          <div className="absolute -bottom-16 -right-16 w-64 h-64 bg-accent/5 rounded-full blur-[80px] group-hover:bg-accent/10 transition-colors" />
+        </TiltCard>
       </motion.div>
 
       {/* GitHub Stats (1x1) */}
       <motion.div
         variants={itemVariants}
-        className="md:col-span-1 md:row-span-1 bento-card p-8 flex flex-col justify-between group"
+        className="md:col-span-1 md:row-span-1 group"
       >
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-bold uppercase tracking-widest text-neutral-500">GitHub Stats</h3>
-          <Terminal className="w-5 h-5 text-neutral-600 group-hover:text-white transition-colors" />
-        </div>
-        <div className="space-y-4">
-          <div className="flex items-end justify-between">
-            <span className="text-4xl font-bold text-white">12+</span>
-            <span className="text-[10px] text-neutral-600 mb-1">Repos</span>
-          </div>
-          <div className="h-1 w-full bg-neutral-800 rounded-full overflow-hidden">
-            <div className="h-full w-2/3 bg-blue-500/50" />
-          </div>
-          <div className="flex justify-between text-[10px] font-medium text-neutral-500">
-            <div className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-yellow-500/50" />
-              Stars: 5
+        <TiltCard className="p-1 glass-panel">
+          <div className="p-8 h-full flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <h3 className="text-[10px] font-bold uppercase tracking-widest text-text-muted">GitHub Stats</h3>
+              <Terminal className="w-4 h-4 text-accent" />
             </div>
-            <div className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-purple-500/50" />
-              Followers: 8
+            <div className="space-y-4">
+              <div className="flex items-end justify-between">
+                <span className="text-4xl font-bold text-white font-syne">12+</span>
+                <span className="text-[10px] text-text-muted mb-1 font-bold uppercase">Repos</span>
+              </div>
+              <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                <motion.div 
+                  initial={{ width: 0 }}
+                  animate={{ width: "66%" }}
+                  className="h-full bg-accent/50" 
+                />
+              </div>
+              <div className="flex justify-between text-[10px] font-bold uppercase tracking-tighter text-text-muted">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-accent" />
+                  Stars: 5
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-blue-500" />
+                  Followers: 8
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        </TiltCard>
       </motion.div>
 
       {/* Socials Card (1x1) */}
       <motion.div
         variants={itemVariants}
-        className="md:col-span-1 md:row-span-1 bento-card p-4"
+        className="md:col-span-1 md:row-span-1 group"
       >
-        <div className="grid grid-cols-2 gap-2 h-full">
-          {[
-            { name: "LinkedIn", Icon: Globe, color: "hover:bg-blue-600/10 hover:text-blue-400" },
-            { name: "GitHub", Icon: Globe, color: "hover:bg-white/10 hover:text-white" },
-            { name: "Instagram", Icon: MessageCircle, color: "hover:bg-pink-600/10 hover:text-pink-400" },
-            { name: "Mail", Icon: Mail, color: "hover:bg-red-600/10 hover:text-red-400" }
-          ].map((social) => (
-            <a
-              key={social.name}
-              href="#"
-              className={`flex items-center justify-center rounded-2xl border border-card-border bg-white/[0.01] transition-all group ${social.color}`}
-            >
-              <social.Icon className="w-5 h-5 opacity-50 group-hover:opacity-100 transition-opacity" />
-            </a>
-          ))}
-        </div>
+        <TiltCard className="p-1 glass-panel">
+          <div className="grid grid-cols-2 gap-3 h-full p-6">
+            {[
+              { name: "LinkedIn", Icon: Globe, href: "#", color: "hover:bg-blue-600/10 hover:text-blue-400" },
+              { name: "GitHub", Icon: Globe, href: "#", color: "hover:bg-white/10 hover:text-white" },
+              { name: "Instagram", Icon: MessageCircle, href: "#", color: "hover:bg-pink-600/10 hover:text-pink-400" },
+              { name: "Mail", Icon: Mail, href: "#", color: "hover:bg-accent/10 hover:text-accent" }
+            ].map((social) => (
+              <a
+                key={social.name}
+                href={social.href}
+                className={`flex items-center justify-center rounded-2xl border border-border bg-white/[0.02] transition-all duration-300 group ${social.color}`}
+              >
+                <social.Icon className="w-5 h-5 opacity-50 group-hover/card:opacity-100 group-hover:opacity-100 transition-opacity" />
+              </a>
+            ))}
+          </div>
+        </TiltCard>
       </motion.div>
 
       {/* Timeline Card (2x1) */}
       <motion.div
         variants={itemVariants}
-        className="md:col-span-2 md:row-span-1 bento-card p-10 flex flex-col justify-between"
+        className="md:col-span-2 md:row-span-1 group"
       >
-        <div className="flex items-center gap-4 mb-6">
-          <div className="p-3 rounded-2xl bg-purple-500/10 border border-purple-500/20">
-            <GraduationCap className="w-6 h-6 text-purple-400" />
+        <TiltCard className="p-1 glass-panel">
+          <div className="p-10 h-full flex flex-col justify-between">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="p-3 rounded-2xl bg-accent/5 border border-accent/20">
+                <GraduationCap className="w-6 h-6 text-accent" />
+              </div>
+              <h3 className="text-xl font-bold font-syne">Education</h3>
+            </div>
+            
+            <div className="relative pl-8 space-y-2 border-l border-border">
+              <div className="absolute top-0 left-[-5.5px] w-2.5 h-2.5 rounded-full bg-accent shadow-[0_0_10px_rgba(232,83,58,0.5)]" />
+              <p className="text-[10px] font-bold text-accent uppercase tracking-widest">2024 — Present</p>
+              <h4 className="text-lg font-bold text-white leading-snug font-syne">
+                D4 Teknik Informatika <br />
+                <span className="text-neutral-500 font-medium">Universitas Airlangga</span>
+              </h4>
+            </div>
           </div>
-          <h3 className="text-xl font-bold">Education</h3>
-        </div>
-        
-        <div className="relative pl-8 space-y-2 border-l border-neutral-800">
-          <div className="absolute top-0 left-[-5px] w-2.5 h-2.5 rounded-full bg-purple-500" />
-          <p className="text-sm font-bold text-neutral-400">2024 — Present</p>
-          <h4 className="text-lg font-bold text-white leading-snug">
-            D4 Teknik Informatika <br />
-            <span className="text-neutral-500 font-medium">Universitas Airlangga</span>
-          </h4>
-        </div>
+        </TiltCard>
       </motion.div>
 
-      {/* Stack Card (1x2) */}
+      {/* Main Stack Card (1x2) */}
       <motion.div
         variants={itemVariants}
-        className="md:col-span-1 md:row-span-2 bento-card p-10 flex flex-col"
+        className="md:col-span-1 md:row-span-2 group"
       >
-        <div className="flex items-center gap-3 mb-10">
-          <div className="p-2 bg-blue-500/10 rounded-lg">
-            <Code2 className="w-5 h-5 text-blue-400" />
-          </div>
-          <h3 className="font-bold text-lg uppercase tracking-tight">Main Stack</h3>
-        </div>
-        
-        <div className="space-y-6 flex-1">
-          {[
-            { name: "PHP / Laravel", icon: <Database className="w-4 h-4" /> },
-            { name: "MySQL", icon: <Database className="w-4 h-4" /> },
-            { name: "JavaScript", icon: <Terminal className="w-4 h-4" /> },
-            { name: "Git", icon: <GitBranch className="w-4 h-4" /> },
-            { name: "Docker", icon: <Box className="w-4 h-4" /> },
-          ].map((tech) => (
-            <div key={tech.name} className="flex items-center gap-4 group cursor-default">
-              <div className="w-10 h-10 rounded-xl border border-card-border bg-white/[0.02] flex items-center justify-center group-hover:border-blue-500/50 group-hover:bg-blue-500/5 transition-all">
-                <span className="text-neutral-600 group-hover:text-blue-400 transition-colors">{tech.icon}</span>
-              </div>
-              <div>
-                <p className="text-sm font-bold text-neutral-300 group-hover:text-white transition-colors">{tech.name}</p>
-                <div className="h-0.5 w-0 group-hover:w-full bg-blue-500/30 transition-all duration-300 mt-1" />
-              </div>
+        <TiltCard className="p-1 glass-panel">
+          <div className="p-10 h-full flex flex-col">
+            <div className="flex items-center gap-3 mb-10">
+              <div className="px-4 py-2 glass-panel rounded-full text-xs font-bold flex items-center gap-2">
+              <MapPin className="w-3.5 h-3.5 text-accent" /> Surabaya, Indonesia
             </div>
-          ))}
-        </div>
+              <h3 className="font-bold text-lg uppercase tracking-tight font-syne">Mastery</h3>
+            </div>
+            
+            <div className="space-y-6 flex-1">
+              {[
+                { name: "Laravel", color: "text-red-500" },
+                { name: "MySQL", color: "text-blue-500" },
+                { name: "JavaScript", color: "text-yellow-500" },
+                { name: "TypeScript", color: "text-blue-400" },
+                { name: "Git", color: "text-orange-500" },
+                { name: "Docker", color: "text-blue-600" },
+              ].map((tech) => (
+                <div key={tech.name} className="flex items-center gap-4 group cursor-default">
+                  <div className="w-1.5 h-1.5 rounded-full bg-border group-hover:bg-accent transition-colors" />
+                  <div>
+                    <p className="text-sm font-bold text-text-muted group-hover:text-white transition-colors">{tech.name}</p>
+                    <div className="h-px w-0 group-hover:w-full bg-accent/30 transition-all duration-500 mt-1" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </TiltCard>
       </motion.div>
       
-      {/* Bio / Philosophy (1x1) - Filler to make it look even */}
+      {/* Live Status Card (1x1) */}
       <motion.div
         variants={itemVariants}
-        className="md:col-span-1 md:row-span-1 bento-card p-8 flex flex-col justify-center gap-4 group"
+        className="md:col-span-1 md:row-span-1 group"
       >
-         <h3 className="text-neutral-600 text-[10px] font-bold uppercase tracking-widest group-hover:text-purple-400 transition-colors">Philosophy</h3>
-         <p className="text-sm text-neutral-500 italic leading-relaxed">
-           "Crafting Digital Experiences with Backend Precision."
-         </p>
+        <TiltCard className="p-1 glass-panel">
+          <div className="p-8 h-full">
+            <LiveStatus />
+          </div>
+        </TiltCard>
       </motion.div>
     </motion.div>
   );

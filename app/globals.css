@@ -85,6 +85,12 @@
     gap: var(--spacing-grid-gap);
   }
 
+  .grid-airy-compact {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1.5rem;
+  }
+
   .gradient-text {
     background-clip: text;
     -webkit-background-clip: text;

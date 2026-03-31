@@ -16,31 +16,32 @@ export default function OrbitAnimation() {
       {/* Center Icon */}
       <div className="z-10 p-6 glass-panel rounded-full shadow-[0_0_30px_rgba(232,83,58,0.2)] border-accent/20">
         <Image 
-          src="https://skillicons.dev/icons?i=laravel" 
+          src="https://skillicons.dev/icons?i=laravel&theme=dark" 
           alt="Laravel" 
           width={64} 
           height={64} 
           className="w-12 h-12 md:w-16 md:h-16"
+          unoptimized
         />
       </div>
 
       {/* Ring 1 - Slow */}
       <div className="absolute border border-border/40 rounded-full w-[160px] h-[160px] md:w-[240px] md:h-[240px] animate-spin-slow">
         <div className="absolute -top-4 left-1/2 -translate-x-1/2 p-2 glass-panel rounded-lg">
-          <Image src="https://skillicons.dev/icons?i=php" alt="PHP" width={24} height={24} />
+          <Image src="https://skillicons.dev/icons?i=php&theme=dark" alt="PHP" width={24} height={24} unoptimized />
         </div>
         <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 p-2 glass-panel rounded-lg">
-          <Image src="https://skillicons.dev/icons?i=mysql" alt="MySQL" width={24} height={24} />
+          <Image src="https://skillicons.dev/icons?i=mysql&theme=dark" alt="MySQL" width={24} height={24} unoptimized />
         </div>
       </div>
 
       {/* Ring 2 - Medium (Reverse) */}
       <div className="absolute border border-dotted border-border/20 rounded-full w-[260px] h-[260px] md:w-[380px] md:h-[380px] animate-spin-reverse-medium">
         <div className="absolute top-1/2 -left-4 -translate-y-1/2 p-2 glass-panel rounded-lg">
-          <Image src="https://skillicons.dev/icons?i=js" alt="JS" width={24} height={24} />
+          <Image src="https://skillicons.dev/icons?i=js&theme=dark" alt="JS" width={24} height={24} unoptimized />
         </div>
         <div className="absolute top-1/2 -right-4 -translate-y-1/2 p-2 glass-panel rounded-lg">
-          <Image src="https://skillicons.dev/icons?i=github" alt="GitHub" width={24} height={24} />
+          <Image src="https://skillicons.dev/icons?i=github&theme=dark" alt="GitHub" width={24} height={24} unoptimized />
         </div>
       </div>
 

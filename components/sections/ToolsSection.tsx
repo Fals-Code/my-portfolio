@@ -39,7 +39,7 @@ export default function ToolsSection() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 grid-airy">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 grid-airy-compact">
           {tools.map((tool, idx) => (
             <motion.div
               key={tool.name}
@@ -53,11 +53,12 @@ export default function ToolsSection() {
               <GlassPanel className="p-10 flex flex-col items-center justify-center gap-6 group-hover:border-accent transition-colors duration-500">
                 <div className="relative w-16 h-16 group-hover:drop-shadow-[0_0_15px_rgba(232,83,58,0.3)] transition-all duration-500">
                   <Image 
-                    src={`https://skillicons.dev/icons?i=${tool.icon}`} 
+                    src={`https://skillicons.dev/icons?i=${tool.icon}&theme=dark`} 
                     alt={tool.name} 
                     width={64} 
                     height={64} 
                     className="object-contain"
+                    unoptimized
                   />
                 </div>
                 <span className="text-xs font-bold uppercase tracking-widest text-text-muted group-hover:text-white transition-colors">

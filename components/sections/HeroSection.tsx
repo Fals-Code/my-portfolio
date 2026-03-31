@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { useTypewriter } from "@/hooks/useTypewriter";
 import { GradientText, Button } from "@/components/ui/Primitives";
 import OrbitAnimation from "./OrbitAnimation";
+import Magnetic from "@/components/ui/Magnetic";
 
 /**
  * Home Hero Section
@@ -49,7 +50,7 @@ export default function HeroSection() {
             className="text-lg md:text-xl text-text-muted max-w-xl"
           >
             I'm <span className="text-white font-medium">Ahmad Mathlaul Falah</span>, a{" "}
-            <span className="text-accent font-bold h-7 inline-block min-w-[200px]">{displayText}</span>{" "}
+            <span className="text-accent font-bold h-7 inline-block">{displayText}</span>{" "}
             specializing in building robust, scalable systems.
           </motion.p>
 
@@ -57,17 +58,23 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="flex flex-wrap gap-4 pt-4"
+            className="flex flex-wrap gap-6 pt-4"
           >
-            <Button variant="primary" asChild>
-              <Link href="/projects">View My Work</Link>
-            </Button>
-            <Button variant="outline" asChild>
-              <Link href="/game">Play Game</Link>
-            </Button>
-            <Button variant="outline" asChild>
-              <Link href="/contact">Contact</Link>
-            </Button>
+            <Magnetic>
+              <Button variant="primary" asChild className="px-8 py-6 text-base">
+                <Link href="/projects">View My Work</Link>
+              </Button>
+            </Magnetic>
+            <Magnetic>
+              <Button variant="outline" asChild className="px-8 py-6 text-base">
+                <Link href="/game">Play Game</Link>
+              </Button>
+            </Magnetic>
+            <Magnetic>
+              <Button variant="outline" asChild className="px-8 py-6 text-base">
+                <Link href="/contact">Contact</Link>
+              </Button>
+            </Magnetic>
           </motion.div>
         </div>
 

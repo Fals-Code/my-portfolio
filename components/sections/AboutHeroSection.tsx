@@ -42,7 +42,7 @@ function PhotoCard() {
  */
 export default function AboutHeroSection() {
   return (
-    <section className="container mx-auto px-6 section-pad">
+    <section className="container mx-auto px-6 pt-32 pb-24">
       <div className="grid grid-cols-1 md:grid-cols-2 grid-airy items-center">
         {/* Left Column: Text */}
         <div className="flex-1 space-y-8">

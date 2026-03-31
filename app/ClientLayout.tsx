@@ -13,6 +13,7 @@ import CursorGlow from "@/components/global/CursorGlow";
 import MusicPlayer from "@/components/global/MusicPlayer";
 import Chatbot from "@/components/global/Chatbot";
 import BackToTop from "@/components/global/BackToTop";
+import CommandPalette from "@/components/global/CommandPalette";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
@@ -43,6 +44,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
           <MusicPlayer />
           <Chatbot />
           <BackToTop />
+          <CommandPalette />
         </ChatbotProvider>
       </MusicProvider>
     </ThemeProvider>

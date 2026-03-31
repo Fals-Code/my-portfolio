@@ -13,9 +13,11 @@ interface MusicContextType {
   currentTrack: Track | null;
   volume: number;
   isMuted: boolean;
+  sfxEnabled: boolean;
   togglePlay: () => void;
   setVolume: (v: number) => void;
   toggleMute: () => void;
+  toggleSfx: () => void;
   nextTrack: () => void;
   prevTrack: () => void;
 }
@@ -46,6 +48,7 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [volume, setVolumeState] = useState(0.5);
   const [isMuted, setIsMuted] = useState(false);
+  const [sfxEnabled, setSfxEnabled] = useState(true);
   
   const playerRef = useRef<any>(null);
   const [isApiReady, setIsApiReady] = useState(false);
@@ -134,6 +137,10 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  const toggleSfx = () => {
+    setSfxEnabled(!sfxEnabled);
+  };
+
   const prevTrack = () => {
     const prevIndex = (currentTrackIndex - 1 + PLAYLIST.length) % PLAYLIST.length;
     setCurrentTrackIndex(prevIndex);
@@ -150,9 +157,11 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         currentTrack: PLAYLIST[currentTrackIndex], 
         volume, 
         isMuted,
+        sfxEnabled,
         togglePlay,
         setVolume,
         toggleMute,
+        toggleSfx,
         nextTrack,
         prevTrack
       }}

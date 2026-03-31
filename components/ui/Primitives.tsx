@@ -2,6 +2,8 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import { useSound } from "@/hooks/useSound";
+import { Slot } from "@radix-ui/react-slot";
 
 export const SectionLabel = ({ children }: { children: React.ReactNode }) => (
   <div className="inline-flex items-center gap-3 mb-6">
@@ -24,8 +26,6 @@ export const GlassPanel = ({ children, className = "" }: { children: React.React
   </div>
 );
 
-import { Slot } from "@radix-ui/react-slot";
-
 export const Button = ({ 
   children, 
   variant = "primary", 
@@ -38,10 +38,11 @@ export const Button = ({
   variant?: "primary" | "secondary" | "outline";
   size?: "sm" | "md" | "lg";
   asChild?: boolean;
-  onClick?: () => void;
+  onClick?: (e?: React.MouseEvent) => void;
   className?: string;
 }) => {
   const Comp = asChild ? Slot : motion.button;
+  const { playHover, playClick } = useSound();
   
   const variants = {
     primary: "bg-accent text-white hover:bg-accent-hover shadow-lg shadow-accent/20",
@@ -60,10 +61,16 @@ export const Button = ({
     whileTap: { scale: 0.98 }
   };
 
+  const handleInteraction = (e: React.MouseEvent) => {
+    playClick();
+    if (onClick) onClick(e as any);
+  };
+
   return (
     <Comp
       {...motionProps}
-      onClick={onClick}
+      onMouseEnter={() => playHover()}
+      onClick={handleInteraction}
       className={`rounded-2xl font-bold transition-all uppercase tracking-widest inline-flex items-center justify-center ${variants[variant]} ${sizes[size]} ${className}`}
     >
       {children}

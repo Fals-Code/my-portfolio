@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { useMusic } from "@/context/MusicContext";
 import { 
   Play, 
@@ -9,9 +9,10 @@ import {
   VolumeX, 
   SkipForward, 
   SkipBack, 
-  Music as MusicIcon, 
   ChevronUp, 
-  ChevronDown 
+  ChevronDown,
+  Waves,
+  Music as MusicIcon
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -29,7 +30,9 @@ export default function MusicPlayer() {
     isMuted, 
     toggleMute, 
     nextTrack, 
-    prevTrack 
+    prevTrack,
+    sfxEnabled,
+    toggleSfx
   } = useMusic();
   
   const [isExpanded, setIsExpanded] = useState(false);
@@ -53,6 +56,23 @@ export default function MusicPlayer() {
                 </div>
                 <h4 className="text-base font-syne font-extrabold text-white truncate px-0">{currentTrack?.title}</h4>
                 <p className="text-[12px] text-text-muted truncate font-bold uppercase tracking-widest">{currentTrack?.artist}</p>
+              </div>
+
+              {/* SFX Toggle */}
+              <div className="flex items-center justify-between px-4 py-3 bg-white/5 rounded-2xl border border-white/5">
+                <div className="flex items-center gap-3">
+                  <Waves className={`w-4 h-4 ${sfxEnabled ? "text-accent" : "text-text-muted"}`} />
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-white">System SFX</span>
+                </div>
+                <button 
+                  onClick={toggleSfx}
+                  className={`w-10 h-5 rounded-full relative transition-colors ${sfxEnabled ? "bg-accent" : "bg-neutral-800"}`}
+                >
+                  <motion.div 
+                    animate={{ x: sfxEnabled ? 20 : 2 }}
+                    className="absolute top-1 w-3 h-3 bg-white rounded-full transition-all"
+                  />
+                </button>
               </div>
 
               {/* Volume Control */}
