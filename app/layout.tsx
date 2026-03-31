@@ -26,6 +26,10 @@ export const metadata: Metadata = {
   creator: "Ahmad Mathlaul Falah",
   metadataBase: new URL("https://falah.com"),
   keywords: ["Next.js", "Backend Developer", "Laravel", "Portofolio", "Ahmad Falah"],
+  icons: {
+    icon: "/icon.png",
+    apple: "/icon.png",
+  },
 };
 
 export const viewport: Viewport = {
