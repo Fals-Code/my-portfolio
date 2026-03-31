@@ -49,7 +49,7 @@ const timeline = [
 
 export default function AboutPage() {
   return (
-    <div className="flex flex-col w-full min-h-screen overflow-x-hidden pt-32 pb-32">
+    <div className="flex flex-col w-full min-h-screen overflow-x-hidden pt-24 md:pt-20 pb-32">
       
       {/* 1. Deep Dive Hero */}
       <section className="container mx-auto px-6 mb-24 max-w-4xl text-center">
@@ -63,9 +63,9 @@ export default function AboutPage() {
             <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
             The Mind Behind The Code
           </div>
-          <h1 className="text-4xl md:text-6xl lg:text-[5.5rem] font-syne font-extrabold leading-[0.9] text-[var(--text)] tracking-tight">
-            Engineering logic <br className="hidden md:block" />
-            <span className="text-text-muted italic font-medium">with precision.</span>
+          <h1 className="text-4xl md:text-5xl lg:text-[4.5rem] font-syne font-extrabold leading-[1] text-[var(--text)] tracking-tight">
+            Crafting digital backbones <br className="hidden md:block" />
+            <span className="text-text-muted italic font-medium text-[0.8em]">with intention.</span>
           </h1>
         </motion.div>
       </section>

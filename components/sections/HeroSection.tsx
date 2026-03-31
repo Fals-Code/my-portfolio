@@ -16,7 +16,7 @@ import CodeAnimation from "./CodeAnimation";
  */
 export default function HeroSection() {
   return (
-    <section className="relative overflow-hidden min-h-[90vh] flex items-center pt-32 pb-12">
+    <section className="relative overflow-hidden min-h-[85vh] flex items-center pt-24 md:pt-20 pb-12">
       {/* Background Decorative Mesh */}
       <div className="absolute inset-0 mesh-bg opacity-30 pointer-events-none" />
 
@@ -24,7 +24,7 @@ export default function HeroSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-8 lg:items-start max-w-7xl mx-auto">
           
           {/* Right Column: Code Animation (Top on Mobile) */}
-          <div className="order-1 lg:order-2 w-full flex justify-center lg:justify-end lg:pt-32">
+          <div className="order-1 lg:order-2 w-full flex justify-center lg:justify-end lg:pt-24">
             <CodeAnimation />
           </div>
 

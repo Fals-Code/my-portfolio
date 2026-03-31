@@ -81,7 +81,7 @@ export default async function CaseStudyPage({ params }: { params: any }) {
   return (
     <div className="flex flex-col w-full min-h-screen pb-32">
       {/* Navigation Top */}
-      <div className="container mx-auto px-6 pt-12 mt-10 md:mt-24 flex justify-between items-center relative z-10">
+      <div className="container mx-auto px-6 pt-6 mt-16 md:mt-16 flex justify-between items-center relative z-10">
         <Link 
           href="/projects" 
           className="inline-flex items-center gap-2 text-text-muted hover:text-accent transition-colors text-[10px] font-bold uppercase tracking-[0.2em] group glass-panel px-4 py-2 rounded-full"
@@ -113,7 +113,7 @@ export default async function CaseStudyPage({ params }: { params: any }) {
 
       {/* Massive Hero Image Block */}
       {cs.heroImage && (
-        <div className="container mx-auto px-6 mt-12 mb-16">
+        <div className="container mx-auto px-6 mt-8 mb-16">
           <div className="relative w-full aspect-[4/3] md:aspect-[21/9] rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl shadow-accent/5 group">
              <Image 
                 src={cs.heroImage} 
