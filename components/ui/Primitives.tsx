@@ -1,0 +1,72 @@
+"use client";
+
+import React from "react";
+import { motion } from "framer-motion";
+
+export const SectionLabel = ({ children }: { children: React.ReactNode }) => (
+  <div className="inline-flex items-center gap-3 mb-6">
+    <div className="w-8 h-px bg-accent/30" />
+    <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent">
+      {children}
+    </span>
+  </div>
+);
+
+export const GradientText = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
+  <span className={`gradient-text ${className}`}>
+    {children}
+  </span>
+);
+
+export const GlassPanel = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
+  <div className={`glass-panel p-8 rounded-[2.5rem] ${className}`}>
+    {children}
+  </div>
+);
+
+import { Slot } from "@radix-ui/react-slot";
+
+export const Button = ({ 
+  children, 
+  variant = "primary", 
+  size = "md",
+  asChild = false,
+  onClick, 
+  className = "" 
+}: { 
+  children: React.ReactNode;
+  variant?: "primary" | "secondary" | "outline";
+  size?: "sm" | "md" | "lg";
+  asChild?: boolean;
+  onClick?: () => void;
+  className?: string;
+}) => {
+  const Comp = asChild ? Slot : motion.button;
+  
+  const variants = {
+    primary: "bg-accent text-white hover:bg-accent-hover shadow-lg shadow-accent/20",
+    secondary: "bg-bg-card border border-border hover:bg-bg-hover text-text",
+    outline: "border border-accent/40 text-accent hover:border-accent hover:bg-accent/5 backdrop-blur-sm"
+  };
+
+  const sizes = {
+    sm: "px-6 py-3 text-[10px]",
+    md: "px-8 py-4 text-sm",
+    lg: "px-10 py-5 text-base"
+  };
+
+  const motionProps = asChild ? {} : {
+    whileHover: { scale: 1.02 },
+    whileTap: { scale: 0.98 }
+  };
+
+  return (
+    <Comp
+      {...motionProps}
+      onClick={onClick}
+      className={`rounded-2xl font-bold transition-all uppercase tracking-widest inline-flex items-center justify-center ${variants[variant]} ${sizes[size]} ${className}`}
+    >
+      {children}
+    </Comp>
+  );
+};
