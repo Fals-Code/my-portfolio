@@ -1,7 +1,7 @@
 import { google } from "@ai-sdk/google";
 import { streamText } from "ai";
 
-export const runtime = "edge";
+// Removed edge runtime for better stability in local node environment
 
 const SYSTEM_PROMPT = `
 Nama: Ahmad Mathlaul Falah
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
       messages,
     });
 
-    return result.toAIStreamResponse();
+    return result.toDataStreamResponse();
   } catch (error) {
     console.error("Chat API v3 Error:", error);
     const errorMessage = error instanceof Error ? error.message : String(error);

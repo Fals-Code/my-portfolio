@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState } from "react";
-import { useChat, Message } from "ai/react";
+import { useChat, Message } from "@ai-sdk/react";
 
 interface ChatbotContextType {
   messages: Message[];
@@ -18,10 +18,18 @@ interface ChatbotContextType {
 
 const ChatbotContext = createContext<ChatbotContextType | undefined>(undefined);
 
+const INITIAL_MESSAGES: Message[] = [
+  {
+    id: "welcome",
+    role: "assistant",
+    content: "Halo! Saya Falah Bot 🤖 Tanya apa saja tentang Falah — skill, proyek, atau cara menghubunginya!",
+  },
+];
+
 export const ChatbotProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // useChat from 'ai/react' matches the v3/v4 stable version.
+  // useChat from '@ai-sdk/react' is now stabilized with INITIAL_MESSAGES.
   const { 
     messages, 
     input, 
@@ -31,13 +39,16 @@ export const ChatbotProvider: React.FC<{ children: React.ReactNode }> = ({ child
     isLoading 
   } = useChat({
     api: "/api/chat",
-    initialMessages: [
-      {
-        id: "welcome",
-        role: "assistant",
-        content: "Halo! Saya Falah Bot 🤖 Tanya apa saja tentang Falah — skill, proyek, atau cara menghubunginya!",
-      },
-    ],
+    initialMessages: INITIAL_MESSAGES,
+    onResponse: (response) => {
+      console.log("Chat Response started:", response.status);
+    },
+    onFinish: (message) => {
+      console.log("Chat finished:", message.content.length, "chars");
+    },
+    onError: (error) => {
+      console.error("Chat Error:", error);
+    }
   });
 
   const openChat = () => setIsOpen(true);
