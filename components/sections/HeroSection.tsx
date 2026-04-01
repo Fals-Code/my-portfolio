@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button, GradientText } from "@/components/ui/Primitives";
-import { Download, Terminal, Mail, Globe, ArrowRight, Gamepad2, Zap } from "lucide-react";
+import { Download, Terminal, Mail, Globe, ArrowRight } from "lucide-react";
 import { GitHub, Instagram } from "@/components/ui/Icons";
 import Magnetic from "@/components/ui/Magnetic";
 import { fadeReveal } from "@/lib/motion-tokens";
@@ -92,22 +92,6 @@ export default function HeroSection() {
                    <a href="/cv.pdf" download className="flex items-center gap-3 font-medium text-base md:text-lg">
                      Download CV <Download className="w-5 h-5 opacity-60 group-hover:opacity-100 transition-opacity" />
                    </a>
-               </Button>
-            </Magnetic>
-
-            <Magnetic>
-               <Button variant="outline" size="lg" asChild className="rounded-full px-10 group border-white/10 hover:border-cyan-500">
-                   <Link href="/cyber-drive" className="flex items-center gap-3 font-medium text-base md:text-lg hover:text-cyan-400 transition-colors">
-                     Cyber Drive <Zap className="w-5 h-5 opacity-60 group-hover:opacity-100 transition-opacity" />
-                   </Link>
-               </Button>
-            </Magnetic>
-
-            <Magnetic>
-               <Button variant="outline" size="lg" asChild className="rounded-full px-10 group border-white/10 hover:border-blue-500">
-                   <Link href="/game" className="flex items-center gap-3 font-medium text-base md:text-lg hover:text-blue-400 transition-colors">
-                     Uni Runner <Gamepad2 className="w-5 h-5 opacity-60 group-hover:opacity-100 transition-opacity" />
-                   </Link>
                </Button>
             </Magnetic>
           </motion.div>

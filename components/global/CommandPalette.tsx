@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Home, User, Briefcase, Gamepad, Mail, X, Command } from "lucide-react";
+import { Search, Home, User, Briefcase, Mail, X, Command } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function CommandPalette() {
@@ -29,7 +29,6 @@ export default function CommandPalette() {
     { name: "Home", icon: <Home className="w-4 h-4" />, href: "/" },
     { name: "About", icon: <User className="w-4 h-4" />, href: "/about" },
     { name: "Projects", icon: <Briefcase className="w-4 h-4" />, href: "/projects" },
-    { name: "Game", icon: <Gamepad className="w-4 h-4" />, href: "/game" },
     { name: "Contact", icon: <Mail className="w-4 h-4" />, href: "/contact" },
   ];
 

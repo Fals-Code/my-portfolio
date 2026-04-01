@@ -27,22 +27,19 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     }
   }, []);
 
-  const pathname = usePathname();
-  const isGamePage = pathname === "/game";
-
   return (
     <ThemeProvider>
       <MusicProvider>
         <ChatbotProvider>
           <Loader />
           <CursorGlow />
-          {!isGamePage && <Navbar />}
-          <main className={`relative z-10 flex flex-col min-h-screen ${isGamePage ? "" : "pt-20"}`}>
+          <Navbar />
+          <main className="relative z-10 flex flex-col min-h-screen pt-20">
             {children}
           </main>
-          {!isGamePage && <Footer />}
-          {!isGamePage && <MusicPlayer />}
-          {!isGamePage && <Chatbot />}
+          <Footer />
+          <MusicPlayer />
+          <Chatbot />
           <BackToTop />
           <CommandPalette />
         </ChatbotProvider>
