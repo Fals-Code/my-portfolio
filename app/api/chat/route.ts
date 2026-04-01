@@ -1,7 +1,9 @@
-import { google } from "@ai-sdk/google";
-import { streamText } from "ai";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { streamText, generateText } from "ai";
 
-// Removed edge runtime for better stability in local node environment
+const google = createGoogleGenerativeAI({
+  apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
+});
 
 const SYSTEM_PROMPT = `
 Nama: Ahmad Mathlaul Falah
@@ -28,15 +30,22 @@ export async function POST(req: Request) {
     const { messages } = await req.json();
     console.log("Chat API (modern): Processing", messages ? messages.length : 0, "messages");
 
+    console.log("Using API Key (first 5):", process.env.GOOGLE_GENERATIVE_AI_API_KEY?.substring(0, 5));
+
+    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+      throw new Error("API Key is missing from environment");
+    }
+
     const result = await streamText({
-      model: google("models/gemini-2.5-flash"), // Verified from local models_list.json
+      model: google("gemini-pro"), 
       system: SYSTEM_PROMPT,
       messages,
     });
 
     return result.toDataStreamResponse();
+
   } catch (error) {
-    console.error("Chat API v3 Error:", error);
+    console.error("FATAL Chat API Error:", error);
     const errorMessage = error instanceof Error ? error.message : String(error);
     return new Response(
       JSON.stringify({ error: "Something went wrong", details: errorMessage }),
