@@ -1,5 +1,5 @@
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { streamText, generateText } from "ai";
+import { streamText } from "ai";
 
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
@@ -28,16 +28,13 @@ Jangan menjawab pertanyaan di luar topik Ahmad Mathlaul Falah secara mendalam.
 export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
-    console.log("Chat API (modern): Processing", messages ? messages.length : 0, "messages");
-
-    console.log("Using API Key (first 5):", process.env.GOOGLE_GENERATIVE_AI_API_KEY?.substring(0, 5));
 
     if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
       throw new Error("API Key is missing from environment");
     }
 
     const result = await streamText({
-      model: google("gemini-pro"), 
+      model: google("gemini-2.0-flash"), // ✅ valid model
       system: SYSTEM_PROMPT,
       messages,
     });
