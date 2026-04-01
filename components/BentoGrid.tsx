@@ -191,9 +191,8 @@ export default function BentoGrid() {
         className="md:col-span-1 md:row-span-1 group"
       >
         <TiltCard className="p-1 glass-panel">
-          <div className="grid grid-cols-2 gap-3 h-full p-6">
+          <div className="flex flex-wrap items-center justify-center gap-4 h-full p-6">
             {[
-              { name: "LinkedIn", Icon: Globe, href: "https://linkedin.com/in/falah", color: "hover:bg-blue-600/10 hover:text-blue-400" },
               { name: "GitHub", Icon: GitHub, href: "https://github.com/Fals-Code", color: "hover:bg-white/10 hover:text-white" },
               { name: "Instagram", Icon: Instagram, href: "https://instagram.com/falahh.am", color: "hover:bg-pink-600/10 hover:text-pink-400" },
               { name: "Mail", Icon: Mail, href: "mailto:ahmadmathlaulfalah14@gmail.com", color: "hover:bg-accent/10 hover:text-accent" }

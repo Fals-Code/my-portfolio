@@ -49,7 +49,6 @@ export interface GitHubLanguage {
 export interface ContactData {
   email: string;
   whatsapp: string;
-  linkedin: string;
   github: string;
   instagram: string;
 }

@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button, GradientText } from "@/components/ui/Primitives";
-import { Download, Terminal, Mail, Globe, ArrowRight, Gamepad2 } from "lucide-react";
+import { Download, Terminal, Mail, Globe, ArrowRight, Gamepad2, Zap } from "lucide-react";
 import { GitHub, Instagram } from "@/components/ui/Icons";
 import Magnetic from "@/components/ui/Magnetic";
 import { fadeReveal } from "@/lib/motion-tokens";
@@ -96,9 +96,17 @@ export default function HeroSection() {
             </Magnetic>
 
             <Magnetic>
+               <Button variant="outline" size="lg" asChild className="rounded-full px-10 group border-white/10 hover:border-cyan-500">
+                   <Link href="/cyber-drive" className="flex items-center gap-3 font-medium text-base md:text-lg hover:text-cyan-400 transition-colors">
+                     Cyber Drive <Zap className="w-5 h-5 opacity-60 group-hover:opacity-100 transition-opacity" />
+                   </Link>
+               </Button>
+            </Magnetic>
+
+            <Magnetic>
                <Button variant="outline" size="lg" asChild className="rounded-full px-10 group border-white/10 hover:border-blue-500">
                    <Link href="/game" className="flex items-center gap-3 font-medium text-base md:text-lg hover:text-blue-400 transition-colors">
-                     Play a Game <Gamepad2 className="w-5 h-5 opacity-60 group-hover:opacity-100 transition-opacity" />
+                     Uni Runner <Gamepad2 className="w-5 h-5 opacity-60 group-hover:opacity-100 transition-opacity" />
                    </Link>
                </Button>
             </Magnetic>
@@ -115,7 +123,6 @@ export default function HeroSection() {
             <div className="flex flex-wrap justify-center lg:justify-start items-center gap-4">
               {[
                 { Icon: GitHub, href: "https://github.com/falah" },
-                { Icon: Globe, href: "https://linkedin.com/in/falah" },
                 { Icon: Instagram, href: "https://instagram.com/falah" },
                 { Icon: Mail, href: "mailto:ahmadmathlaulfalah14@gmail.com" }
               ].map((social, i) => (

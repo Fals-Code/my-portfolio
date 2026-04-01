@@ -95,7 +95,6 @@ export function Footer() {
         </div>
         <div className="flex items-center gap-8 text-sm font-medium">
           <a href="https://github.com/MathlaulFalah" target="_blank" className="hover:text-accent transition-colors">Github</a>
-          <a href="https://linkedin.com/in/AhmadFalah" target="_blank" className="hover:text-accent transition-colors">LinkedIn</a>
           <Link href="/contact" className="hover:text-accent transition-colors">Contact</Link>
         </div>
       </div>
