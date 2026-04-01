@@ -18,7 +18,8 @@ import {
   Server,
   Coffee,
   Gamepad2,
-  BookOpen
+  BookOpen,
+  Italic
 } from "lucide-react";
 import { GlassPanel, GradientText, Button } from "@/components/ui/Primitives";
 import TiltCard from "@/components/ui/TiltCard";
@@ -123,10 +124,10 @@ export default function AboutPage() {
                      Pondasi <GradientText>Clean Architecture.</GradientText>
                    </h2>
                    <p className="text-base md:text-lg text-text-muted leading-relaxed font-medium">
-                     Perjalanan saya di Universitas Airlangga mengajarkan bahwa kode yang baik bukan hanya tentang membuat aplikasi berjalan, rari tentang mendesain sistem yang kokoh dan mudah di-*maintenance* untuk masa depan.
+                     Perjalanan saya di Universitas Airlangga mengajarkan bahwa kode yang baik bukan hanya tentang membuat aplikasi berjalan, rari tentang mendesain sistem yang kokoh dan mudah di <strong>maintenance</strong> untuk masa depan.
                    </p>
                    <p className="text-base text-text-muted/80 leading-relaxed italic border-l-2 border-accent/40 pl-6 py-2">
-                     "Fokus utama saya selalu pada ekosistem backend. Merancang struktur *database* yang aman (ACID compliance), membangun RESTful API yang terstruktur, dan memastikan arsitektur Laravel yang *scalable*."
+                     "Fokus utama saya selalu pada ekosistem backend. Merancang struktur <strong>database</strong> yang aman (ACID compliance), membangun RESTful API yang terstruktur, dan memastikan arsitektur Laravel yang <strong>scalable</strong>."
                    </p>
                 </div>
              </TiltCard>
@@ -147,7 +148,7 @@ export default function AboutPage() {
                         </div>
                         <div>
                           <h4 className="font-bold text-[var(--text)] font-syne text-lg">Kulineran</h4>
-                          <p className="text-sm text-text-muted mt-1 leading-relaxed">Mengeksplorasi kopi dan kuliner lokal baru untuk *recharge* inspirasi.</p>
+                          <p className="text-sm text-text-muted mt-1 leading-relaxed">Mengeksplorasi kopi dan kuliner lokal baru untuk <strong>recharge</strong> inspirasi.</p>
                         </div>
                       </div>
                       
@@ -157,7 +158,7 @@ export default function AboutPage() {
                         </div>
                         <div>
                           <h4 className="font-bold text-[var(--text)] font-syne text-lg">Pro Evolution Soccer 21</h4>
-                          <p className="text-sm text-text-muted mt-1 leading-relaxed">Mengasah mental taktikal dan istirahat sejenak lewat mode *Master League* di PES 21.</p>
+                          <p className="text-sm text-text-muted mt-1 leading-relaxed">Mengasah mental taktikal dan istirahat sejenak lewat mode <strong>Local Match</strong> alias <i>Bantai-bantai player lain</i> di PES 21.</p>
                         </div>
                       </div>
                    </div>
