@@ -7,8 +7,6 @@ import {
   Pause, 
   Volume2, 
   VolumeX, 
-  SkipForward, 
-  SkipBack, 
   ChevronUp, 
   ChevronDown,
   Waves,
@@ -51,13 +49,15 @@ export default function MusicPlayer() {
               className="absolute bottom-full left-0 mb-6 p-8 glass-panel rounded-[2.5rem] w-80 space-y-8 border border-white/5 bg-bg/60 backdrop-blur-2xl shadow-2xl"
             >
               {/* Track Info */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-accent">
+              <div className="space-y-4 px-2">
+                <div className="flex items-center gap-3 text-accent/80">
                   <MusicIcon className="w-4 h-4 animate-pulse" />
                   <span className="text-[10px] font-bold uppercase tracking-[0.3em]">Now Playing</span>
                 </div>
-                <h4 className="text-base font-syne font-extrabold text-[var(--text)] truncate px-0">{currentTrack?.title}</h4>
-                <p className="text-[12px] text-text-muted truncate font-bold uppercase tracking-widest">{currentTrack?.artist}</p>
+                <div className="space-y-1">
+                  <h4 className="text-xl font-syne font-extrabold text-[var(--text)] tracking-tight truncate">{currentTrack?.title}</h4>
+                  <p className="text-[11px] text-text-muted font-bold uppercase tracking-[0.2em]">{currentTrack?.artist}</p>
+                </div>
               </div>
 
               {/* SFX Toggle */}
@@ -77,57 +77,60 @@ export default function MusicPlayer() {
                 </button>
               </div>
 
-              {/* Volume Control */}
-              <div className="space-y-4 pt-2 border-t border-white/5">
-                <div className="flex items-center justify-between">
-                  <button onClick={toggleMute} className="text-text-muted hover:text-[var(--text)] transition-colors">
+              {/* Volume Control (Simplified) */}
+              <div className="space-y-6 pt-4 border-t border-black/5 dark:border-white/5">
+                <div className="flex items-center gap-4">
+                  <button onClick={toggleMute} className="text-text-muted hover:text-accent transition-colors flex-shrink-0">
                     {isMuted || volume === 0 ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
                   </button>
-                  <span className="text-[10px] font-mono text-text-muted">{Math.round(volume * 100)}%</span>
+                  <div className="relative flex-1 group h-6 flex items-center">
+                    {/* Visual Track */}
+                    <div className="absolute inset-x-0 h-1.5 bg-black/5 dark:bg-white/10 rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={false}
+                        animate={{ width: `${(isMuted ? 0 : volume) * 100}%` }}
+                        className="h-full bg-accent"
+                      />
+                    </div>
+                    {/* Interactive Input */}
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.01"
+                      value={isMuted ? 0 : volume}
+                      onChange={(e) => setVolume(parseFloat(e.target.value))}
+                      className="absolute inset-x-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    />
+                    {/* Custom Thumb (Pseudo-indicator) */}
+                    <motion.div 
+                      initial={false}
+                      animate={{ left: `calc(${(isMuted ? 0 : volume) * 100}% - 4px)` }}
+                      className="absolute w-3 h-3 bg-accent rounded-full shadow-lg border-2 border-white pointer-events-none z-20"
+                    />
+                  </div>
+                  <span className="text-[10px] font-mono font-bold text-text-muted w-8 text-right">{Math.round(volume * 100)}%</span>
                 </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.01"
-                  value={isMuted ? 0 : volume}
-                  onChange={(e) => setVolume(parseFloat(e.target.value))}
-                  className="w-full accent-accent h-1 bg-white/5 rounded-full appearance-none cursor-pointer"
-                />
               </div>
 
-              {/* Navigation Controls */}
-              <div className="flex items-center justify-center gap-8 pt-2">
-                <button 
-                  onClick={prevTrack} 
-                  className="text-text-muted hover:text-accent transition-colors"
-                  title="Previous Track"
-                >
-                  <SkipBack className="w-6 h-6 fill-current" />
-                </button>
+              {/* Playback Control (Simplified) */}
+              <div className="flex items-center justify-center pt-2">
                 <button 
                   onClick={togglePlay} 
                   disabled={!isPlayerReady}
-                  className={`w-16 h-16 rounded-full flex items-center justify-center shadow-lg transition-all duration-500 ${
+                  className={`w-20 h-20 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 transform active:scale-95 ${
                     !isPlayerReady 
                       ? "bg-neutral-800 text-neutral-500 cursor-wait" 
-                      : "bg-accent text-white shadow-accent/20 hover:scale-110"
+                      : "bg-accent text-white shadow-accent/40 hover:scale-110"
                   }`}
                 >
                   {!isPlayerReady ? (
-                    <Loader2 className="w-8 h-8 animate-spin" />
+                    <Loader2 className="w-10 h-10 animate-spin" />
                   ) : isPlaying ? (
-                    <Pause className="w-8 h-8 fill-current" />
+                    <Pause className="w-10 h-10 fill-current" />
                   ) : (
-                    <Play className="w-8 h-8 fill-current ml-1" />
+                    <Play className="w-10 h-10 fill-current ml-1.5" />
                   )}
-                </button>
-                <button 
-                  onClick={nextTrack} 
-                  className="text-text-muted hover:text-accent transition-colors"
-                  title="Next Track"
-                >
-                  <SkipForward className="w-6 h-6 fill-current" />
                 </button>
               </div>
             </motion.div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { useChatbot } from "@/context/ChatbotContext";
 import { MessageSquare, X, Send, Trash2, Bot, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -24,6 +24,36 @@ export default function Chatbot() {
     clearMessages,
     closeChat
   } = useChatbot();
+  
+  const [thinkingMessage, setThinkingMessage] = useState("Falah Bot is thinking...");
+  
+  useEffect(() => {
+    let timer1: NodeJS.Timeout;
+    let timer2: NodeJS.Timeout;
+    let timer3: NodeJS.Timeout;
+
+    if (isLoading) {
+      setThinkingMessage("Falah Bot is thinking...");
+      
+      timer1 = setTimeout(() => {
+        setThinkingMessage("Still processing your request...");
+      }, 3000);
+      
+      timer2 = setTimeout(() => {
+        setThinkingMessage("Almost there, preparing the answer...");
+      }, 6000);
+      
+      timer3 = setTimeout(() => {
+        setThinkingMessage("This is taking a bit longer than usual, please hold on...");
+      }, 10000);
+    }
+
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+    };
+  }, [isLoading]);
   
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -96,8 +126,11 @@ export default function Chatbot() {
               
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 p-5 rounded-[2rem] animate-pulse">
+                  <div className="bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 p-5 rounded-[2rem] flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 duration-500">
                     <Loader2 className="w-5 h-5 animate-spin text-accent" />
+                    <span className="text-xs font-medium text-accent animate-pulse">
+                      {thinkingMessage}
+                    </span>
                   </div>
                 </div>
               )}
