@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import { useMusic } from "@/context/MusicContext";
 import { 
   Play, 
@@ -36,9 +36,24 @@ export default function MusicPlayer() {
   } = useMusic();
   
   const [isExpanded, setIsExpanded] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  // Click outside to close
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isExpanded && containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsExpanded(false);
+      }
+    };
+
+    if (isExpanded) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isExpanded]);
 
   return (
-    <div className="fixed bottom-4 left-4 md:bottom-6 md:left-6 z-[60] hide-on-intro">
+    <div ref={containerRef} className="fixed bottom-4 left-4 md:bottom-6 md:left-6 z-[60] hide-on-intro">
       <div className="relative group">
         <AnimatePresence>
           {isExpanded && (

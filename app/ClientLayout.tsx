@@ -15,6 +15,7 @@ import Chatbot from "@/components/global/Chatbot";
 import BackToTop from "@/components/global/BackToTop";
 import CommandPalette from "@/components/global/CommandPalette";
 import ThreeBackground from "@/components/global/ThreeBackground";
+import ScrollProgress from "@/components/global/ScrollProgress";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
@@ -33,6 +34,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       <MusicProvider>
         <ChatbotProvider>
           <Loader />
+          <ScrollProgress />
           <CursorGlow />
           <Navbar />
           <main className="relative z-10 flex flex-col min-h-screen pt-20">
@@ -44,7 +46,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
           <BackToTop />
           <CommandPalette />
           <ThreeBackground />
-      </ChatbotProvider>
+        </ChatbotProvider>
       </MusicProvider>
     </ThemeProvider>
   );

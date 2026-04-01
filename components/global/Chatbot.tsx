@@ -56,6 +56,7 @@ export default function Chatbot() {
   }, [isLoading]);
   
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -65,8 +66,22 @@ export default function Chatbot() {
     if (isOpen) scrollToBottom();
   }, [messages, isOpen]);
 
+  // Click outside to close
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isOpen && containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        closeChat();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isOpen, closeChat]);
+
   return (
-    <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[60] hide-on-intro">
+    <div ref={containerRef} className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[60] hide-on-intro">
       <AnimatePresence>
         {isOpen && (
           <motion.div

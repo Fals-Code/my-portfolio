@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, Home, User, Briefcase, Mail, X, Command, Sparkles, Loader2, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useChat } from "@ai-sdk/react";
-
 export default function CommandPalette() {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");

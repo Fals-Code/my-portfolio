@@ -33,7 +33,7 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className={`hide-on-intro fixed top-0 w-full z-50 transition-all duration-500 ${isScrolled ? "glass-panel py-3" : "bg-transparent py-4 md:py-8"}`}>
+    <nav className={`hide-on-intro fixed top-0 w-full transition-all duration-500 ${isOpen ? "z-[150]" : "z-50"} ${isScrolled ? "glass-panel py-3" : "bg-transparent py-4 md:py-8"}`}>
       <div className="max-w-7xl mx-auto px-10 flex items-center justify-between relative z-[100]">
         <Link href="/" className="text-3xl font-syne font-extrabold text-[var(--text)] hover:text-accent transition-colors">
           Falah.
@@ -136,27 +136,27 @@ export default function Navbar() {
 
             {/* Drawer Footer */}
             <div className="space-y-12">
-              {/* Theme Switcher in Drawer */}
+              {/* Simple & Elegant Theme Switcher */}
               <div 
                  onClick={(e) => toggleTheme(e)}
-                 className="p-8 rounded-[2.5rem] bg-[var(--bg-card)] border border-[var(--border)] cursor-pointer hover:border-accent/30 transition-all group"
+                 className="flex items-center justify-between p-6 rounded-[2rem] bg-[var(--bg-card)] border border-[var(--border)] cursor-pointer hover:bg-[var(--bg-hover)] transition-all"
               >
-                 <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-5">
-                       <div className="p-3 rounded-2xl bg-accent/10">
-                          {theme === "dark" ? <Sun className="w-5 h-5 text-accent" /> : <Moon className="w-5 h-5 text-accent" />}
-                       </div>
-                       <div>
-                          <p className="text-xs font-black uppercase tracking-widest text-[var(--text)]">Appearance</p>
-                          <p className="text-[10px] text-text-muted uppercase tracking-tighter">Theme: {theme === "dark" ? "Dark" : "Light"}</p>
-                       </div>
+                 <div className="flex items-center gap-4">
+                    <div className="p-3 rounded-xl bg-accent/10">
+                       {theme === "dark" ? <Moon className="w-5 h-5 text-accent" /> : <Sun className="w-5 h-5 text-accent" />}
                     </div>
-                    <div className={`w-14 h-7 rounded-full bg-neutral-300 dark:bg-neutral-800 relative transition-colors ${theme === "dark" ? "bg-accent" : ""}`}>
-                      <motion.div 
-                        animate={{ x: theme === "dark" ? 32 : 4 }}
-                        className="absolute top-1.5 w-4 h-4 bg-white rounded-full shadow-lg" 
-                      />
+                    <div>
+                       <p className="text-xs font-bold text-[var(--text)] tracking-wide">Theme</p>
+                       <p className="text-[10px] text-text-muted uppercase tracking-widest">{theme === "dark" ? "Dark" : "Light"}</p>
                     </div>
+                 </div>
+
+                 <div className={`w-12 h-6 rounded-full relative transition-colors duration-500 ${theme === "dark" ? "bg-accent" : "bg-neutral-200 dark:bg-neutral-800"}`}>
+                    <motion.div 
+                      animate={{ x: theme === "dark" ? 28 : 4 }}
+                      transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                      className="absolute top-1 w-4 h-4 bg-white rounded-full shadow-md" 
+                    />
                  </div>
               </div>
 
