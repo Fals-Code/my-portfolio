@@ -18,13 +18,7 @@ interface ChatbotContextType {
 
 const ChatbotContext = createContext<ChatbotContextType | undefined>(undefined);
 
-const INITIAL_MESSAGES: Message[] = [
-  {
-    id: "welcome",
-    role: "assistant",
-    content: "Halo! Saya Falah Bot 🤖 Tanya apa saja tentang Falah — skill, proyek, atau cara menghubunginya!",
-  },
-];
+const INITIAL_MESSAGES: Message[] = [];
 
 export const ChatbotProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -39,15 +33,17 @@ export const ChatbotProvider: React.FC<{ children: React.ReactNode }> = ({ child
     isLoading 
   } = useChat({
     api: "/api/chat",
+    streamProtocol: "data",
     initialMessages: INITIAL_MESSAGES,
-    onResponse: (response) => {
-      console.log("Chat Response started:", response.status);
-    },
-    onFinish: (message) => {
-      console.log("Chat finished:", message.content.length, "chars");
+    fetch: (url, options) => {
+      return fetch(url, { ...options, cache: "no-store" });
     },
     onError: (error) => {
-      console.error("Chat Error:", error);
+      console.error("DEBUG - FULL STREAM ERROR:", error);
+      // Try to log the error object details
+      if (error && typeof error === 'object') {
+        console.dir(error);
+      }
     }
   });
 
@@ -56,13 +52,7 @@ export const ChatbotProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const toggleChat = () => setIsOpen((prev) => !prev);
 
   const clearMessages = () => {
-    setMessages([
-      {
-        id: "welcome",
-        role: "assistant",
-        content: "Halo! Saya Falah Bot 🤖 Tanya apa saja tentang Falah — skill, proyek, atau cara menghubunginya!",
-      },
-    ]);
+    setMessages([]);
   };
 
   return (

@@ -2,50 +2,61 @@ import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { streamText } from "ai";
 
 const google = createGoogleGenerativeAI({
-  apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
+  apiKey: process.env.MY_OWN_GEMINI_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY,
 });
 
-const SYSTEM_PROMPT = `
-Nama: Ahmad Mathlaul Falah
-Prodi: D4 Teknik Informatika, Vokasi Universitas Airlangga
-Skill: Backend Development (Laravel, PHP, MySQL, Eloquent ORM)
-Proyek: 
- - RSHP Hospital System (registrasi pasien & jadwal dokter real-time)
- - Warehouse Inventory (manajemen stok otomatis)
- - Book Collection Manager (eksperimen Livewire)
-Lokasi: Gresik - Surabaya, Indonesia 
-Email: ahmadmathlaulfalah14@gmail.com
-GitHub: github.com/Fals-Code
-Instagram: @falahh.am
-Goal: Mastering Cloud Architecture & Microservices
+export const dynamic = "force-dynamic";
+export const maxDuration = 30;
 
-Persona: Kamu adalah "Falah Bot", asisten AI yang sopan, singkat, cerdas, dan profesional. 
-Tugasmu adalah menjawab pertanyaan seputar identitas, skill, profil, dan proyek Ahmad Mathlaul Falah.
-Berikan jawaban dalam Bahasa Indonesia (utama) atau Bahasa Inggris (jika user bertanya dalam Inggris). 
-Jangan menjawab pertanyaan di luar topik Ahmad Mathlaul Falah secara mendalam.
-`;
 
 export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
+    console.log("INCOMING MESSAGES:", JSON.stringify(messages, null, 2));
 
-    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-      throw new Error("API Key is missing from environment");
+    if (!messages || !Array.isArray(messages)) {
+      return new Response("No messages or invalid format", { status: 400 });
     }
 
-    const result = await streamText({
-      model: google("gemini-2.0-flash"), // ✅ valid model
-      system: SYSTEM_PROMPT,
-      messages,
+    // IMPORTANT: Gemini requires the first message to be from the 'user'.
+    // If the history starts with the 'assistant' welcome message, it will fail.
+    // We filter out any leading assistant messages.
+    const filteredMessages = messages.filter((m, index) => {
+      if (index === 0 && m.role === "assistant") return false;
+      return true;
     });
 
-    return result.toDataStreamResponse();
+    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY && !process.env.MY_OWN_GEMINI_KEY) {
+      return new Response(
+        JSON.stringify({ error: "API Key is missing in .env.local" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    console.log("SENDING REQUEST TO GEMINI...");
+    console.log("FINAL MESSAGES SENT TO GOOGLE:", JSON.stringify(filteredMessages, null, 2));
+
+    const result = await streamText({
+      model: google("gemini-flash-latest"),
+      system: `You are Falah's Assistant. Ahmad Mathlaul Falah: Mahasiswa aktif D4 Teknik Informatika di Universitas Airlangga (UNAIR) & Backend Developer. Tech: Laravel, Clean Architecture. Proyek: HIS (Sistem Antrian RS), Warehouse Inventory (Transaksi Database). Bersikap teknis & ringkas.`,
+      messages: filteredMessages,
+      temperature: 0,
+      maxTokens: 500,
+    });
+
+    return result.toDataStreamResponse({
+      headers: {
+        "X-Content-Type-Options": "nosniff",
+        "Cache-Control": "no-cache, no-transform",
+        "X-Accel-Buffering": "no",
+      }
+    });
 
   } catch (error) {
-    console.error("FATAL Chat API Error:", error);
+    console.log("CHAT ERROR:", error);
     const errorMessage = error instanceof Error ? error.message : String(error);
     return new Response(
-      JSON.stringify({ error: "Something went wrong", details: errorMessage }),
+      JSON.stringify({ error: "Chat Error", details: errorMessage }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }

@@ -12,7 +12,8 @@ import {
   ChevronUp, 
   ChevronDown,
   Waves,
-  Music as MusicIcon
+  Music as MusicIcon,
+  Loader2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -32,7 +33,8 @@ export default function MusicPlayer() {
     nextTrack, 
     prevTrack,
     sfxEnabled,
-    toggleSfx
+    toggleSfx,
+    isPlayerReady
   } = useMusic();
   
   const [isExpanded, setIsExpanded] = useState(false);
@@ -105,9 +107,20 @@ export default function MusicPlayer() {
                 </button>
                 <button 
                   onClick={togglePlay} 
-                  className="w-16 h-16 rounded-full bg-accent text-white flex items-center justify-center shadow-lg shadow-accent/20 hover:scale-110 transition-transform duration-500"
+                  disabled={!isPlayerReady}
+                  className={`w-16 h-16 rounded-full flex items-center justify-center shadow-lg transition-all duration-500 ${
+                    !isPlayerReady 
+                      ? "bg-neutral-800 text-neutral-500 cursor-wait" 
+                      : "bg-accent text-white shadow-accent/20 hover:scale-110"
+                  }`}
                 >
-                  {isPlaying ? <Pause className="w-8 h-8 fill-current" /> : <Play className="w-8 h-8 fill-current ml-1" />}
+                  {!isPlayerReady ? (
+                    <Loader2 className="w-8 h-8 animate-spin" />
+                  ) : isPlaying ? (
+                    <Pause className="w-8 h-8 fill-current" />
+                  ) : (
+                    <Play className="w-8 h-8 fill-current ml-1" />
+                  )}
                 </button>
                 <button 
                   onClick={nextTrack} 
@@ -126,13 +139,18 @@ export default function MusicPlayer() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={togglePlay}
+            disabled={!isPlayerReady}
             className={`p-4 rounded-[1.2rem] shadow-xl flex items-center justify-center transition-all ${
-              isPlaying 
-                ? "bg-accent text-white shadow-accent/20" 
-                : "glass-panel bg-[var(--bg)]/10 border-[var(--border)] cursor-pointer hover:bg-white/10"
+              !isPlayerReady
+                ? "bg-neutral-800 text-neutral-500 cursor-wait"
+                : isPlaying 
+                  ? "bg-accent text-white shadow-accent/20" 
+                  : "glass-panel bg-[var(--bg)]/10 border-[var(--border)] cursor-pointer hover:bg-white/10"
             }`}
           >
-            {isPlaying ? (
+            {!isPlayerReady ? (
+              <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin" />
+            ) : isPlaying ? (
               <Pause className="w-5 h-5 md:w-6 md:h-6 fill-current" />
             ) : (
               <Play className="w-5 h-5 md:w-6 md:h-6 fill-current ml-0.5" />

@@ -14,6 +14,7 @@ interface MusicContextType {
   volume: number;
   isMuted: boolean;
   sfxEnabled: boolean;
+  isPlayerReady: boolean;
   togglePlay: () => void;
   setVolume: (v: number) => void;
   toggleMute: () => void;
@@ -54,61 +55,87 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   useEffect(() => {
     // 1. Load the YouTube IFrame API script
-    if (!window.YT) {
-      const tag = document.createElement("script");
-      tag.src = "https://www.youtube.com/iframe_api";
-      tag.onerror = () => {
-        console.error("MusicContext: Failed to load YouTube IFrame API. This is likely due to an AdBlocker or network restriction.");
-      };
-      const firstScriptTag = document.getElementsByTagName("script")[0];
-      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+    console.log("MusicContext: Initializing YouTube API...");
+    
+    if (window.YT && window.YT.Player) {
+      console.log("MusicContext: YouTube API already exists.");
+      setIsApiReady(true);
+    } else {
+      // Check if tag already exists to avoid duplicates
+      if (!document.getElementById("yt-iframe-api")) {
+        const tag = document.createElement("script");
+        tag.id = "yt-iframe-api";
+        tag.src = "https://www.youtube.com/iframe_api";
+        tag.onerror = () => {
+          console.error("MusicContext: Failed to load YouTube IFrame API script.");
+        };
+        const firstScriptTag = document.getElementsByTagName("script")[0];
+        firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+        console.log("MusicContext: YouTube script tag injected.");
+      }
 
       window.onYouTubeIframeAPIReady = () => {
+        console.log("MusicContext: onYouTubeIframeAPIReady fired.");
         setIsApiReady(true);
       };
-    } else {
-      setIsApiReady(true);
     }
   }, []);
 
   useEffect(() => {
     if (isApiReady && !playerRef.current) {
-      // 2. Initialize the player hidden
-      const playerContainer = document.createElement("div");
-      playerContainer.id = "yt-player-persistent";
-      playerContainer.style.display = "none";
-      document.body.appendChild(playerContainer);
+      console.log("MusicContext: Creating YT player...");
+      
+      // Ensure container exists and is unique
+      let playerContainer = document.getElementById("yt-player-persistent");
+      if (!playerContainer) {
+        playerContainer = document.createElement("div");
+        playerContainer.id = "yt-player-persistent";
+        playerContainer.style.display = "none";
+        document.body.appendChild(playerContainer);
+      }
 
-      playerRef.current = new window.YT.Player("yt-player-persistent", {
-        height: "0",
-        width: "0",
-        videoId: PLAYLIST[currentTrackIndex].id,
-        playerVars: {
-          autoplay: 0,
-          controls: 0,
-          disablekb: 1,
-          fs: 0,
-          modestbranding: 1,
-          rel: 0,
-          enablejsapi: 1,
-          origin: typeof window !== 'undefined' ? window.location.origin : '',
-        },
-        events: {
-          onReady: (event: any) => {
-            // Force load the correct track immediately
-            if (event.target && typeof event.target.cueVideoById === 'function') {
-              event.target.cueVideoById(PLAYLIST[0].id);
+      try {
+        playerRef.current = new window.YT.Player("yt-player-persistent", {
+          height: "0",
+          width: "0",
+          videoId: PLAYLIST[currentTrackIndex].id,
+          playerVars: {
+            autoplay: 0,
+            controls: 0,
+            disablekb: 1,
+            fs: 0,
+            modestbranding: 1,
+            rel: 0,
+            enablejsapi: 1,
+            origin: typeof window !== 'undefined' ? window.location.origin : '',
+          },
+          events: {
+            onReady: (event: any) => {
+              console.log("MusicContext: Player Ready.");
+              if (event.target && typeof event.target.cueVideoById === 'function') {
+                event.target.cueVideoById(PLAYLIST[0].id);
+              }
+              setIsPlayerReady(true);
+            },
+            onStateChange: (event: any) => {
+              // YT.PlayerState.PLAYING = 1, PAUSED = 2, ENDED = 0
+              console.log("MusicContext: State Change ->", event.data);
+              if (event.data === 1) setIsPlaying(true);
+              else if (event.data === 2) setIsPlaying(false);
+              else if (event.data === 0) {
+                console.log("MusicContext: Track Ended. Playing next...");
+                nextTrackRef.current();
+              }
+            },
+            onError: (event: any) => {
+              console.error("MusicContext: Player Error ->", event.data);
+              // Possible errors: 2 (invalid param), 5 (HTML5 error), 100 (not found), 101/150 (not embeddable)
             }
-            setIsPlayerReady(true);
           },
-          onStateChange: (event: any) => {
-            // YT.PlayerState.PLAYING = 1, PAUSED = 2, ENDED = 0
-            if (event.data === 1) setIsPlaying(true);
-            else if (event.data === 2) setIsPlaying(false);
-            else if (event.data === 0) nextTrackRef.current();
-          },
-        },
-      });
+        });
+      } catch (err) {
+        console.error("MusicContext: Exception during player creation:", err);
+      }
     }
   }, [isApiReady]);
 
@@ -193,6 +220,7 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         volume, 
         isMuted,
         sfxEnabled,
+        isPlayerReady,
         togglePlay,
         setVolume,
         toggleMute,
