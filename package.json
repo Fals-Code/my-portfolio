@@ -12,6 +12,8 @@
     "@ai-sdk/google": "1.1.0",
     "@ai-sdk/react": "1.1.0",
     "@radix-ui/react-slot": "^1.2.4",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.5.0",
     "ai": "4.1.0",
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.7.0",
@@ -34,6 +36,7 @@
     "@types/three": "^0.183.1",
     "eslint": "^9",
     "eslint-config-next": "16.2.1",
+    "puppeteer": "^24.40.0",
     "tailwindcss": "^4",
     "three": "^0.183.2",
     "typescript": "^5"

@@ -14,6 +14,7 @@ import MusicPlayer from "@/components/global/MusicPlayer";
 import Chatbot from "@/components/global/Chatbot";
 import BackToTop from "@/components/global/BackToTop";
 import CommandPalette from "@/components/global/CommandPalette";
+import ThreeBackground from "@/components/global/ThreeBackground";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
@@ -42,7 +43,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
           <Chatbot />
           <BackToTop />
           <CommandPalette />
-        </ChatbotProvider>
+          <ThreeBackground />
+      </ChatbotProvider>
       </MusicProvider>
     </ThemeProvider>
   );

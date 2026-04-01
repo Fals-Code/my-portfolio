@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useSound } from "@/hooks/useSound";
 import { Slot } from "@radix-ui/react-slot";
 import { springSnappy, springBouncy } from "@/lib/motion-tokens";
+import Magnetic from "./Magnetic";
 
 export const SectionLabel = ({ children }: { children: React.ReactNode }) => (
   <div className="inline-flex items-center gap-3 mb-6">
@@ -69,13 +70,15 @@ export const Button = ({
   };
 
   return (
-    <Comp
-      {...motionProps}
-      onMouseEnter={() => playHover()}
-      onClick={handleInteraction}
-      className={`rounded-2xl font-bold transition-all uppercase tracking-[0.15em] inline-flex items-center justify-center ${variants[variant]} ${sizes[size]} ${className}`}
-    >
-      {children}
-    </Comp>
+    <Magnetic amount={0.15}>
+      <Comp
+        {...motionProps}
+        onMouseEnter={() => playHover()}
+        onClick={handleInteraction}
+        className={`rounded-2xl font-bold transition-all uppercase tracking-[0.15em] inline-flex items-center justify-center ${variants[variant]} ${sizes[size]} ${className}`}
+      >
+        {children}
+      </Comp>
+    </Magnetic>
   );
 };

@@ -160,16 +160,23 @@ export default function MusicPlayer() {
             )}
           </motion.button>
 
-          {/* Track info - visible only on md+ when playing */}
-          {isPlaying && currentTrack && (
-            <div className="hidden md:block max-w-[130px] overflow-hidden">
-              <p className="text-[10px] font-bold text-[var(--text)] truncate leading-tight"
-                title={currentTrack.title}>
-                {currentTrack.title}
-              </p>
-              <p className="text-[9px] text-text-muted truncate">{currentTrack.artist}</p>
-            </div>
-          )}
+          {/* Track info - animated entry/exit */}
+          <AnimatePresence>
+            {isPlaying && currentTrack && (
+              <motion.div 
+                initial={{ opacity: 0, x: -10, width: 0 }}
+                animate={{ opacity: 1, x: 0, width: "auto" }}
+                exit={{ opacity: 0, x: -10, width: 0 }}
+                className="hidden md:block max-w-[130px] overflow-hidden whitespace-nowrap"
+              >
+                <p className="text-[10px] font-bold text-[var(--text)] truncate leading-tight"
+                  title={currentTrack.title}>
+                  {currentTrack.title}
+                </p>
+                <p className="text-[9px] text-text-muted truncate">{currentTrack.artist}</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <button
             onClick={() => setIsExpanded(!isExpanded)}

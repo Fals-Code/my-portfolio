@@ -12,16 +12,21 @@ import {
   Briefcase,
   GraduationCap,
   Database,
-  Terminal,
-  Box,
-  GitBranch
+  Terminal, 
+  Box, 
+  GitBranch,
+  FileDown
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import TiltCard from "./ui/TiltCard";
 import LiveStatus from "./ui/LiveStatus";
 import { GitHub, Instagram } from "./ui/Icons";
 import { springBouncy } from "@/lib/motion-tokens";
 import { useGitHub } from "@/hooks/useGitHub";
+import ProjectPeek from "./ui/ProjectPeek";
+import { useState } from "react";
+import SkillsOrbit from "./ui/SkillsOrbit";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -44,6 +49,9 @@ const itemVariants = {
 
 export default function BentoGrid() {
   const { stats, isLoading } = useGitHub();
+  const [peek, setPeek] = useState<{ isVisible: boolean; imageSrc?: string; title?: string; category?: string }>({
+    isVisible: false,
+  });
 
   return (
     <motion.div
@@ -90,6 +98,15 @@ export default function BentoGrid() {
                 <p className="text-text-muted leading-relaxed max-w-md">
                   Fokus pada arsitektur backend, clean code, dan pembangunan sistem scalable menggunakan Laravel.
                 </p>
+                <div className="pt-2">
+                  <a 
+                    href="/Ahmad-Mathlaul-Falah-CV.pdf"
+                    download="Ahmad-Mathlaul-Falah-CV.pdf"
+                    className="inline-flex items-center gap-3 px-6 py-3 bg-accent text-white rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-accent/20 hover:scale-105 transition-all outline-none cursor-pointer"
+                  >
+                    <FileDown className="w-4 h-4" /> Download CV
+                  </a>
+                </div>
               </div>
             </div>
 
@@ -110,7 +127,14 @@ export default function BentoGrid() {
       {/* Featured Project (2x1) */}
       <motion.div
         variants={itemVariants}
-        className="md:col-span-2 md:row-span-1 group"
+        onMouseEnter={() => setPeek({ 
+          isVisible: true, 
+          imageSrc: "/assets/imgs/hospital_system.png", 
+          title: "RSHP – Hospital Info System", 
+          category: "Featured Proyek" 
+        })}
+        onMouseLeave={() => setPeek({ isVisible: false })}
+        className="md:col-span-2 md:row-span-1 group cursor-default"
       >
         <TiltCard className="p-1 glass-panel overflow-hidden">
           <div className="p-10 h-full flex flex-col justify-between relative z-10">
@@ -252,23 +276,8 @@ export default function BentoGrid() {
               <h3 className="font-bold text-lg uppercase tracking-tight font-syne">Mastery</h3>
             </div>
             
-            <div className="space-y-6 flex-1">
-              {[
-                { name: "Laravel", color: "text-red-500" },
-                { name: "MySQL", color: "text-blue-500" },
-                { name: "JavaScript", color: "text-yellow-500" },
-                { name: "TypeScript", color: "text-blue-400" },
-                { name: "Git", color: "text-orange-500" },
-                { name: "Docker", color: "text-blue-600" },
-              ].map((tech) => (
-                <div key={tech.name} className="flex items-center gap-4 group cursor-default">
-                  <div className="w-1.5 h-1.5 rounded-full bg-border group-hover:bg-accent transition-colors" />
-                  <div>
-                    <p className="text-sm font-bold text-text-muted group-hover:text-[var(--text)] transition-colors">{tech.name}</p>
-                    <div className="h-px w-0 group-hover:w-full bg-accent/30 transition-all duration-500 mt-1" />
-                  </div>
-                </div>
-              ))}
+            <div className="flex-1 -mx-8">
+              <SkillsOrbit />
             </div>
           </div>
         </TiltCard>
@@ -285,6 +294,9 @@ export default function BentoGrid() {
           </div>
         </TiltCard>
       </motion.div>
+
+      {/* Project Peek Overlay */}
+      <ProjectPeek {...peek} />
     </motion.div>
   );
 }

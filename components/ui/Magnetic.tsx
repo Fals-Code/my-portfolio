@@ -1,44 +1,46 @@
 "use client";
 
-import React, { useRef, useState, MouseEvent } from "react";
-import { motion, useSpring, useMotionValue } from "framer-motion";
+import React, { useRef, useState, ReactElement } from "react";
+import { motion, useSpring, useMotionValue, useTransform } from "framer-motion";
 
-export default function Magnetic({ children }: { children: React.ReactNode }) {
+interface MagneticProps {
+  children: ReactElement;
+  amount?: number; // Strength of the pull
+}
+
+export default function Magnetic({ children, amount = 0.5 }: MagneticProps) {
   const ref = useRef<HTMLDivElement>(null);
   
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  
-  const springX = useSpring(x, { stiffness: 150, damping: 15 });
-  const springY = useSpring(y, { stiffness: 150, damping: 15 });
-  
-  const handleMouseMove = (e: MouseEvent) => {
-    if (!ref.current) return;
-    
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const springConfig = { damping: 15, stiffness: 150, mass: 0.1 };
+  const x = useSpring(mouseX, springConfig);
+  const y = useSpring(mouseY, springConfig);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
     const { clientX, clientY } = e;
-    const { left, top, width, height } = ref.current.getBoundingClientRect();
+    const { height, width, left, top } = ref.current!.getBoundingClientRect();
+    const middleX = clientX - (left + width / 2);
+    const middleY = clientY - (top + height / 2);
     
-    const centerX = left + width / 2;
-    const centerY = top + height / 2;
-    
-    const distanceX = clientX - centerX;
-    const distanceY = clientY - centerY;
-    
-    x.set(distanceX * 0.35);
-    y.set(distanceY * 0.35);
+    // Scale the movement by the 'amount' prop
+    mouseX.set(middleX * amount);
+    mouseY.set(middleY * amount);
   };
-  
+
   const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
+    mouseX.set(0);
+    mouseY.set(0);
   };
-  
+
   return (
     <motion.div
       ref={ref}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      style={{ x: springX, y: springY }}
+      style={{ x, y }}
+      className="inline-block relative"
     >
       {children}
     </motion.div>
