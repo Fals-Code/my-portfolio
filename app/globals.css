@@ -127,6 +127,24 @@
       radial-gradient(at 0% 100%, rgba(100, 100, 255, 0.1) 0px, transparent 50%);
     background-attachment: fixed;
   }
+
+  .markdown-content p {
+    margin-bottom: 0.75rem;
+  }
+  .markdown-content p:last-child {
+    margin-bottom: 0;
+  }
+  .markdown-content strong {
+    font-weight: 700;
+  }
+  .markdown-content ul, .markdown-content ol {
+    margin-left: 1.5rem;
+    margin-bottom: 0.75rem;
+    list-style-type: disc;
+  }
+  .markdown-content li {
+    margin-bottom: 0.25rem;
+  }
 }
 
 @keyframes fadeSlideUp {

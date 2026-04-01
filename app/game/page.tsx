@@ -22,44 +22,60 @@ export default function GamePage() {
     const sfxCoin = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-retro-arcade-casino-notification-211.mp3");
     const sfxCrash = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-arcade-mechanical-hit-1104.mp3");
 
-    // --- Three.js Setup ---
+    // --- Three.js Setup - Cinematic Overhaul ---
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x87CEEB); 
-    scene.fog = new THREE.Fog(0x87CEEB, 40, 250); 
+    scene.background = new THREE.Color(0x0f172a); // Deep Dusk
+    scene.fog = new THREE.FogExp2(0x0f172a, 0.015); // Volumetric Atmosphere
 
-    const camera = new THREE.PerspectiveCamera(82, window.innerWidth / window.innerHeight, 0.2, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const camera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 0.2, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.VSMShadowMap; // Very soft shadows
+    renderer.toneMapping = THREE.ReinhardToneMapping;
+    renderer.toneMappingExposure = 1.25;
     if (containerRef.current) containerRef.current.appendChild(renderer.domElement);
 
-    // --- Hyper-Lighting ---
-    const hemiLight = new THREE.HemisphereLight(0x87CEEB, 0x14532d, 0.6);
+    // --- Cinematic Lighting ---
+    const hemiLight = new THREE.HemisphereLight(0x0f172a, 0x011C3A, 0.3);
     scene.add(hemiLight);
-    const sunLight = new THREE.DirectionalLight(0xffffff, 1.6);
-    sunLight.position.set(20, 60, 20);
+    
+    // Low Sun / Moonlight
+    const sunLight = new THREE.DirectionalLight(0x3b82f6, 1.8);
+    sunLight.position.set(-30, 45, -50);
     sunLight.castShadow = true;
-    sunLight.shadow.mapSize.width = 2048; sunLight.shadow.mapSize.height = 2048;
-    sunLight.shadow.camera.left = -50; sunLight.shadow.camera.right = 50;
-    sunLight.shadow.camera.top = 50; sunLight.shadow.camera.bottom = -50;
+    sunLight.shadow.mapSize.width = 4096; sunLight.shadow.mapSize.height = 4096;
+    sunLight.shadow.camera.left = -60; sunLight.shadow.camera.right = 60;
+    sunLight.shadow.camera.top = 60; sunLight.shadow.camera.bottom = -60;
+    sunLight.shadow.radius = 4; sunLight.shadow.blurSamples = 25;
     scene.add(sunLight);
 
-    // --- Materials & Assets ---
-    const matYellow = new THREE.MeshStandardMaterial({ color: 0xf5c518, roughness: 0.3 });
-    const matGold = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.8, roughness: 0.2 });
-    const matGlass = new THREE.MeshStandardMaterial({ color: 0x334155, transparent: true, opacity: 0.8 });
-    const matLight = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 2 });
-    const matWheel = new THREE.MeshStandardMaterial({ color: 0x111111 });
-    const matGrass = new THREE.MeshStandardMaterial({ color: 0x14532d, roughness: 1.0 });
-    const matTrotoar = new THREE.MeshStandardMaterial({ color: 0x71717a, roughness: 0.8 });
-    const matWood = new THREE.MeshStandardMaterial({ color: 0x78350f });
-    const matOrange = new THREE.MeshStandardMaterial({ color: 0xe8533a });
-    const matBlueBody = new THREE.MeshStandardMaterial({ color: 0x1e3a8a });
-    const matPlayerBody = new THREE.MeshStandardMaterial({ color: 0x3b82f6 });
-    const matSkin = new THREE.MeshStandardMaterial({ color: 0xffdbac });
-    const matGrey = new THREE.MeshStandardMaterial({ color: 0x64748b });
+    // Dynamic Highlights (Street/Bus emulation)
+    const neonLight = new THREE.PointLight(0xe8533a, 8, 35);
+    neonLight.position.set(0, 10, -50);
+    scene.add(neonLight);
+
+    // --- High-Fidelity PBR Materials ---
+    // Road - Ultra Wet Asphalt
+    const matRoad = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.1, metalness: 0.9 });
+    // Concrete - Wet & Gritty
+    const matTrotoar = new THREE.MeshStandardMaterial({ color: 0x444444, roughness: 0.2, metalness: 0.4 });
+    // Metallic Assets
+    const matMetal = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.9, roughness: 0.1 });
+    const matNeonRed = new THREE.MeshStandardMaterial({ color: 0xff0000, emissive: 0xff0000, emissiveIntensity: 15 });
+    const matLight = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 8 });
+    
+    const matYellow = new THREE.MeshStandardMaterial({ color: 0xf5c518, roughness: 0.2, metalness: 0.5 });
+    const matGlass = new THREE.MeshStandardMaterial({ color: 0x334155, transparent: true, opacity: 0.4, roughness: 0, metalness: 1 });
+    const matWood = new THREE.MeshStandardMaterial({ color: 0x451a03, roughness: 0.8 });
+    const matPlayerBody = new THREE.MeshStandardMaterial({ color: 0x1d4ed8, roughness: 0.5 });
+    const matSkin = new THREE.MeshStandardMaterial({ color: 0xffdbac, roughness: 0.8 });
+    const matGrey = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.6 });
+    const matRubber = new THREE.MeshStandardMaterial({ color: 0x050505, roughness: 0.9 });
+    const matGrass = new THREE.MeshStandardMaterial({ color: 0x064e3b, roughness: 1.0 });
+    const matGold = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.9, roughness: 0.1 });
+    const matOrange = new THREE.MeshStandardMaterial({ color: 0xe8533a, emissive: 0xe8533a, emissiveIntensity: 0.5 });
 
     // --- Hyper-Detail Player ---
     const pGroup = new THREE.Group();
@@ -73,8 +89,8 @@ export default function GamePage() {
     const nose = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.08, 0.05), matSkin); nose.position.set(0, 1.15, -0.19);
     const earL = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.1, 0.05), matSkin); earL.position.set(-0.18, 1.15, 0);
     const earR = earL.clone(); earR.position.x = 0.18;
-    const hr = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.15, 0.38), matWheel); hr.position.y = 1.25;
-    const eyL = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.02), matWheel); eyL.position.set(-0.08, 1.17, -0.18);
+    const hr = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.15, 0.38), matRubber); hr.position.y = 1.25;
+    const eyL = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.02), matRubber); eyL.position.set(-0.08, 1.17, -0.18);
     const eyR = eyL.clone(); eyR.position.x = 0.08;
     // Arms ++ (Forearms, Hands)
     const pLarm = new THREE.Group();
@@ -94,19 +110,19 @@ export default function GamePage() {
 
     // --- Hyper-Detail Satpam ---
     const cGroup = new THREE.Group();
-    const sBody = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.8, 0.4), matBlueBody); sBody.position.y = 0.5; sBody.castShadow = true;
+    const sBody = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.8, 0.4), matMetal); sBody.position.y = 0.5; sBody.castShadow = true;
     const sVest = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.5, 0.42), new THREE.MeshStandardMaterial({ color: 0xffff00, transparent: true, opacity: 0.5 })); sVest.position.y = 0.6;
     const sBadge = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 0.02), matGold); sBadge.position.set(0.15, 0.72, -0.22);
     const sBuckle = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.08, 0.02), matLight); sBuckle.position.set(0, 0.32, -0.21);
-    const sWalkie = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.2, 0.08), matWheel); sWalkie.position.set(-0.2, 0.4, 0.15);
+    const sWalkie = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.2, 0.08), matRubber); sWalkie.position.set(-0.2, 0.4, 0.15);
     const sHead = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.35, 0.35), matSkin); sHead.position.y = 1.15; sHead.castShadow = true;
     const sEyes = eyL.clone(); const sEyeR = eyR.clone();
-    const sHat = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.1), matBlueBody); sHat.position.y = 1.35;
-    const sBrim = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.03, 0.3), matBlueBody); sBrim.position.set(0, 1.32, -0.15);
-    const sLarm = pLarm.clone(); sLarm.children.forEach(c => (c as THREE.Mesh).material = (c===sLarm.children[0]?matBlueBody:matSkin));
-    const sRarm = pRarm.clone(); sRarm.children.forEach(c => (c as THREE.Mesh).material = (c===sRarm.children[0]?matBlueBody:matSkin));
-    const sLleg = pLleg.clone(); sLleg.children.forEach(c => (c as THREE.Mesh).material = (c===sLleg.children[0]?matBlueBody:matWheel));
-    const sRleg = pRleg.clone(); sRleg.children.forEach(c => (c as THREE.Mesh).material = (c===sRleg.children[0]?matBlueBody:matWheel));
+    const sHat = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.1), matMetal); sHat.position.y = 1.35;
+    const sBrim = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.03, 0.3), matMetal); sBrim.position.set(0, 1.32, -0.15);
+    const sLarm = pLarm.clone(); sLarm.children.forEach(c => (c as THREE.Mesh).material = (c===sLarm.children[0]?matMetal:matSkin));
+    const sRarm = pRarm.clone(); sRarm.children.forEach(c => (c as THREE.Mesh).material = (c===pRarm.children[0]?matMetal:matSkin));
+    const sLleg = pLleg.clone(); sLleg.children.forEach(c => (c as THREE.Mesh).material = (c===sLleg.children[0]?matMetal:matRubber));
+    const sRleg = pRleg.clone(); sRleg.children.forEach(c => (c as THREE.Mesh).material = (c===sRleg.children[0]?matMetal:matRubber));
     sLarm.position.set(-0.35, 0.85, 0); sRarm.position.x = 0.35; sLleg.position.set(-0.16, 0.5, 0); sRleg.position.x = 0.16;
 
     const spot = new THREE.SpotLight(0xffffff, 8, 15, Math.PI / 6);
@@ -118,7 +134,7 @@ export default function GamePage() {
 
     // --- Hyper-Environment ---
     const LANES = [-3.5, 0, 3.5];
-    const gr = new THREE.Mesh(new THREE.PlaneGeometry(14, 2000), new THREE.MeshStandardMaterial({ color: 0x27272a, roughness: 0.9 }));
+    const gr = new THREE.Mesh(new THREE.PlaneGeometry(14, 2000), matRoad);
     gr.rotation.x = -Math.PI / 2; gr.receiveShadow = true; scene.add(gr);
     
     const sidL = new THREE.Mesh(new THREE.BoxGeometry(5, 0.5, 2000), matTrotoar); sidL.position.set(-9.5, 0.25, 0); sidL.receiveShadow = true; scene.add(sidL);
@@ -126,7 +142,7 @@ export default function GamePage() {
 
     // Curb detail (Kantil)
     for (let i = 0; i < 200; i++) {
-        const cL = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.6, 5), i % 2 === 0 ? matLight : matWheel);
+        const cL = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.6, 5), i % 2 === 0 ? matLight : matRubber);
         cL.position.set(-7, 0.3, -i * 5); scene.add(cL);
         const cR = cL.clone(); cR.position.x = 7; scene.add(cR);
     }
@@ -143,13 +159,13 @@ export default function GamePage() {
     const flgs: THREE.Group[] = [];
     const createDecoration = (z: number) => {
         // High-detail street lamps
-        const lP = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.15, 6), matWheel);
+        const lP = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.15, 6), matMetal);
         const lH = new THREE.Mesh(new THREE.SphereGeometry(0.3), matLight); lH.position.y = 3;
         const lamp = new THREE.Group(); lamp.add(lP, lH);
         lamp.position.set(-8, 0, z); scene.add(lamp); decor.push(lamp);
         // Flags
-        const p = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 5), matWheel);
-        const cl = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1, 0.05), Math.random() > 0.5 ? matOrange : matBlueBody); cl.position.set(0.75, 2, 0);
+        const p = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 5), matMetal);
+        const cl = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1, 0.05), Math.random() > 0.5 ? matOrange : matMetal); cl.position.set(0.75, 2, 0);
         const f = new THREE.Group(); f.add(p, cl);
         f.position.set(8.5, 0, z + 10); scene.add(f); flgs.push(f); decor.push(f);
     };
@@ -185,12 +201,12 @@ export default function GamePage() {
         // Interior (Seats & Steering)
         const seatG = new THREE.BoxGeometry(0.6, 0.6, 0.6);
         for (let j = 0; j < 6; j++) {
-            const sL = new THREE.Mesh(seatG, matBlueBody); sL.position.set(-1, 0.8, -3 + j*1.2);
+            const sL = new THREE.Mesh(seatG, matMetal); sL.position.set(-1, 0.8, -3 + j*1.2);
             const sR = sL.clone(); sR.position.x = 1; g.add(sL, sR);
         }
-        const wheel = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.05, 8, 16), matWheel); wheel.position.set(-0.8, 1.8, -4.5); wheel.rotation.x = -0.5;
+        const wheel = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.05, 8, 16), matRubber); wheel.position.set(-0.8, 1.8, -4.5); wheel.rotation.x = -0.5;
         // Mirrors
-        const mP = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.6), matWheel); mP.position.set(-1.8, 2.5, -4.8);
+        const mP = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.6), matMetal); mP.position.set(-1.8, 2.5, -4.8);
         const mS = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.6, 0.1), matGlass); mS.position.set(-1.8, 2.5, -5.1);
         const mirrL = new THREE.Group(); mirrL.add(mP, mS);
         const mirrR = mirrL.clone(); mirrR.position.x = 3.6; mirrR.scale.z = -1;
@@ -201,14 +217,14 @@ export default function GamePage() {
         // Tires
         const whG = new THREE.CylinderGeometry(0.45, 0.45, 0.5);
         [[-1.4, -3.5], [1.4, -3.5], [-1.4, 3.5], [1.4, 3.5]].forEach(p => {
-            const w = new THREE.Mesh(whG, matWheel); w.rotation.z = Math.PI/2; w.position.set(p[0], 0.45, p[1]); g.add(w);
+            const w = new THREE.Mesh(whG, matRubber); w.rotation.z = Math.PI/2; w.position.set(p[0], 0.45, p[1]); g.add(w);
         });
         g.add(b, glass, headL, headR, wheel, mirrL, mirrR); g.position.set(LANES[lane], 0, -250); scene.add(g); obst.push(g);
     };
     const spawnHurdle = (lane: number) => {
         const g = new THREE.Group();
         const b = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.5, 0.5), matYellow); b.position.y = 0.85; b.castShadow = true;
-        const l1 = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.85, 0.2), matWheel); l1.position.set(-1.5, 0.42, 0); const r1 = l1.clone(); r1.position.x = 1.5;
+        const l1 = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.85, 0.2), matRubber); l1.position.set(-1.5, 0.42, 0); const r1 = l1.clone(); r1.position.x = 1.5;
         g.add(b, l1, r1); g.position.set(LANES[lane], 0, -250); scene.add(g); obst.push(g);
     };
     const spawnCoin = (lane: number) => {
@@ -225,9 +241,23 @@ export default function GamePage() {
 
     const clds: THREE.Mesh[] = [];
     for (let i = 0; i < 15; i++) {
-        const cl = new THREE.Mesh(new THREE.BoxGeometry(12, 1.5, 15), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 }));
+        const cl = new THREE.Mesh(new THREE.BoxGeometry(12, 1.5, 15), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.15 }));
         cl.position.set((Math.random()-0.5)*140, 30 + Math.random()*20, -Math.random()*600); scene.add(cl); clds.push(cl);
     }
+
+    // --- High-Detail Rain System ---
+    const rainCount = 4000;
+    const rainGeo = new THREE.BufferGeometry();
+    const rainPos = new Float32Array(rainCount * 3);
+    for (let i = 0; i < rainCount; i++) {
+        rainPos[i*3] = (Math.random()-0.5)*40;
+        rainPos[i*3+1] = Math.random()*40;
+        rainPos[i*3+2] = -Math.random()*200;
+    }
+    rainGeo.setAttribute("position", new THREE.BufferAttribute(rainPos, 3));
+    const rainMat = new THREE.PointsMaterial({ color: 0xaaaaaa, size: 0.08, transparent: true, opacity: 0.4 });
+    const rain = new THREE.Points(rainGeo, rainMat);
+    scene.add(rain);
 
     // --- State & Movement ---
     let curL = 1, tarX = LANES[1], isJ = false, jV = 0, jCount = 0, isS = false, sTime = 0, speed = 0.85, sTotal = 0, cDist = 7, isStum = false, stumTime = 0;
@@ -308,6 +338,16 @@ export default function GamePage() {
           p.material.opacity *= 0.96; if (p.scale.x < 0.01) { scene.remove(p); arr.splice(i, 1); } }));
 
       speed += 0.00018 + (sTotal / 900000);
+      
+      // Update Rain
+      const rPos = rainGeo.attributes.position.array as Float32Array;
+      for (let i = 0; i < rainCount; i++) {
+          rPos[i*3+1] -= 1.5;
+          if (rPos[i*3+1] < 0) rPos[i*3+1] = 40;
+      }
+      rainGeo.attributes.position.needsUpdate = true;
+      rain.position.z = pGroup.position.z;
+
       camera.position.set(0, 6.2, 13); camera.lookAt(new THREE.Vector3(pGroup.position.x * 0.4, 0.8, -25));
       renderer.render(scene, camera);
     };
@@ -379,11 +419,19 @@ export default function GamePage() {
 
       <div ref={containerRef} className="absolute inset-0 z-10" />
       
-      {/* Cinematic Overlays */}
-      <div className="absolute inset-0 z-15 pointer-events-none">
-          <div className="absolute inset-0 bg-[radial-gradient(circle,transparent_60%,rgba(0,0,0,0.7)_140%)]" />
-          <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/asphalt-dark.png')]" />
-          <div className="absolute top-0 left-0 w-full h-full opacity-30 shadow-[inset_0_0_150px_rgba(0,0,0,1)]" />
+      {/* Cinematic Overlays - Ultra Realistic */}
+      <div className="absolute inset-0 z-15 pointer-events-none overflow-hidden">
+          {/* Heavy Vignette */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle,transparent_40%,rgba(0,0,0,0.8)_100%)]" />
+          
+          {/* Dynamic Film Grain */}
+          <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay animate-pulse bg-[url('https://www.transparenttextures.com/patterns/asphalt-dark.png')]" />
+          
+          {/* Depth Bloom Blur */}
+          <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-black/80 to-transparent opacity-60" />
+          
+          {/* Inner Shadow / Color Grade */}
+          <div className="absolute inset-0 shadow-[inset_0_0_200px_rgba(0,0,0,0.9)] mix-blend-multiply" />
       </div>
     </div>
   );

@@ -4,6 +4,8 @@ import React, { useRef, useEffect } from "react";
 import { useChatbot } from "@/context/ChatbotContext";
 import { MessageSquare, X, Send, Trash2, Bot, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import ReactMarkdown from "react-markdown";
+import remarkBreaks from "remark-breaks";
 
 /**
  * Global Chatbot UI Component.
@@ -83,7 +85,11 @@ export default function Chatbot() {
                       ? "bg-accent text-white rounded-br-sm shadow-accent/20" 
                       : "bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/10 text-[var(--text)] rounded-bl-sm backdrop-blur-sm"
                   }`}>
-                    {msg.content}
+                    <div className="markdown-content">
+                      <ReactMarkdown remarkPlugins={[remarkBreaks]}>
+                        {msg.content.replace(/([:.])\s\*/g, '$1\n\n*')}
+                      </ReactMarkdown>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -99,24 +105,26 @@ export default function Chatbot() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input - High Visibility Design */}
-            <form onSubmit={handleSubmit} className="p-6 border-t border-black/10 dark:border-white/10 bg-white dark:bg-black/20 backdrop-blur-md">
-              <div className="flex gap-4 items-center">
-                <input
-                  type="text"
-                  value={input}
-                  onChange={handleInputChange}
-                  placeholder="Type a message..."
-                  className="flex-1 bg-gray-50 dark:bg-white/10 border-2 border-gray-200 dark:border-white/10 focus:border-accent rounded-2xl px-6 py-4 text-sm focus:outline-none transition-all text-black dark:text-white placeholder:text-gray-400"
-                  disabled={isLoading}
-                  autoFocus
-                />
+            {/* Input - Consistent White Design */}
+            <form onSubmit={handleSubmit} className="p-6 md:p-8 border-t border-black/5 bg-white backdrop-blur-xl">
+              <div className="flex gap-3 items-center">
+                <div className="relative flex-1 group">
+                  <input
+                    type="text"
+                    value={input}
+                    onChange={handleInputChange}
+                    placeholder="Type a message..."
+                    className="w-full bg-white border border-gray-100 focus:border-accent/40 focus:ring-4 focus:ring-accent/5 rounded-[1.5rem] px-6 py-4 text-sm focus:outline-none transition-all duration-300 text-black placeholder:text-gray-400 font-medium shadow-sm"
+                    disabled={isLoading}
+                    autoFocus
+                  />
+                </div>
                 <button 
                   type="submit" 
                   disabled={isLoading || !input.trim()}
-                  className="bg-accent text-white p-4 rounded-2xl hover:bg-accent-hover transition-all disabled:opacity-50 disabled:grayscale flex items-center justify-center min-w-[56px] shadow-lg shadow-accent/20"
+                  className="bg-accent text-white p-4 h-[52px] w-[52px] rounded-2xl hover:bg-accent-hover active:scale-90 hover:scale-105 transition-all duration-300 disabled:opacity-20 disabled:grayscale flex items-center justify-center shadow-xl shadow-accent/20"
                 >
-                  {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-6 h-6" />}
+                  {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />}
                 </button>
               </div>
             </form>

@@ -1,7 +1,7 @@
 import { google } from "@ai-sdk/google";
-import { streamText, StreamingTextResponse } from "ai";
+import { streamText } from "ai";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 
 const SYSTEM_PROMPT = `
 Nama: Ahmad Mathlaul Falah
@@ -26,15 +26,15 @@ Jangan menjawab pertanyaan di luar topik Ahmad Mathlaul Falah secara mendalam.
 export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
-    console.log("Chat API (v3): Processing", messages ? messages.length : 0, "messages");
+    console.log("Chat API (modern): Processing", messages ? messages.length : 0, "messages");
 
     const result = await streamText({
-      model: google("models/gemini-flash-latest"),
+      model: google("models/gemini-2.5-flash"), // Verified from local models_list.json
       system: SYSTEM_PROMPT,
       messages,
     });
 
-    return new StreamingTextResponse(result.toAIStream());
+    return result.toAIStreamResponse();
   } catch (error) {
     console.error("Chat API v3 Error:", error);
     const errorMessage = error instanceof Error ? error.message : String(error);
