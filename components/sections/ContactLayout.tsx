@@ -63,7 +63,7 @@ function ContactForm() {
             value={formData.name}
             onChange={handleChange}
             placeholder="Your Name"
-            className="w-full bg-white/5 border border-border rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-accent transition-all text-[var(--text)]"
+            className="w-full bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-accent transition-all text-[var(--text)]"
           />
         </div>
         <div className="space-y-2">
@@ -74,7 +74,7 @@ function ContactForm() {
             value={formData.email}
             onChange={handleChange}
             placeholder="your@email.com"
-            className="w-full bg-white/5 border border-border rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-accent transition-all text-[var(--text)]"
+            className="w-full bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-accent transition-all text-[var(--text)]"
           />
         </div>
       </div>
@@ -87,7 +87,7 @@ function ContactForm() {
           value={formData.subject}
           onChange={handleChange}
           placeholder="What's this about?"
-          className="w-full bg-white/5 border border-border rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-accent transition-all text-[var(--text)]"
+          className="w-full bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-accent transition-all text-[var(--text)]"
         />
       </div>
 
@@ -99,7 +99,7 @@ function ContactForm() {
           value={formData.message}
           onChange={handleChange}
           placeholder="Tell me more..."
-          className="w-full bg-white/5 border border-border rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-accent transition-all text-[var(--text)] min-h-[120px] resize-none"
+          className="w-full bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-accent transition-all text-[var(--text)] min-h-[120px] resize-none"
         />
       </div>
 

@@ -44,14 +44,14 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
-          <button onClick={toggleTheme} className="p-2 rounded-full border border-border hover:bg-bg-hover transition-colors">
+          <button onClick={toggleTheme} className="p-2 rounded-full border border-black/10 dark:border-white/10 hover:bg-bg-hover transition-colors">
             {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
         </div>
 
         {/* Mobile Nav Toggle */}
         <div className="md:hidden flex items-center gap-4">
-          <button onClick={toggleTheme} className="p-2 rounded-full border border-border">
+          <button onClick={toggleTheme} className="p-2 rounded-full border border-black/10 dark:border-white/10">
             {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
           <button onClick={() => setIsOpen(!isOpen)}>
@@ -67,7 +67,7 @@ export function Navbar() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="md:hidden absolute top-full left-0 w-full bg-bg p-6 border-b border-border space-y-4 shadow-xl"
+            className="md:hidden absolute top-full left-0 w-full bg-bg p-6 border-b border-black/10 dark:border-white/10 space-y-4 shadow-xl"
           >
             {navLinks.map((link) => (
               <Link 
@@ -88,7 +88,7 @@ export function Navbar() {
 
 export function Footer() {
   return (
-    <footer className="w-full py-12 px-6 border-t border-border mt-auto relative z-10">
+    <footer className="w-full py-12 px-6 border-t border-black/10 dark:border-white/10 mt-auto relative z-10">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="text-sm text-text-muted">
           © {new Date().getFullYear()} Ahmad Mathlaul Falah. All rights reserved.

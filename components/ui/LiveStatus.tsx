@@ -51,7 +51,7 @@ export default function LiveStatus() {
       <motion.p 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="text-[10px] text-text-muted italic leading-tight border-t border-border/20 pt-3"
+        className="text-[10px] text-text-muted italic leading-tight border-t border-black/10 dark:border-white/10/20 pt-3"
       >
         "Crafting systems while you sleep."
       </motion.p>

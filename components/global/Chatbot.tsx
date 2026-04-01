@@ -41,10 +41,10 @@ export default function Chatbot() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="absolute bottom-full right-0 mb-6 w-[380px] md:w-[480px] h-[650px] glass-panel rounded-[3rem] overflow-hidden flex flex-col shadow-2xl border border-white/5 bg-bg/60 backdrop-blur-2xl"
+            className="absolute bottom-full right-0 mb-6 w-[calc(100vw-2rem)] md:w-[480px] h-[550px] md:h-[650px] max-h-[80vh] glass-panel rounded-[2rem] md:rounded-[3rem] overflow-hidden flex flex-col shadow-2xl border border-black/5 dark:border-white/5 bg-bg/60 backdrop-blur-2xl"
           >
             {/* Header */}
-            <div className="p-8 bg-accent text-white flex items-center justify-between">
+            <div className="p-6 md:p-8 bg-accent text-white flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-white/20 rounded-2xl">
                   <Bot className="w-6 h-6" />
@@ -75,13 +75,13 @@ export default function Chatbot() {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-8 space-y-6 custom-scrollbar scroll-smooth">
+            <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 custom-scrollbar scroll-smooth">
               {messages.map((msg) => (
                 <div key={msg.id} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                   <div className={`max-w-[85%] px-6 py-4 rounded-3xl text-[13px] md:text-sm leading-relaxed shadow-sm transform-gpu ${
                     msg.role === "user" 
                       ? "bg-accent text-white rounded-br-sm shadow-accent/20" 
-                      : "bg-white/5 border border-white/10 text-[var(--text)] rounded-bl-sm backdrop-blur-sm"
+                      : "bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/10 text-[var(--text)] rounded-bl-sm backdrop-blur-sm"
                   }`}>
                     {msg.content}
                   </div>
@@ -90,7 +90,7 @@ export default function Chatbot() {
               
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-white/5 border border-white/10 p-5 rounded-[2rem] animate-pulse">
+                  <div className="bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 p-5 rounded-[2rem] animate-pulse">
                     <Loader2 className="w-5 h-5 animate-spin text-accent" />
                   </div>
                 </div>
@@ -99,23 +99,24 @@ export default function Chatbot() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input */}
-            <form onSubmit={handleSubmit} className="p-6 border-t border-white/5 bg-white/[0.02] backdrop-blur-sm">
+            {/* Input - High Visibility Design */}
+            <form onSubmit={handleSubmit} className="p-6 border-t border-black/10 dark:border-white/10 bg-white dark:bg-black/20 backdrop-blur-md">
               <div className="flex gap-4 items-center">
                 <input
                   type="text"
                   value={input}
                   onChange={handleInputChange}
-                  placeholder="Ask about my projects or skills..."
-                  className="flex-1 bg-white/5 border border-white/5 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-accent/40 transition-all placeholder:text-white/20"
+                  placeholder="Type a message..."
+                  className="flex-1 bg-gray-50 dark:bg-white/10 border-2 border-gray-200 dark:border-white/10 focus:border-accent rounded-2xl px-6 py-4 text-sm focus:outline-none transition-all text-black dark:text-white placeholder:text-gray-400"
                   disabled={isLoading}
+                  autoFocus
                 />
                 <button 
                   type="submit" 
                   disabled={isLoading || !input.trim()}
-                  className="bg-accent text-white p-4 rounded-2xl hover:bg-accent-hover transition-all disabled:opacity-50 disabled:grayscale hover:scale-110 active:scale-95 duration-300"
+                  className="bg-accent text-white p-4 rounded-2xl hover:bg-accent-hover transition-all disabled:opacity-50 disabled:grayscale flex items-center justify-center min-w-[56px] shadow-lg shadow-accent/20"
                 >
-                  <Send className="w-6 h-6" />
+                  {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-6 h-6" />}
                 </button>
               </div>
             </form>

@@ -141,7 +141,7 @@ export default function ProjectsSection() {
                   </div>
 
                   {/* Actions */}
-                  <div className="pt-6 mt-6 border-t border-border flex items-center justify-between mx-2">
+                  <div className="pt-6 mt-6 border-t border-black/10 dark:border-white/10 flex items-center justify-between mx-2">
                     <Link 
                       href={proj.caseStudy || "/projects"} 
                       className="text-[10px] font-bold uppercase tracking-widest text-[var(--text)] hover:text-accent flex items-center gap-2 group/link transition-colors"

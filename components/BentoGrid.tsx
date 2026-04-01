@@ -61,7 +61,7 @@ export default function BentoGrid() {
           <div className="p-10 h-full flex flex-col justify-between">
             <div className="space-y-8">
               <div className="flex items-start justify-between">
-                <div className="relative w-28 h-28 rounded-3xl overflow-hidden border-2 border-border/40 group-hover:border-accent/40 transition-colors duration-500">
+                <div className="relative w-28 h-28 rounded-3xl overflow-hidden border-2 border-black/10 dark:border-white/10/40 group-hover:border-accent/40 transition-colors duration-500">
                   <div className="absolute inset-0 bg-neutral-900 flex items-center justify-center">
                     <User className="w-12 h-12 text-neutral-700" />
                   </div>
@@ -94,11 +94,11 @@ export default function BentoGrid() {
             </div>
 
             <div className="flex flex-wrap gap-3 mt-12">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-2xl border border-border bg-white/[0.02] text-[11px] font-bold text-text-muted uppercase tracking-wider">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-2xl border border-black/10 dark:border-white/10 bg-white/[0.02] text-[11px] font-bold text-text-muted uppercase tracking-wider">
                 <MapPin className="w-3.5 h-3.5 text-accent" />
                 Gresik — Surabaya
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-2xl border border-border bg-white/[0.02] text-[11px] font-bold text-text-muted uppercase tracking-wider">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-2xl border border-black/10 dark:border-white/10 bg-white/[0.02] text-[11px] font-bold text-text-muted uppercase tracking-wider">
                 <Briefcase className="w-3.5 h-3.5 text-accent" />
                 Backend Precision
               </div>
@@ -204,7 +204,7 @@ export default function BentoGrid() {
                 target="_blank"
                 rel="noopener noreferrer"
                 title={social.name}
-                className={`flex items-center justify-center rounded-2xl border border-border bg-white/[0.02] transition-all duration-300 group ${social.color}`}
+                className={`flex items-center justify-center rounded-2xl border border-black/10 dark:border-white/10 bg-white/[0.02] transition-all duration-300 group ${social.color}`}
               >
                 <social.Icon className="w-5 h-5 opacity-50 group-hover/card:opacity-100 group-hover:opacity-100 transition-opacity" />
               </a>
@@ -227,7 +227,7 @@ export default function BentoGrid() {
               <h3 className="text-xl font-bold font-syne">Education</h3>
             </div>
             
-            <div className="relative pl-8 space-y-2 border-l border-border">
+            <div className="relative pl-8 space-y-2 border-l border-black/10 dark:border-white/10">
               <div className="absolute top-0 left-[-5.5px] w-2.5 h-2.5 rounded-full bg-accent shadow-[0_0_10px_rgba(232,83,58,0.5)]" />
               <p className="text-[11px] font-bold text-accent uppercase tracking-widest">2024 — Present</p>
               <h4 className="text-lg font-bold text-[var(--text)] leading-snug font-syne">

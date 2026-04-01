@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { useChat, Message } from "ai/react";
 
 interface ChatbotContextType {
@@ -20,9 +20,8 @@ const ChatbotContext = createContext<ChatbotContextType | undefined>(undefined);
 
 export const ChatbotProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [hasOpenedBefore, setHasOpenedBefore] = useState(false);
 
-  // useChat from 'ai/react' handles streaming and state automatically
+  // useChat from 'ai/react' matches the v3/v4 stable version.
   const { 
     messages, 
     input, 
@@ -59,9 +58,9 @@ export const ChatbotProvider: React.FC<{ children: React.ReactNode }> = ({ child
     <ChatbotContext.Provider 
       value={{ 
         messages, 
-        input,
-        handleInputChange,
-        handleSubmit,
+        input, 
+        handleInputChange, 
+        handleSubmit, 
         isOpen, 
         isLoading, 
         openChat, 

@@ -134,7 +134,7 @@ export default function AboutPage() {
              {/* Beyond The Screen - Hobbies / Interests */}
              <TiltCard className="p-1 glass-panel">
                 <div className="p-8 md:p-10 space-y-8 border border-white/5">
-                   <div className="flex items-center gap-3 border-b border-border/50 pb-4">
+                   <div className="flex items-center gap-3 border-b border-black/10 dark:border-white/10/50 pb-4">
                       <h3 className="text-sm font-bold uppercase tracking-widest text-accent flex items-center gap-2">
                         <BookOpen className="w-4 h-4" /> Beyond The Screen
                       </h3>
