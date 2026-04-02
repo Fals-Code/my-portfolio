@@ -249,6 +249,34 @@ body.intro-running .hide-on-intro {
   -webkit-transform: translateZ(0);
 }
 
+/* Hardware Accelerated Animations */
+@keyframes float-css {
+  0% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -10px, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+.animate-float-css {
+  animation: float-css 6s ease-in-out infinite;
+}
+
+@keyframes shimmer-css {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-shimmer-css {
+  background: linear-gradient(90deg, transparent, rgba(232,83,58,0.1), transparent);
+  background-size: 200% 100%;
+  animation: shimmer-css 2s infinite;
+}
+
+/* Force hardware acceleration on all transitions */
+* {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
 /* View Transitions API - Theme Toggle Effect */
 ::view-transition-group(root) {
   animation-duration: 0.8s;

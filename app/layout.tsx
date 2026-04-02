@@ -45,7 +45,46 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id" suppressHydrationWarning>
+      <head>
+        <style dangerouslySetInnerHTML={{ __html: `
+          #instant-boot-loader {
+            position: fixed;
+            inset: 0;
+            background: #0a0a0a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease;
+          }
+          #instant-boot-loader.hidden { opacity: 0; pointer-events: none; }
+          .boot-logo { 
+            font-family: sans-serif; 
+            font-weight: 900; 
+            font-size: 2rem; 
+            color: #e8533a; 
+            letter-spacing: -2px;
+            animation: boot-pulse 1s ease-in-out infinite alternate;
+          }
+          @keyframes boot-pulse { 
+            from { opacity: 0.5; transform: scale(0.95); } 
+            to { opacity: 1; transform: scale(1); } 
+          }
+        `}} />
+      </head>
       <body className={`${outfit.variable} ${dmSans.variable} font-dm-sans antialiased mesh-bg min-h-screen relative overflow-x-hidden`}>
+        <div id="instant-boot-loader" suppressHydrationWarning>
+          <div className="boot-logo">FALAH.DEV</div>
+          <script dangerouslySetInnerHTML={{ __html: `
+            window.addEventListener('load', function() {
+              var loader = document.getElementById('instant-boot-loader');
+              if (loader) {
+                loader.classList.add('hidden');
+                setTimeout(function() { loader.remove(); }, 500);
+              }
+            });
+          `}} />
+        </div>
         <ClientLayout>
           <PageTransition>
             {children}

@@ -11,9 +11,8 @@ export default function Loader() {
 
     // If the document is already fully loaded, dismiss immediately
     if (document.readyState === "complete") {
-      // Small delay so the animation has time to render at least once
-      const t = setTimeout(dismiss, 300);
-      return () => clearTimeout(t);
+      dismiss();
+      return;
     }
 
     // Otherwise wait for the actual load event

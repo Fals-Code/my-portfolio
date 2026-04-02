@@ -33,29 +33,29 @@ export default function TerminalIntro() {
       setLines([""]);
       for (let char = 0; char <= fullLines[0].text.length; char++) {
         setLines([fullLines[0].text.substring(0, char)]);
-        await new Promise((r) => setTimeout(r, 40));
+        await new Promise((r) => setTimeout(r, 20));
       }
-      await new Promise((r) => setTimeout(r, 400));
+      await new Promise((r) => setTimeout(r, 250));
       // Line 1: Reply
       setLines((prev) => [prev[0] + "\n" + fullLines[0].reply]);
-      await new Promise((r) => setTimeout(r, 600));
-
+      await new Promise((r) => setTimeout(r, 400));
+ 
       // Line 2: Downloader start
       setLines((prev) => [...prev, ""]);
       for (let char = 0; char <= fullLines[1].text.length; char++) {
         setLines((prev) => [prev[0], fullLines[1].text.substring(0, char)]);
-        await new Promise((r) => setTimeout(r, 30));
+        await new Promise((r) => setTimeout(r, 15));
       }
       
       // Progress Bar Sequence
-      await new Promise((r) => setTimeout(r, 300));
-      for (let p = 0; p <= 100; p += Math.floor(Math.random() * 15) + 5) {
+      await new Promise((r) => setTimeout(r, 200));
+      for (let p = 0; p <= 100; p += Math.floor(Math.random() * 20) + 10) {
         setProgress(Math.min(p, 100));
-        await new Promise((r) => setTimeout(r, Math.random() * 80 + 30));
+        await new Promise((r) => setTimeout(r, Math.random() * 50 + 20));
       }
       setProgress(100);
       
-      await new Promise((r) => setTimeout(r, 400));
+      await new Promise((r) => setTimeout(r, 300));
       // End
       setLines((prev) => [
         prev[0], 
