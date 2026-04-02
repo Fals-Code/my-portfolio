@@ -87,7 +87,7 @@ export default function TerminalIntro() {
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.8 }}
-      className="fixed inset-0 z-[100] bg-[#050505]/90 backdrop-blur-md flex items-center justify-center font-mono p-4 md:p-6"
+      className="fixed inset-0 z-[100] bg-[#050505]/98 flex items-center justify-center font-mono p-4 md:p-6"
       style={{ transform: "translateZ(0)" }}
     >
       <motion.div 

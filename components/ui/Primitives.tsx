@@ -49,7 +49,7 @@ export const Button = ({
   const variants = {
     primary: "bg-accent text-white hover:bg-accent-hover shadow-lg shadow-accent/20",
     secondary: "bg-bg-card border border-black/10 dark:border-white/10 hover:bg-bg-hover text-text",
-    outline: "border border-accent/40 text-accent hover:border-accent hover:bg-accent/5 backdrop-blur-sm"
+    outline: "border border-accent/40 text-accent hover:border-accent hover:bg-accent/5"
   };
 
   const sizes = {

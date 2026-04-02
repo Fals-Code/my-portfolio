@@ -37,7 +37,7 @@ export const springBouncy: Transition = {
  * Penggunaan: Scroll-triggered content, Section entrance.
  */
 export const fadeReveal: Variants = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 30, willChange: "transform" },
   visible: (i: number = 0) => ({
     opacity: 1, 
     y: 0,
@@ -45,6 +45,9 @@ export const fadeReveal: Variants = {
       delay: i * 0.1,
       duration: 0.8,
       ease: [0.16, 1, 0.3, 1] // Quart-out
+    },
+    transitionEnd: {
+      willChange: "auto"
     }
   })
 };

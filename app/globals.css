@@ -124,13 +124,11 @@
   }
 
   .glass-panel {
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--border);
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.95);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
-    /* Force GPU for smoother blur in Safari */
+    /* Force GPU for smoother rendering */
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
   }
@@ -139,13 +137,13 @@
   @supports not (backdrop-filter: blur(1px)) {
     .glass-panel {
       background-color: var(--bg-card);
-      opacity: 0.95;
+      opacity: 0.98;
     }
   }
 
   [data-theme="dark"] .glass-panel {
     border: 1px solid rgba(255, 255, 255, 0.08);
-    background-color: rgba(var(--bg-rgb), 0.7);
+    background-color: rgba(var(--bg-rgb), 0.9);
   }
 
   .mesh-bg {

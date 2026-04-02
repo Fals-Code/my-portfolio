@@ -61,7 +61,7 @@ export default function MusicPlayer() {
               initial={{ opacity: 0, y: 20, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.9 }}
-              className="absolute bottom-full left-0 mb-6 p-6 md:p-8 glass-panel rounded-[2rem] md:rounded-[2.5rem] w-[85vw] md:w-80 space-y-6 md:space-y-8 border border-white/5 bg-bg/60 backdrop-blur-lg shadow-2xl"
+              className="absolute bottom-full left-0 mb-6 p-6 md:p-8 glass-panel rounded-[2rem] md:rounded-[2.5rem] w-[85vw] md:w-80 space-y-6 md:space-y-8 border border-white/5 bg-bg/95 shadow-2xl"
               style={{ transform: "translateZ(0)" }}
             >
               {/* Track Info */}

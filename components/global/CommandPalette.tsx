@@ -78,7 +78,7 @@ export default function CommandPalette() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsOpen(false)}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999]"
+            className="fixed inset-0 bg-black/85 z-[9999]"
           />
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: -20 }}

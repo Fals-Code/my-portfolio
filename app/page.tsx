@@ -1,6 +1,8 @@
-import React from "react";
-import TerminalIntro from "@/components/sections/TerminalIntro";
-import HeroSection from "@/components/sections/HeroSection";
+"use client";
+
+import dynamic from "next/dynamic";
+const TerminalIntro = dynamic(() => import("@/components/sections/TerminalIntro"), { ssr: false });
+const HeroSection = dynamic(() => import("@/components/sections/HeroSection"), { ssr: false });
 import ServicesSection from "@/components/sections/ServicesSection";
 import Link from "next/link";
 import { GradientText } from "@/components/ui/Primitives";

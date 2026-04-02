@@ -88,7 +88,7 @@ export default function Chatbot() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="absolute bottom-full right-0 mb-6 w-[92vw] md:w-[480px] h-[550px] md:h-[650px] max-h-[75vh] glass-panel rounded-3xl md:rounded-[3rem] overflow-hidden flex flex-col shadow-2xl border border-black/5 dark:border-white/5 bg-bg/60 backdrop-blur-lg"
+            className="absolute bottom-full right-0 mb-6 w-[92vw] md:w-[480px] h-[550px] md:h-[650px] max-h-[75vh] glass-panel rounded-3xl md:rounded-[3rem] overflow-hidden flex flex-col shadow-2xl border border-black/5 dark:border-white/5 bg-bg/95"
             style={{ transform: "translateZ(0)" }}
           >
             {/* Header */}
@@ -129,7 +129,7 @@ export default function Chatbot() {
                   <div className={`max-w-[85%] px-6 py-4 rounded-3xl text-[13px] md:text-sm leading-relaxed shadow-sm transform-gpu ${
                     msg.role === "user" 
                       ? "bg-accent text-white rounded-br-sm shadow-accent/20" 
-                      : "bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/10 text-[var(--text)] rounded-bl-sm backdrop-blur-sm"
+                      : "bg-black/5 dark:bg-white/15 border border-black/10 dark:border-white/10 text-[var(--text)] rounded-bl-sm"
                   }`}>
                     <div className="markdown-content">
                       <ReactMarkdown remarkPlugins={[remarkBreaks]}>
@@ -155,7 +155,7 @@ export default function Chatbot() {
             </div>
 
             {/* Input - Consistent White Design */}
-            <form onSubmit={handleSubmit} className="p-6 md:p-8 border-t border-black/5 bg-white backdrop-blur-xl">
+            <form onSubmit={handleSubmit} className="p-6 md:p-8 border-t border-black/5 bg-white dark:bg-bg-card">
               <div className="flex gap-3 items-center">
                 <div className="relative flex-1 group">
                   <input

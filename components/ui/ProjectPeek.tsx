@@ -49,7 +49,7 @@ export default function ProjectPeek({ isVisible, imageSrc, title, category }: Pr
           initial={{ opacity: 0, scale: 0.8, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.8, y: 10 }}
-          className="w-64 h-40 md:w-80 md:h-52 glass-panel p-2 overflow-hidden rounded-2xl shadow-2xl border border-white/20 bg-white/10 backdrop-blur-xl"
+          className="w-64 h-40 md:w-80 md:h-52 glass-panel p-2 overflow-hidden rounded-2xl shadow-2xl border border-white/20 bg-white/30"
         >
           <div className="relative w-full h-full rounded-xl overflow-hidden group">
             <Image 

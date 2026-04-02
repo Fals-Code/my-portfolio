@@ -36,7 +36,7 @@ export default function HeroSection() {
             animate="visible"
             variants={fadeReveal}
             custom={0}
-            className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full glass-panel border-accent/20 bg-accent/5 backdrop-blur-xl"
+            className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full glass-panel border-accent/20 bg-accent/15"
           >
             <span className="relative flex h-2.5 w-2.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>

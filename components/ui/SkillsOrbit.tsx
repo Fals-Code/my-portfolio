@@ -87,12 +87,14 @@ export default function SkillsOrbit() {
       <Canvas 
         dpr={tier === "high" ? [1, 2] : [1, 1]} 
         camera={{ position: [0, 0, 10], fov: 60 }}
+        performance={{ min: 0.5 }}
         gl={{ 
           antialias: tier === "high", 
           powerPreference: "high-performance",
           alpha: true,
           stencil: false,
-          depth: true
+          depth: true,
+          preserveDrawingBuffer: false
         }}
       >
         <Suspense fallback={null}>
