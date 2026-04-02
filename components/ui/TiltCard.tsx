@@ -3,6 +3,7 @@
 import React, { useRef, MouseEvent } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useSound } from "@/hooks/useSound";
+import { usePerformance } from "@/hooks/usePerformance";
 
 interface TiltCardProps {
   children: React.ReactNode;
@@ -11,20 +12,21 @@ interface TiltCardProps {
 
 export default function TiltCard({ children, className }: TiltCardProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const { isLow } = usePerformance();
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  const mouseXSpring = useSpring(x);
-  const mouseYSpring = useSpring(y);
+  const mouseXSpring = useSpring(x, { stiffness: 100, damping: 20 });
+  const mouseYSpring = useSpring(y, { stiffness: 100, damping: 20 });
 
   const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["17.5deg", "-17.5deg"]);
   const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-17.5deg", "17.5deg"]);
 
-  const { playHover, playClick } = useSound();
+  const { playHover } = useSound();
 
   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    if (!ref.current) return;
+    if (!ref.current || isLow) return;
     
     // Play sound on first enter
     if (x.get() === 0 && y.get() === 0) {
@@ -32,7 +34,6 @@ export default function TiltCard({ children, className }: TiltCardProps) {
     }
 
     const rect = ref.current.getBoundingClientRect();
-
     const width = rect.width;
     const height = rect.height;
 
@@ -57,16 +58,17 @@ export default function TiltCard({ children, className }: TiltCardProps) {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{
-        rotateY,
-        rotateX,
-        transformStyle: "preserve-3d",
+        rotateY: isLow ? 0 : rotateY,
+        rotateX: isLow ? 0 : rotateX,
+        transformStyle: isLow ? "flat" : "preserve-3d",
+        perspective: isLow ? "none" : "1000px"
       }}
-      className={`relative h-full w-full rounded-2xl ${className}`}
+      className={`relative h-full w-full rounded-2xl overflow-hidden ${className} transform-gpu`}
     >
       <div 
         style={{
-          transform: "translateZ(75px)",
-          transformStyle: "preserve-3d",
+          transform: isLow ? "none" : "translateZ(75px)",
+          transformStyle: isLow ? "flat" : "preserve-3d",
         }}
         className="h-full w-full"
       >

@@ -12,10 +12,19 @@ import Loader from "@/components/global/Loader";
 import CursorGlow from "@/components/global/CursorGlow";
 import ScrollProgress from "@/components/global/ScrollProgress";
 
-// Dynamic Imports for Heavy Components
+// Dynamic Imports for Heavy Components with Loading Placeholders
 const ThreeBackground = dynamic(() => import("@/components/global/ThreeBackground"), { ssr: false });
-const Chatbot = dynamic(() => import("@/components/global/Chatbot"), { ssr: false });
-const MusicPlayer = dynamic(() => import("@/components/global/MusicPlayer"), { ssr: false });
+
+const Chatbot = dynamic(() => import("@/components/global/Chatbot"), { 
+  ssr: false, 
+  loading: () => <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 w-14 h-14 bg-accent/20 rounded-2xl animate-pulse" />
+});
+
+const MusicPlayer = dynamic(() => import("@/components/global/MusicPlayer"), { 
+  ssr: false, 
+  loading: () => <div className="fixed bottom-4 left-4 md:bottom-6 md:left-6 w-14 h-14 bg-accent/20 rounded-2xl animate-pulse" />
+});
+
 const CommandPalette = dynamic(() => import("@/components/global/CommandPalette"), { ssr: false });
 const BackToTop = dynamic(() => import("@/components/global/BackToTop"), { ssr: false });
 

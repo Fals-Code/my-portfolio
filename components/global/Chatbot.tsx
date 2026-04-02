@@ -88,7 +88,8 @@ export default function Chatbot() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="absolute bottom-full right-0 mb-6 w-[calc(100vw-2rem)] md:w-[480px] h-[550px] md:h-[650px] max-h-[80vh] glass-panel rounded-[2rem] md:rounded-[3rem] overflow-hidden flex flex-col shadow-2xl border border-black/5 dark:border-white/5 bg-bg/60 backdrop-blur-2xl"
+            className="absolute bottom-full right-0 mb-6 w-[92vw] md:w-[480px] h-[550px] md:h-[650px] max-h-[75vh] glass-panel rounded-3xl md:rounded-[3rem] overflow-hidden flex flex-col shadow-2xl border border-black/5 dark:border-white/5 bg-bg/60 backdrop-blur-lg"
+            style={{ transform: "translateZ(0)" }}
           >
             {/* Header */}
             <div className="p-6 md:p-8 bg-accent text-white flex items-center justify-between">

@@ -54,12 +54,21 @@
     color: var(--text);
     font-family: var(--font-dm-sans);
     transition: background-color 0.4s ease, color 0.4s ease;
+    width: 100%;
+    overflow-x: hidden;
+    /* Prevent iOS elastic pull-to-refresh if causing issues, but keep for scroll */
+    position: relative;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-syne);
-    font-weight: 700;
+  html {
+    width: 100%;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
   }
+
+  h1 { font-size: clamp(2.5rem, 8vw, 6rem); }
+  h2 { font-size: clamp(2rem, 6vw, 4rem); }
+  h3 { font-size: clamp(1.5rem, 4vw, 2.5rem); }
 
   ::selection {
     background-color: var(--accent);
@@ -90,6 +99,12 @@
 
   .grid-airy {
     gap: var(--spacing-grid-gap);
+  }
+
+  @media (max-width: 768px) {
+    .grid-airy {
+      gap: 2rem;
+    }
   }
 
   .grid-airy-compact {
@@ -208,11 +223,30 @@ body.intro-running .hide-on-intro {
   animation: spin-reverse-slow 15s linear infinite;
 }
 
-/* Mobile fix: prevent floating buttons from covering content */
+/* Mobile fix: prevent floating buttons from covering content and ensure perfect fit */
 @media (max-width: 768px) {
   main {
-    padding-bottom: 5rem;
+    padding-bottom: 7rem;
+    padding-left: 0;
+    padding-right: 0;
   }
+  .container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    max-width: 100%;
+  }
+  /* Remove heavy blurs on ultra-small or very old screens if needed */
+  @media (max-height: 667px) {
+    .glass-panel {
+      backdrop-filter: blur(8px);
+    }
+  }
+}
+
+/* Force discrete GPU layer for all animated components */
+.transform-gpu {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 /* View Transitions API - Theme Toggle Effect */

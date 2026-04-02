@@ -88,7 +88,8 @@ export default function CodeAnimation() {
         opacity: { duration: 0.8, ease: "easeOut" },
         y: { duration: 6, ease: "easeInOut", repeat: Infinity }
       }}
-      className="relative w-full max-w-lg mx-auto md:mr-0 z-20"
+      className="relative w-full max-w-lg mx-auto md:mr-0 z-20 transform-gpu"
+      style={{ transform: "translateZ(0)" }}
     >
       {/* Decorative glows */}
       <div className="absolute -inset-1 bg-gradient-to-r from-accent to-blue-500 rounded-[2rem] blur-xl opacity-20 group-hover:opacity-40 transition duration-1000"></div>
