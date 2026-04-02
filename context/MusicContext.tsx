@@ -54,6 +54,9 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const nextTrackRef = useRef<() => void>(() => {});
   const initializingRef = useRef(false);
 
+  // YouTube Player initialization removed from mount to save CPU.
+  // It will now be triggered only on user interaction.
+
   const initYouTube = () => {
     if (window.YT && window.YT.Player) {
       setIsApiReady(true);
@@ -64,13 +67,11 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     console.log("MusicContext: Lazy Initializing YouTube API...");
     
-    if (!document.getElementById("yt-iframe-api")) {
-      const tag = document.createElement("script");
-      tag.id = "yt-iframe-api";
-      tag.src = "https://www.youtube.com/iframe_api";
-      const firstScriptTag = document.getElementsByTagName("script")[0];
-      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
-    }
+    const tag = document.createElement("script");
+    tag.id = "yt-iframe-api";
+    tag.src = "https://www.youtube.com/iframe_api";
+    const firstScriptTag = document.getElementsByTagName("script")[0];
+    firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
 
     window.onYouTubeIframeAPIReady = () => {
       console.log("MusicContext: onYouTubeIframeAPIReady fired.");
@@ -78,13 +79,10 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
   };
 
-  // Skip the auto-start useEffect
-
   useEffect(() => {
     if (isApiReady && !playerRef.current) {
       console.log("MusicContext: Creating YT player...");
       
-      // Ensure container exists and is unique
       let playerContainer = document.getElementById("yt-player-persistent");
       if (!playerContainer) {
         playerContainer = document.createElement("div");
@@ -99,7 +97,7 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           width: "0",
           videoId: PLAYLIST[currentTrackIndex].id,
           playerVars: {
-            autoplay: 0,
+            autoplay: 1, // Start immediately since this is user-triggered
             controls: 0,
             disablekb: 1,
             fs: 0,
@@ -111,25 +109,14 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           events: {
             onReady: (event: any) => {
               console.log("MusicContext: Player Ready.");
-              if (event.target && typeof event.target.cueVideoById === 'function') {
-                event.target.cueVideoById(PLAYLIST[0].id);
-              }
               setIsPlayerReady(true);
+              event.target.playVideo();
             },
             onStateChange: (event: any) => {
-              // YT.PlayerState.PLAYING = 1, PAUSED = 2, ENDED = 0
-              console.log("MusicContext: State Change ->", event.data);
               if (event.data === 1) setIsPlaying(true);
               else if (event.data === 2) setIsPlaying(false);
-              else if (event.data === 0) {
-                console.log("MusicContext: Track Ended. Playing next...");
-                nextTrackRef.current();
-              }
+              else if (event.data === 0) nextTrackRef.current();
             },
-            onError: (event: any) => {
-              console.error("MusicContext: Player Error ->", event.data);
-              // Possible errors: 2 (invalid param), 5 (HTML5 error), 100 (not found), 101/150 (not embeddable)
-            }
           },
         });
       } catch (err) {

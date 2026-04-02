@@ -56,6 +56,7 @@
     background-color: var(--bg);
     color: var(--text);
     font-family: var(--font-dm-sans);
+    transition: background-color 0.2s ease, color 0.2s ease;
     width: 100%;
     overflow-x: hidden;
     position: relative;
@@ -127,8 +128,8 @@
   .glass-panel {
     border: 1px solid var(--border);
     background-color: rgba(255, 255, 255, 0.95);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
     /* Force GPU for smoother rendering */
     transform: translateZ(0);
     -webkit-transform: translateZ(0);

@@ -20,8 +20,17 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsScrolled(window.scrollY > 20);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -58,25 +67,22 @@ export default function Navbar() {
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-12">
           {navLinks.map((link) => (
-            <Magnetic key={link.href} amount={0.2}>
-              <Link 
-                href={link.href} 
-                className={`text-[10px] font-bold uppercase tracking-[0.3em] transition-all hover:text-accent p-2 ${
-                  pathname === link.href ? "text-accent" : "text-text-muted"
-                }`}
-              >
-                {link.label}
-              </Link>
-            </Magnetic>
-          ))}
-          <Magnetic amount={0.3}>
-            <button 
-              onClick={(e) => toggleTheme(e)} 
-              className="p-3 rounded-2xl glass-panel hover:bg-white/5 transition-all outline-none"
+            <Link 
+              key={link.href}
+              href={link.href} 
+              className={`text-[10px] font-bold uppercase tracking-[0.3em] transition-all hover:text-accent p-2 ${
+                pathname === link.href ? "text-accent" : "text-text-muted"
+              }`}
             >
-              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-            </button>
-          </Magnetic>
+              {link.label}
+            </Link>
+          ))}
+          <button 
+            onClick={(e) => toggleTheme(e)} 
+            className="p-3 rounded-2xl glass-panel hover:bg-white/5 transition-all outline-none"
+          >
+            {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
         </div>
 
         {/* Mobile Toggle */}
