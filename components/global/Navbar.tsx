@@ -25,15 +25,19 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Body Scroll Lock for Menu/Drawers
+  // Body Scroll Lock - Improved to prevent layout shifts
   useEffect(() => {
     if (isOpen) {
+      const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
       document.body.style.overflow = "hidden";
+      document.body.style.paddingRight = `${scrollBarWidth}px`;
     } else {
       document.body.style.overflow = "unset";
+      document.body.style.paddingRight = "0px";
     }
     return () => {
       document.body.style.overflow = "unset";
+      document.body.style.paddingRight = "0px";
     };
   }, [isOpen]);
 
@@ -109,11 +113,11 @@ export default function Navbar() {
       <AnimatePresence>
         {isOpen && (
           <motion.div 
-            initial={{ x: "100%" }}
+            initial={{ x: "105%" }} // Slightly more to hide shadow bleed
             animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="md:hidden fixed top-0 right-0 h-[100dvh] w-[82vw] md:w-[60vw] bg-[var(--bg)] border-l border-[var(--border)] dark:border-accent/20 z-[101] p-8 md:p-12 flex flex-col justify-between shadow-2xl transition-colors duration-400 rounded-l-[2rem] md:rounded-l-[3.5rem] transform-gpu overflow-hidden"
+            exit={{ x: "105%" }}
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }} // Smoother ease-out
+            className="md:hidden fixed top-0 right-0 h-[100dvh] w-[82vw] md:w-[60vw] bg-[var(--bg)] border-l border-[var(--border)] dark:border-accent/20 z-[101] p-8 md:p-12 flex flex-col justify-between shadow-2xl transition-colors duration-200 rounded-l-[2rem] md:rounded-l-[3.5rem] transform-gpu overflow-hidden"
             style={{ willChange: "transform" }}
           >
             <div className="space-y-10">
@@ -134,9 +138,13 @@ export default function Navbar() {
                 {navLinks.map((link, i) => (
                   <motion.div
                     key={link.href}
-                    initial={{ opacity: 0, x: 20 }}
+                    initial={{ opacity: 0, x: 30 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.1 + i * 0.05 }}
+                    transition={{ 
+                      delay: 0.3 + i * 0.08, // Increased initial delay to let drawer slide first
+                      duration: 0.5,
+                      ease: "easeOut"
+                    }}
                   >
                     <Link 
                       href={link.href} 
