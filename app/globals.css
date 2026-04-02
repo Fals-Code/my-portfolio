@@ -56,10 +56,8 @@
     background-color: var(--bg);
     color: var(--text);
     font-family: var(--font-dm-sans);
-    transition: background-color 0.4s ease, color 0.4s ease;
     width: 100%;
     overflow-x: hidden;
-    /* Prevent iOS elastic pull-to-refresh if causing issues, but keep for scroll */
     position: relative;
   }
 
@@ -276,7 +274,7 @@ body.intro-running .hide-on-intro {
 }
 
 /* Force hardware acceleration on all transitions */
-* {
+.glass-panel, .transform-gpu {
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
 }

@@ -7,16 +7,16 @@ import { usePerformance } from "@/hooks/usePerformance";
 import * as THREE from "three";
 
 function Scene({ tier }: { tier: string }) {
-  const { viewport } = useThree();
+  const { viewport, invalidate } = useThree();
   const meshRef = useRef<THREE.Mesh>(null!);
   const mouse = useRef({ x: 0, y: 0 });
 
-  // Geometry segments based on performance tier
+  // Geometry segments based on performance tier - Reduced more for performance
   const segments = useMemo(() => {
     switch (tier) {
-      case "high": return [1, 100, 200];
-      case "medium": return [1, 40, 80];
-      default: return [1, 16, 32];
+      case "high": return [1, 80, 160];
+      case "medium": return [1, 32, 64];
+      default: return [1, 12, 24];
     }
   }, [tier]);
 
@@ -24,10 +24,11 @@ function Scene({ tier }: { tier: string }) {
     const handleMouseMove = (e: MouseEvent) => {
       mouse.current.x = (e.clientX / window.innerWidth) * 2 - 1;
       mouse.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      invalidate(); // Trigger a single frame render
     };
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+  }, [invalidate]);
 
   useFrame((state) => {
     if (!meshRef.current) return;
@@ -80,8 +81,9 @@ export default function ThreeBackground() {
   if (isLow) return <div className="fixed inset-0 mesh-bg opacity-30 z-0" />;
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 opacity-40 dark:opacity-30">
+    <div className="fixed inset-0 pointer-events-none z-0 opacity-15 dark:opacity-20 translate-z-0">
       <Canvas
+        frameloop="demand" // Only renders on request
         camera={{ position: [0, 0, 5], fov: 75 }}
         gl={{ 
           antialias: tier === "high", 

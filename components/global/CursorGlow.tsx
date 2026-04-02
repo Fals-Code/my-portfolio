@@ -12,8 +12,8 @@ export default function CursorGlow() {
   const { isLow } = usePerformance();
 
   useEffect(() => {
-    // Disable on mobile or low-end devices
-    if (isLow) return;
+    // Disable on mobile, tablets or low-end devices
+    if (isLow || window.innerWidth < 1024) return;
 
     const glow = glowRef.current;
     if (!glow) return;
