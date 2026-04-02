@@ -25,6 +25,18 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Body Scroll Lock for Menu/Drawers
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
+
   const navLinks = [
     { label: "Home", href: "/" },
     { label: "About", href: "/about" },
@@ -33,9 +45,9 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className={`hide-on-intro fixed top-0 w-full transition-all duration-500 ${isOpen ? "z-[150]" : "z-50"} ${isScrolled ? "glass-panel py-3" : "bg-transparent py-4 md:py-8"}`}>
-      <div className="max-w-7xl mx-auto px-10 flex items-center justify-between relative z-[100]">
-        <Link href="/" className="text-3xl font-syne font-extrabold text-[var(--text)] hover:text-accent transition-colors">
+    <nav className={`hide-on-intro fixed top-0 w-full transition-[background,padding,box-shadow,color] duration-500 ease-in-out transform-gpu ${isOpen ? "z-[150]" : "z-50"} ${isScrolled ? "glass-panel py-3 shadow-sm shadow-black/5" : "bg-transparent py-4 md:py-7"}`} style={{ willChange: "padding, background" }}>
+      <div className="max-w-7xl mx-auto px-6 md:px-10 flex items-center justify-between relative z-[100]">
+        <Link href="/" className="text-2xl md:text-3xl font-syne font-extrabold text-[var(--text)] hover:text-accent transition-colors">
           Falah.
         </Link>
 
@@ -64,12 +76,18 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Toggle */}
-        <div className="md:hidden flex items-center gap-4">
-          <button onClick={(e) => toggleTheme(e)} className="p-3 rounded-2xl glass-panel">
+        <div className="md:hidden flex items-center gap-3">
+          <button 
+            onClick={(e) => toggleTheme(e)} 
+            className="p-3 rounded-2xl glass-panel relative z-[160]"
+          >
             {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
-          <button onClick={() => setIsOpen(!isOpen)} className="p-2">
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          <button 
+            onClick={() => setIsOpen(!isOpen)} 
+            className="p-2 relative z-[160]"
+          >
+            {isOpen ? <X className="w-6 h-6 text-accent" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
       </div>
@@ -82,7 +100,7 @@ export default function Navbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsOpen(false)}
-            className="md:hidden fixed inset-0 bg-black/60 z-[90]"
+            className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[90]"
           />
         )}
       </AnimatePresence>
@@ -94,20 +112,21 @@ export default function Navbar() {
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
-            transition={{ type: "spring", damping: 30, stiffness: 200 }}
-            className="md:hidden fixed top-0 right-0 h-screen w-[85%] bg-[var(--bg)] border-l border-[var(--border)] dark:border-accent/20 z-[101] p-12 flex flex-col justify-between shadow-2xl transition-colors duration-400 rounded-l-[3.5rem]"
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="md:hidden fixed top-0 right-0 h-[100dvh] w-[82vw] md:w-[60vw] bg-[var(--bg)] border-l border-[var(--border)] dark:border-accent/20 z-[101] p-8 md:p-12 flex flex-col justify-between shadow-2xl transition-colors duration-400 rounded-l-[2rem] md:rounded-l-[3.5rem] transform-gpu overflow-hidden"
+            style={{ willChange: "transform" }}
           >
-            <div className="space-y-14">
+            <div className="space-y-10">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-1.5 bg-accent rounded-full" />
-                  <span className="text-2xl font-syne font-black tracking-tighter text-accent">Menu.</span>
+                  <div className="h-8 w-1.5 bg-accent rounded-full" />
+                  <span className="text-xl font-syne font-black tracking-tighter text-accent">Navigation.</span>
                 </div>
                 <button 
                   onClick={() => setIsOpen(false)}
-                  className="p-4 bg-black/5 dark:bg-white/5 rounded-2xl hover:bg-accent/10 transition-colors group"
+                  className="p-3 bg-black/5 dark:bg-white/5 rounded-xl hover:bg-accent/10 transition-colors group"
                 >
-                  <X className="w-5 h-5 text-[var(--text)] group-hover:rotate-90 transition-transform duration-300" />
+                  <X className="w-4 h-4" />
                 </button>
               </div>
 
