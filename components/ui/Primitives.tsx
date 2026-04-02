@@ -7,28 +7,28 @@ import { Slot } from "@radix-ui/react-slot";
 import { springSnappy, springBouncy } from "@/lib/motion-tokens";
 import Magnetic from "./Magnetic";
 
-export const SectionLabel = ({ children }: { children: React.ReactNode }) => (
+export const SectionLabel = React.memo(({ children }: { children: React.ReactNode }) => (
   <div className="inline-flex items-center gap-3 mb-6">
     <div className="w-8 h-px bg-accent/30" />
     <span className="text-[12px] font-bold uppercase tracking-[0.25em] text-accent">
       {children}
     </span>
   </div>
-);
+));
 
-export const GradientText = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
+export const GradientText = React.memo(({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
   <span className={`gradient-text ${className}`}>
     {children}
   </span>
-);
+));
 
-export const GlassPanel = ({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
+export const GlassPanel = React.memo(({ children, className = "" }: { children: React.ReactNode, className?: string }) => (
   <div className={`glass-panel p-8 rounded-[2.5rem] ${className}`}>
     {children}
   </div>
-);
+));
 
-export const Button = ({ 
+export const Button = React.memo(({ 
   children, 
   variant = "primary", 
   size = "md",
@@ -81,4 +81,4 @@ export const Button = ({
       </Comp>
     </Magnetic>
   );
-};
+});

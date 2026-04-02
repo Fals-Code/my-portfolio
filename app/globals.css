@@ -98,6 +98,9 @@
   .section-pad {
     padding-top: var(--spacing-section-pad);
     padding-bottom: var(--spacing-section-pad);
+    /* Performance: Skip rendering off-screen sections */
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 500px;
   }
 
   .grid-airy {

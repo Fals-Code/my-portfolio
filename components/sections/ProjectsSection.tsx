@@ -66,14 +66,12 @@ export default function ProjectsSection() {
         </div>
 
         <motion.div 
-          layout
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-airy"
         >
-          <AnimatePresence mode="popLayout">
+          <AnimatePresence>
             {filteredProjects.map((proj, index) => (
               <motion.div
                 key={proj.id}
-                layout
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
@@ -100,6 +98,8 @@ export default function ProjectsSection() {
                          alt={proj.title} 
                          fill 
                          priority={index <= 1}
+                         decoding="async"
+                         loading={index <= 1 ? "eager" : "lazy"}
                          className="object-cover group-hover:scale-105 transition-transform duration-700"
                        />
                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
