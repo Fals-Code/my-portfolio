@@ -20,7 +20,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   useEffect(() => {
     // 1. Check localStorage
-    const savedTheme = localStorage.getItem("falah-theme") as Theme;
+    const savedTheme = localStorage.getItem("falah-theme-v2") as Theme;
     
     // Default to 'light' if no preference saved, ignoring system preference
     const initialTheme = savedTheme || "light";
@@ -36,7 +36,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     // Fallback for browsers that don't support View Transitions API
     if (!(document as any).startViewTransition) {
       setTheme(newTheme);
-      localStorage.setItem("falah-theme", newTheme);
+      localStorage.setItem("falah-theme-v2", newTheme);
       document.documentElement.setAttribute("data-theme", newTheme);
       return;
     }
@@ -55,7 +55,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     (document as any).startViewTransition(() => {
       setTheme(newTheme);
-      localStorage.setItem("falah-theme", newTheme);
+      localStorage.setItem("falah-theme-v2", newTheme);
       document.documentElement.setAttribute("data-theme", newTheme);
     });
   };
