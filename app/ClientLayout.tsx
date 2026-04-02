@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { useEffect } from "react";
+import dynamic from "next/dynamic";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { MusicProvider } from "@/context/MusicContext";
 import { ChatbotProvider } from "@/context/ChatbotContext";
@@ -10,12 +10,14 @@ import Navbar from "@/components/global/Navbar";
 import Footer from "@/components/global/Footer";
 import Loader from "@/components/global/Loader";
 import CursorGlow from "@/components/global/CursorGlow";
-import MusicPlayer from "@/components/global/MusicPlayer";
-import Chatbot from "@/components/global/Chatbot";
-import BackToTop from "@/components/global/BackToTop";
-import CommandPalette from "@/components/global/CommandPalette";
-import ThreeBackground from "@/components/global/ThreeBackground";
 import ScrollProgress from "@/components/global/ScrollProgress";
+
+// Dynamic Imports for Heavy Components
+const ThreeBackground = dynamic(() => import("@/components/global/ThreeBackground"), { ssr: false });
+const Chatbot = dynamic(() => import("@/components/global/Chatbot"), { ssr: false });
+const MusicPlayer = dynamic(() => import("@/components/global/MusicPlayer"), { ssr: false });
+const CommandPalette = dynamic(() => import("@/components/global/CommandPalette"), { ssr: false });
+const BackToTop = dynamic(() => import("@/components/global/BackToTop"), { ssr: false });
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
