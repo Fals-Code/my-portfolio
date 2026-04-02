@@ -22,10 +22,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     // 1. Check localStorage
     const savedTheme = localStorage.getItem("falah-theme") as Theme;
     
-    // 2. Check system preference if no saved theme
-    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-    
-    const initialTheme = savedTheme || systemTheme;
+    // Default to 'light' if no preference saved, ignoring system preference
+    const initialTheme = savedTheme || "light";
     
     setTheme(initialTheme);
     document.documentElement.setAttribute("data-theme", initialTheme);
