@@ -89,8 +89,8 @@ export default function AboutPage() {
                   src="/assets/imgs/falah.jpeg" 
                   alt="Ahmad Mathlaul Falah" 
                   fill 
+                  priority
                   className="object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
-                  unoptimized
                />
                <div className="absolute bottom-6 left-6 right-6 z-20">
                   <div className="glass-panel p-6 rounded-3xl backdrop-blur-xl bg-black/60 border-white/10 space-y-4">

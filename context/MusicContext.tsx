@@ -52,34 +52,33 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isApiReady, setIsApiReady] = useState(false);
   const [isPlayerReady, setIsPlayerReady] = useState(false);
   const nextTrackRef = useRef<() => void>(() => {});
+  const initializingRef = useRef(false);
 
-  useEffect(() => {
-    // 1. Load the YouTube IFrame API script
-    console.log("MusicContext: Initializing YouTube API...");
-    
+  const initYouTube = () => {
     if (window.YT && window.YT.Player) {
-      console.log("MusicContext: YouTube API already exists.");
       setIsApiReady(true);
-    } else {
-      // Check if tag already exists to avoid duplicates
-      if (!document.getElementById("yt-iframe-api")) {
-        const tag = document.createElement("script");
-        tag.id = "yt-iframe-api";
-        tag.src = "https://www.youtube.com/iframe_api";
-        tag.onerror = () => {
-          console.error("MusicContext: Failed to load YouTube IFrame API script.");
-        };
-        const firstScriptTag = document.getElementsByTagName("script")[0];
-        firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
-        console.log("MusicContext: YouTube script tag injected.");
-      }
-
-      window.onYouTubeIframeAPIReady = () => {
-        console.log("MusicContext: onYouTubeIframeAPIReady fired.");
-        setIsApiReady(true);
-      };
+      return;
     }
-  }, []);
+    if (initializingRef.current) return;
+    initializingRef.current = true;
+
+    console.log("MusicContext: Lazy Initializing YouTube API...");
+    
+    if (!document.getElementById("yt-iframe-api")) {
+      const tag = document.createElement("script");
+      tag.id = "yt-iframe-api";
+      tag.src = "https://www.youtube.com/iframe_api";
+      const firstScriptTag = document.getElementsByTagName("script")[0];
+      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+    }
+
+    window.onYouTubeIframeAPIReady = () => {
+      console.log("MusicContext: onYouTubeIframeAPIReady fired.");
+      setIsApiReady(true);
+    };
+  };
+
+  // Skip the auto-start useEffect
 
   useEffect(() => {
     if (isApiReady && !playerRef.current) {
@@ -148,6 +147,12 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [currentTrackIndex, isPlayerReady]);
 
   const togglePlay = () => {
+    if (!isApiReady) {
+      initYouTube();
+      // Delay the actual call to allow API to init if needed
+      setTimeout(() => togglePlay(), 500);
+      return;
+    }
     if (!isPlayerReady || !playerRef.current) return;
     
     if (isPlaying) {
@@ -184,6 +189,10 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const nextTrack = () => {
+    if (!isApiReady) {
+      initYouTube();
+      return;
+    }
     const nextIndex = (currentTrackIndex + 1) % PLAYLIST.length;
     setCurrentTrackIndex(nextIndex);
     if (isPlayerReady && playerRef.current && typeof playerRef.current.loadVideoById === "function") {
@@ -202,6 +211,10 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const prevTrack = () => {
+    if (!isApiReady) {
+      initYouTube();
+      return;
+    }
     const prevIndex = (currentTrackIndex - 1 + PLAYLIST.length) % PLAYLIST.length;
     setCurrentTrackIndex(prevIndex);
     if (isPlayerReady && playerRef.current && typeof playerRef.current.loadVideoById === "function") {

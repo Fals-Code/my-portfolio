@@ -70,7 +70,7 @@ export default function ProjectsSection() {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-airy"
         >
           <AnimatePresence mode="popLayout">
-            {filteredProjects.map((proj) => (
+            {filteredProjects.map((proj, index) => (
               <motion.div
                 key={proj.id}
                 layout
@@ -99,7 +99,8 @@ export default function ProjectsSection() {
                          src={proj.image} 
                          alt={proj.title} 
                          fill 
-                         className="object-cover group-hover:scale-105 transition-transform duration-700 unoptimized"
+                         priority={index <= 1}
+                         className="object-cover group-hover:scale-105 transition-transform duration-700"
                        />
                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     </div>
