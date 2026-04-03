@@ -242,8 +242,22 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
 export const useMusic = () => {
   const context = useContext(MusicContext);
+  // Safe fallback to prevent crashes on mobile where Provider is skipped for performance
   if (context === undefined) {
-    throw new Error("useMusic must be used within a MusicProvider");
+    return {
+      isPlaying: false,
+      currentTrack: null,
+      volume: 0,
+      isMuted: true,
+      sfxEnabled: false,
+      isPlayerReady: false,
+      togglePlay: () => {},
+      setVolume: () => {},
+      toggleMute: () => {},
+      toggleSfx: () => {},
+      nextTrack: () => {},
+      prevTrack: () => {},
+    };
   }
   return context;
 };

@@ -92,9 +92,10 @@ export default function ProjectsSection() {
                          alt={proj.title} 
                          fill 
                          quality={60}
+                         loading={index <= 1 ? "eager" : "lazy"}
                          priority={index <= 1}
                          decoding="async"
-                         sizes="(max-width: 768px) 100vw, 33vw"
+                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                          className="object-cover"
                        />
                     </div>
@@ -172,6 +173,8 @@ export default function ProjectsSection() {
                           src={proj.image} 
                           alt={proj.title} 
                           fill 
+                          quality={60}
+                          loading={index <= 1 ? "eager" : "lazy"}
                           priority={index <= 1} 
                           decoding="async" 
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

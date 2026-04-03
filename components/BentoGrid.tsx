@@ -20,7 +20,7 @@ import dynamic from "next/dynamic";
 // Dynamic Import for heavy 3D components if any
 const SkillsOrbit = dynamic(() => import("./ui/SkillsOrbit"), { 
     ssr: false,
-    loading: () => <div className="w-full h-full bg-accent/5 animate-pulse rounded-[2.5rem]" />
+    loading: () => <div className="w-full h-full bg-accent/5 rounded-[2.5rem]" />
 });
 
 // Performance-optimized animation variants
@@ -129,7 +129,7 @@ export default function BentoGrid() {
             ) : (
                 <div className="absolute inset-0 flex flex-col items-center justify-center p-12 text-center space-y-6">
                     <div className="w-20 h-20 rounded-full bg-accent/10 flex items-center justify-center">
-                        <Globe className="w-10 h-10 text-accent animate-pulse" />
+                        <Globe className="w-10 h-10 text-accent" />
                     </div>
                     <div className="space-y-2">
                         <h3 className="text-2xl font-syne font-bold text-[var(--text)]">Cloud Infrastructure</h3>

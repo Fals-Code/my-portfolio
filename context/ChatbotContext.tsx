@@ -77,8 +77,20 @@ export const ChatbotProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
 export const useChatbot = () => {
   const context = useContext(ChatbotContext);
+  // Safe fallback to prevent crashes on mobile where Provider is skipped for performance
   if (context === undefined) {
-    throw new Error("useChatbot must be used within a ChatbotProvider");
+    return {
+      messages: [],
+      input: "",
+      handleInputChange: () => {},
+      handleSubmit: () => {},
+      isOpen: false,
+      isLoading: false,
+      openChat: () => {},
+      closeChat: () => {},
+      toggleChat: () => {},
+      clearMessages: () => {},
+    };
   }
   return context;
 };

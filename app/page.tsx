@@ -4,8 +4,8 @@ import dynamic from "next/dynamic";
 const TerminalIntro = dynamic(() => import("@/components/sections/TerminalIntro"), { ssr: false });
 const HeroSection = dynamic(() => import("@/components/sections/HeroSection"), { ssr: false });
 const HeroSectionStatic = dynamic(() => import("@/components/sections/HeroSection.static"), { ssr: false });
-import ServicesSection from "@/components/sections/ServicesSection";
-import ServicesSectionStatic from "@/components/sections/ServicesSection.static";
+const ServicesSection = dynamic(() => import("@/components/sections/ServicesSection"), { ssr: false });
+const ServicesSectionStatic = dynamic(() => import("@/components/sections/ServicesSection.static"), { ssr: false });
 import Link from "next/link";
 import { GradientText } from "@/components/ui/Primitives";
 
@@ -39,7 +39,7 @@ export default function HomePage() {
         </p>
         <Link 
           href="/contact"
-          className={`inline-flex items-center gap-2 bg-accent text-white px-10 py-5 rounded-2xl text-[10px] font-bold uppercase tracking-widest ${isMobileDevice ? "active:scale-95 transition-none" : "hover:bg-accent-hover transition-all"}`}
+          className={`inline-flex items-center gap-2 bg-accent text-white px-10 py-5 rounded-2xl text-[10px] font-bold uppercase tracking-widest ${isMobileDevice ? "active:scale-95" : "hover:bg-accent-hover transition-all"}`}
         >
           Start a Conversation →
         </Link>

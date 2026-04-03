@@ -10,8 +10,9 @@ import { usePerformance } from "@/hooks/usePerformance";
 import Navbar from "@/components/global/Navbar";
 import Footer from "@/components/global/Footer";
 import Loader from "@/components/global/Loader";
-import CursorGlow from "@/components/global/CursorGlow";
-import ScrollProgress from "@/components/global/ScrollProgress";
+// Dynamic Imports for Global UI (Desktop Only)
+const ScrollProgress = dynamic(() => import("@/components/global/ScrollProgress"), { ssr: false });
+const CursorGlow = dynamic(() => import("@/components/global/CursorGlow"), { ssr: false });
 
 // Dynamic Imports for Heavy Components
 const ThreeBackground = dynamic(() => import("@/components/global/ThreeBackground"), { ssr: false });
@@ -67,13 +68,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   }, [isMobileDevice]);
 
   useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker
-          .register("/sw.js")
-          .catch((err) => console.log("Service Worker failed:", err));
-      });
-    }
+    // Moved Service Worker registration to layout.tsx as an inline script for faster TTI
   }, []);
 
   return (
@@ -86,7 +81,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       <MainContent>{children}</MainContent>
 
       {/* 2. Isolated UI Features - They have their own providers locally */}
-      {isIntroFinished && (
+      {isIntroFinished && !isMobileDevice && (
         <>
           <MusicProvider>
             <MusicPlayerUI />
@@ -96,11 +91,13 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             <ChatbotUI />
           </ChatbotProvider>
           
-          {!isMobileDevice && <BackToTop />}
+          <BackToTop />
           <CommandPalette />
-          {!isMobileDevice && <ThreeBackground />}
+          <ThreeBackground />
         </>
       )}
+      
+      {/* 3. Essential Mobile-Friendly Overlay Tools (if any, currently none) */}
     </ThemeProvider>
   );
 }

@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useSound } from "@/hooks/useSound";
+import { usePerformance } from "@/hooks/usePerformance";
 import { Slot } from "@radix-ui/react-slot";
 import { springSnappy, springBouncy } from "@/lib/motion-tokens";
 import Magnetic from "./Magnetic";
@@ -43,7 +44,8 @@ export const Button = React.memo(({
   onClick?: (e?: React.MouseEvent) => void;
   className?: string;
 }) => {
-  const Comp = asChild ? Slot : motion.button;
+  const { isLow } = usePerformance();
+  const Comp = asChild ? Slot : (isLow ? "button" : motion.button);
   const { playHover, playClick } = useSound();
   
   const variants = {
@@ -58,7 +60,7 @@ export const Button = React.memo(({
     lg: "px-10 py-5 text-base"
   };
 
-  const motionProps = asChild ? {} : {
+  const motionProps = (asChild || isLow) ? {} : {
     whileHover: { scale: 1.02 },
     whileTap: { scale: 0.98 },
     transition: springSnappy // Snappy character for button feedback
@@ -70,12 +72,12 @@ export const Button = React.memo(({
   };
 
   return (
-    <Magnetic amount={0.15}>
+    <Magnetic amount={0.15} disabledOnMobile={true}>
       <Comp
         {...motionProps}
-        onMouseEnter={() => playHover()}
+        onMouseEnter={() => !isLow && playHover()}
         onClick={handleInteraction}
-        className={`rounded-2xl font-bold transition-all uppercase tracking-[0.15em] inline-flex items-center justify-center ${variants[variant]} ${sizes[size]} ${className}`}
+        className={`rounded-2xl font-bold transition-all uppercase tracking-[0.15em] inline-flex items-center justify-center ${variants[variant]} ${sizes[size]} ${className} ${isLow ? "active:scale-[0.98]" : ""}`}
       >
         {children}
       </Comp>
