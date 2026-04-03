@@ -268,7 +268,7 @@ export default async function CaseStudyPage({ params }: { params: any }) {
 
           {/* Powered By (4x1 Bottom) */}
           <div className="md:col-span-4 mt-12 mb-12">
-             <TiltCard className="p-1 glass-panel bg-transparent border-dashed border-border">
+             <TiltCard className="p-1 glass-panel bg-transparent border-dashed border-[var(--border)]">
                 <div className="p-10 flex flex-col md:flex-row items-center justify-center gap-12 text-center md:text-left">
                    <div className="space-y-2">
                      <h3 className="text-[11px] font-bold uppercase tracking-[0.4em] text-text-muted">Built With</h3>

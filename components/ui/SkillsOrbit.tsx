@@ -82,8 +82,32 @@ function Cloud({ count = 8, radius = 5, tier }: { count?: number; radius?: numbe
 export default function SkillsOrbit() {
   const { tier, isLow } = usePerformance();
 
+  if (isLow) {
+    const skills = [
+      "Laravel", "MySQL", "PHP", 
+      "Docker", "Git", "TypeScript", 
+      "React", "Node.js", "Redis", 
+      "PostgreSQL", "Inertia", "API"
+    ];
+
+    return (
+      <div className="w-full py-8">
+        <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
+          {skills.map((skill) => (
+            <div 
+              key={skill} 
+              className="flex items-center justify-center p-3 rounded-2xl glass-panel border-white/5 bg-white/2 hover:bg-accent/10 transition-colors duration-300"
+            >
+              <span className="text-xs font-bold uppercase tracking-wider text-text-muted">{skill}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full h-[280px] md:h-[400px] cursor-grab active:cursor-grabbing transform-gpu">
+    <div className="w-full h-[320px] md:h-[400px] cursor-grab active:cursor-grabbing transform-gpu">
       <Canvas 
         dpr={tier === "high" ? [1, 2] : [1, 1]} 
         camera={{ position: [0, 0, 10], fov: 60 }}

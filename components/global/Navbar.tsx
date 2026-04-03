@@ -8,6 +8,7 @@ import { Sun, Moon, Menu, X, Mail, ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Magnetic from "../ui/Magnetic";
 import { GitHub, Instagram } from "../ui/Icons";
+import { usePerformance } from "@/hooks/usePerformance";
 
 /**
  * Global Navigation Component.
@@ -16,6 +17,7 @@ import { GitHub, Instagram } from "../ui/Icons";
 export default function Navbar() {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
+  const { isLow } = usePerformance();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -116,13 +118,13 @@ export default function Navbar() {
       </AnimatePresence>
 
       {/* The Tech Drawer */}
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {isOpen && (
           <motion.div 
-            initial={{ x: "105%" }} // Slightly more to hide shadow bleed
+            initial={{ x: "105%" }}
             animate={{ x: 0 }}
             exit={{ x: "105%" }}
-            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }} // Smoother ease-out
+            transition={isLow ? { duration: 0.3, ease: "easeOut" } : { duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
             className="md:hidden fixed top-0 right-0 h-[100dvh] w-[82vw] md:w-[60vw] bg-[var(--bg)] border-l border-[var(--border)] dark:border-accent/20 z-[101] p-8 md:p-12 flex flex-col justify-between shadow-2xl transition-colors duration-200 rounded-l-[2rem] md:rounded-l-[3.5rem] transform-gpu overflow-hidden"
             style={{ willChange: "transform" }}
           >
@@ -144,11 +146,11 @@ export default function Navbar() {
                 {navLinks.map((link, i) => (
                   <motion.div
                     key={link.href}
-                    initial={{ opacity: 0, x: 30 }}
+                    initial={isLow ? { opacity: 0 } : { opacity: 0, x: 30 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ 
-                      delay: 0.3 + i * 0.08, // Increased initial delay to let drawer slide first
-                      duration: 0.5,
+                      delay: isLow ? (i * 0.05) : (0.2 + i * 0.08),
+                      duration: 0.4,
                       ease: "easeOut"
                     }}
                   >
@@ -169,7 +171,6 @@ export default function Navbar() {
 
             {/* Drawer Footer */}
             <div className="space-y-12">
-              {/* Simple & Elegant Theme Switcher */}
               <div 
                  onClick={(e) => toggleTheme(e)}
                  className="flex items-center justify-between p-6 rounded-[2rem] bg-[var(--bg-card)] border border-[var(--border)] cursor-pointer hover:bg-[var(--bg-hover)] transition-all"

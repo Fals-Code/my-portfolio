@@ -68,9 +68,10 @@
     -webkit-text-size-adjust: 100%;
   }
 
-  h1 { font-size: clamp(2.5rem, 8vw, 6rem); }
-  h2 { font-size: clamp(2rem, 6vw, 4rem); }
-  h3 { font-size: clamp(1.5rem, 4vw, 2.5rem); }
+  h1 { font-size: clamp(2.2rem, 10vw, 5rem); line-height: 1.1; letter-spacing: -0.02em; }
+  h2 { font-size: clamp(1.8rem, 8vw, 3.5rem); line-height: 1.2; }
+  h3 { font-size: clamp(1.4rem, 6vw, 2.2rem); }
+  p { font-size: clamp(0.95rem, 4vw, 1.125rem); line-height: 1.6; }
 
   ::selection {
     background-color: var(--accent);
@@ -95,8 +96,8 @@
 
 @layer components {
   .section-pad {
-    padding-top: var(--spacing-section-pad);
-    padding-bottom: var(--spacing-section-pad);
+    padding-top: clamp(4rem, 10vh, 10rem);
+    padding-bottom: clamp(4rem, 10vh, 10rem);
     /* Performance: Skip rendering off-screen sections */
     content-visibility: auto;
     contain-intrinsic-size: 1px 500px;
@@ -108,7 +109,11 @@
 
   @media (max-width: 768px) {
     .grid-airy {
-      gap: 2rem;
+      gap: 2.5rem;
+    }
+    .section-pad {
+      padding-top: 5rem;
+      padding-bottom: 5rem;
     }
   }
 
@@ -127,12 +132,22 @@
 
   .glass-panel {
     border: 1px solid var(--border);
-    background-color: rgba(255, 255, 255, 0.95);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
     transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
     /* Force GPU for smoother rendering */
     transform: translateZ(0);
-    -webkit-transform: translateZ(0);
+    will-change: transform;
+  }
+
+  @media (max-width: 768px) {
+    .glass-panel {
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      background-color: rgba(255, 255, 255, 0.9);
+    }
   }
 
   /* Simplify for very old browsers or high-load situations */
@@ -145,7 +160,13 @@
 
   [data-theme="dark"] .glass-panel {
     border: 1px solid rgba(255, 255, 255, 0.08);
-    background-color: rgba(var(--bg-rgb), 0.9);
+    background-color: rgba(var(--bg-rgb), 0.7);
+  }
+
+  @media (max-width: 768px) {
+    [data-theme="dark"] .glass-panel {
+      background-color: rgba(var(--bg-rgb), 0.85);
+    }
   }
 
   .mesh-bg {
@@ -229,21 +250,17 @@ body.intro-running .hide-on-intro {
 /* Mobile fix: prevent floating buttons from covering content and ensure perfect fit */
 @media (max-width: 768px) {
   main {
-    padding-bottom: 7rem;
-    padding-left: 0;
-    padding-right: 0;
+    padding-bottom: 5rem;
   }
   .container {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-    max-width: 100%;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
   }
-  /* Remove heavy blurs on ultra-small or very old screens if needed */
-  @media (max-height: 667px) {
-    .glass-panel {
-      backdrop-filter: blur(8px);
-    }
-  }
+}
+
+/* Global touch-action optimization */
+button, a, input, textarea {
+  touch-action: manipulation;
 }
 
 /* Force discrete GPU layer for all animated components */

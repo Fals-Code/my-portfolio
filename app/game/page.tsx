@@ -5,15 +5,18 @@ import * as THREE from "three";
 import Link from "next/link";
 import { ArrowLeft, RotateCcw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePerformance } from "@/hooks/usePerformance";
+import MobileGating from "@/components/global/MobileGating";
 
 export default function GamePage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [score, setScore] = useState(0);
   const [gameState, setGameState] = useState<"start" | "playing" | "gameover">("start");
   const [highScore, setHighScore] = useState(0);
+  const { isLow } = usePerformance();
 
   useEffect(() => {
-    if (!containerRef.current || gameState !== "playing") return;
+    if (!containerRef.current || gameState !== "playing" || isLow) return;
 
     // --- Audio Setup ---
     const bgm = new Audio("https://assets.mixkit.co/music/preview/mixkit-arcade-retro-changing-zaps-271.mp3");
@@ -57,13 +60,9 @@ export default function GamePage() {
     scene.add(neonLight);
 
     // --- High-Fidelity PBR Materials ---
-    // Road - Ultra Wet Asphalt
     const matRoad = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.1, metalness: 0.9 });
-    // Concrete - Wet & Gritty
     const matTrotoar = new THREE.MeshStandardMaterial({ color: 0x444444, roughness: 0.2, metalness: 0.4 });
-    // Metallic Assets
     const matMetal = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.9, roughness: 0.1 });
-    const matNeonRed = new THREE.MeshStandardMaterial({ color: 0xff0000, emissive: 0xff0000, emissiveIntensity: 15 });
     const matLight = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 8 });
     
     const matYellow = new THREE.MeshStandardMaterial({ color: 0xf5c518, roughness: 0.2, metalness: 0.5 });
@@ -74,17 +73,14 @@ export default function GamePage() {
     const matGrey = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.6 });
     const matRubber = new THREE.MeshStandardMaterial({ color: 0x050505, roughness: 0.9 });
     const matGrass = new THREE.MeshStandardMaterial({ color: 0x064e3b, roughness: 1.0 });
-    const matGold = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.9, roughness: 0.1 });
     const matOrange = new THREE.MeshStandardMaterial({ color: 0xe8533a, emissive: 0xe8533a, emissiveIntensity: 0.5 });
 
     // --- Hyper-Detail Player ---
     const pGroup = new THREE.Group();
-    // Body, Jacket & Straps
     const pBody = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.8, 0.4), matPlayerBody); pBody.position.y = 0.5; pBody.castShadow = true;
     const bp = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.62, 0.22), matGrey); bp.position.set(0, 0.55, 0.3); bp.castShadow = true;
     const strapL = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.6, 0.1), matGrey); strapL.position.set(-0.2, 0.55, -0.2);
     const strapR = strapL.clone(); strapR.position.x = 0.2;
-    // Head ++ (Nose, Ears)
     const pHead = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.35, 0.35), matSkin); pHead.position.y = 1.15; pHead.castShadow = true;
     const nose = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.08, 0.05), matSkin); nose.position.set(0, 1.15, -0.19);
     const earL = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.1, 0.05), matSkin); earL.position.set(-0.18, 1.15, 0);
@@ -92,13 +88,11 @@ export default function GamePage() {
     const hr = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.15, 0.38), matRubber); hr.position.y = 1.25;
     const eyL = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.02), matRubber); eyL.position.set(-0.08, 1.17, -0.18);
     const eyR = eyL.clone(); eyR.position.x = 0.08;
-    // Arms ++ (Forearms, Hands)
     const pLarm = new THREE.Group();
     const lArmM = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.5, 0.18), matPlayerBody); lArmM.position.y = -0.25; lArmM.castShadow = true;
     const lHnd = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.12, 0.12), matSkin); lHnd.position.y = -0.52;
     pLarm.add(lArmM, lHnd); pLarm.position.set(-0.35, 0.85, 0);
     const pRarm = pLarm.clone(); pRarm.position.x = 0.35;
-    // Legs ++ (Shoes, Laces)
     const pLleg = new THREE.Group();
     const lLegM = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.5, 0.2), matPlayerBody); lLegM.position.y = -0.25; lLegM.castShadow = true;
     const lShoe = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.12, 0.32), matLight); lShoe.position.set(0, -0.45, -0.05);
@@ -112,7 +106,7 @@ export default function GamePage() {
     const cGroup = new THREE.Group();
     const sBody = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.8, 0.4), matMetal); sBody.position.y = 0.5; sBody.castShadow = true;
     const sVest = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.5, 0.42), new THREE.MeshStandardMaterial({ color: 0xffff00, transparent: true, opacity: 0.5 })); sVest.position.y = 0.6;
-    const sBadge = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 0.02), matGold); sBadge.position.set(0.15, 0.72, -0.22);
+    const sBadge = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.08, 0.02), matLight); sBadge.position.set(0.15, 0.72, -0.22);
     const sBuckle = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.08, 0.02), matLight); sBuckle.position.set(0, 0.32, -0.21);
     const sWalkie = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.2, 0.08), matRubber); sWalkie.position.set(-0.2, 0.4, 0.15);
     const sHead = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.35, 0.35), matSkin); sHead.position.y = 1.15; sHead.castShadow = true;
@@ -158,12 +152,10 @@ export default function GamePage() {
     const decor: THREE.Object3D[] = [];
     const flgs: THREE.Group[] = [];
     const createDecoration = (z: number) => {
-        // High-detail street lamps
         const lP = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.15, 6), matMetal);
         const lH = new THREE.Mesh(new THREE.SphereGeometry(0.3), matLight); lH.position.y = 3;
         const lamp = new THREE.Group(); lamp.add(lP, lH);
         lamp.position.set(-8, 0, z); scene.add(lamp); decor.push(lamp);
-        // Flags
         const p = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 5), matMetal);
         const cl = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1, 0.05), Math.random() > 0.5 ? matOrange : matMetal); cl.position.set(0.75, 2, 0);
         const f = new THREE.Group(); f.add(p, cl);
@@ -173,12 +165,12 @@ export default function GamePage() {
     const createSceneAt = (z: number) => {
         const type = Math.floor(Math.random() * 2);
         const grp = new THREE.Group();
-        if (type === 0) { // Classical with balcony
+        if (type === 0) {
             const b = new THREE.Mesh(new THREE.BoxGeometry(7, 14, 10), new THREE.MeshStandardMaterial({ color: 0xc8a87a })); b.position.y = 7; b.castShadow = true;
             const r = new THREE.Mesh(new THREE.BoxGeometry(7.5, 1, 10.5), new THREE.MeshStandardMaterial({ color: 0xa84a32 })); r.position.y = 14.5;
             const bal = new THREE.Mesh(new THREE.BoxGeometry(6, 0.5, 1.5), matWood); bal.position.set(0, 5, -5.5);
             grp.add(b, r, bal);
-        } else { // Modern with AC units
+        } else {
             const b = new THREE.Mesh(new THREE.BoxGeometry(6, 22, 12), new THREE.MeshStandardMaterial({ color: 0x94a3b8 })); b.position.y = 11; b.castShadow = true;
             const ac = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.5, 0.4), matLight); ac.position.set(2, 6, -6.1);
             grp.add(b, ac);
@@ -196,25 +188,20 @@ export default function GamePage() {
     const cns: THREE.Mesh[] = [];
     const spawnBus = (lane: number) => {
         const g = new THREE.Group();
-        // Body
         const b = new THREE.Mesh(new THREE.BoxGeometry(3.2, 4.2, 10), matYellow); b.position.y = 2.1; b.castShadow = true; b.receiveShadow = true;
-        // Interior (Seats & Steering)
         const seatG = new THREE.BoxGeometry(0.6, 0.6, 0.6);
         for (let j = 0; j < 6; j++) {
             const sL = new THREE.Mesh(seatG, matMetal); sL.position.set(-1, 0.8, -3 + j*1.2);
             const sR = sL.clone(); sR.position.x = 1; g.add(sL, sR);
         }
         const wheel = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.05, 8, 16), matRubber); wheel.position.set(-0.8, 1.8, -4.5); wheel.rotation.x = -0.5;
-        // Mirrors
         const mP = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.6), matMetal); mP.position.set(-1.8, 2.5, -4.8);
         const mS = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.6, 0.1), matGlass); mS.position.set(-1.8, 2.5, -5.1);
         const mirrL = new THREE.Group(); mirrL.add(mP, mS);
         const mirrR = mirrL.clone(); mirrR.position.x = 3.6; mirrR.scale.z = -1;
-        // Lights
         const glass = new THREE.Mesh(new THREE.BoxGeometry(3.1, 1.8, 1.5), matGlass); glass.position.set(0, 2.8, -4.1);
         const headL = new THREE.Mesh(new THREE.SphereGeometry(0.25), matLight); headL.position.set(-1.1, 1.2, -4.9);
         const headR = headL.clone(); headR.position.x = 1.1;
-        // Tires
         const whG = new THREE.CylinderGeometry(0.45, 0.45, 0.5);
         [[-1.4, -3.5], [1.4, -3.5], [-1.4, 3.5], [1.4, 3.5]].forEach(p => {
             const w = new THREE.Mesh(whG, matRubber); w.rotation.z = Math.PI/2; w.position.set(p[0], 0.45, p[1]); g.add(w);
@@ -278,15 +265,12 @@ export default function GamePage() {
     let fId: number;
     const anim = () => {
       fId = requestAnimationFrame(anim);
-
       pGroup.position.x += (tarX - pGroup.position.x) * 0.18;
       cGroup.position.x += (pGroup.position.x - cGroup.position.x) * 0.08;
       if (isStum) { cDist += (2.8 - cDist) * 0.1; stumTime--; if (stumTime <= 0) isStum = false; camera.position.x += (Math.random()-0.5)*0.2; camera.position.y += (Math.random()-0.5)*0.2; }
       else { cDist += (7 - cDist) * 0.02; }
       cGroup.position.z = pGroup.position.z + cDist; alert.visible = cDist < 4.5;
-
       camera.fov = 85 + (speed - 0.85) * 45; camera.updateProjectionMatrix(); camera.rotation.z = -(tarX - pGroup.position.x) * 0.035;
-
       const t = Date.now() * 0.012;
       if (!isJ && !isS) {
         pGroup.position.y = Math.abs(Math.sin(t)) * 0.12;
@@ -297,14 +281,11 @@ export default function GamePage() {
       sLleg.rotation.x = Math.sin(t*1.5) * 0.95; sRleg.rotation.x = -Math.sin(t*1.5) * 0.95;
       sLarm.rotation.x = -Math.sin(t*1.5) * 0.95; sRarm.rotation.x = Math.sin(t*1.5) * 0.95;
       flgs.forEach((f, i) => { f.children[1].rotation.y = Math.sin(t * 0.5 + i) * 0.25; });
-
       if (isJ) { pGroup.position.y += jV; jV -= 0.015; if (pGroup.position.y <= 0) { pGroup.position.y = 0; isJ = false; jCount = 0; } }
       if (isS) { pGroup.scale.y = 0.18; sTime--; if (Math.random() < 0.7) spawnP(true); if (sTime <= 0) { pGroup.scale.y = 1; isS = false; } }
-
       marks.forEach(m => { m.position.z += speed; if (m.position.z > 15) m.position.z = -200; });
       decor.forEach(d => { d.position.z += speed; if (d.position.z > 50) d.position.z = -450; });
       clds.forEach(c => { c.position.z += speed*0.2; if (c.position.z > 50) c.position.z = -500; });
-
       obst.forEach((ob, i) => {
         ob.position.z += speed;
         ob.children.forEach(ch => {
@@ -322,7 +303,6 @@ export default function GamePage() {
         });
         if (ob.position.z > 50) { scene.remove(ob); obst.splice(i, 1); sTotal += 20; setScore(sTotal); }
       });
-
       cns.forEach((c, i) => {
         c.position.z += speed; c.rotation.y += 0.08;
         if (Math.abs(c.position.x - pGroup.position.x) < 1.1 && Math.abs(c.position.z - pGroup.position.z) < 2) {
@@ -330,36 +310,30 @@ export default function GamePage() {
         }
         if (c.position.z > 30) { scene.remove(c); cns.splice(i, 1); }
       });
-
       if (Math.random() < 0.015) { const ln = Math.floor(Math.random()*3); if (Math.random() < 0.5) spawnBus(ln); else spawnHurdle(ln); }
       if (Math.random() < 0.012) spawnCoin(Math.floor(Math.random()*3));
       if (Math.random() < 0.4) spawnP(false);
       [dP, sP].forEach(arr => arr.forEach((p, i) => { p.position.z += speed * 0.4; p.scale.multiplyScalar(0.96); // @ts-ignore
           p.material.opacity *= 0.96; if (p.scale.x < 0.01) { scene.remove(p); arr.splice(i, 1); } }));
-
       speed += 0.00018 + (sTotal / 900000);
-      
-      // Update Rain
       const rPos = rainGeo.attributes.position.array as Float32Array;
       for (let i = 0; i < rainCount; i++) {
           rPos[i*3+1] -= 1.5;
           if (rPos[i*3+1] < 0) rPos[i*3+1] = 40;
       }
-      rainGeo.attributes.position.needsUpdate = true;
-      rain.position.z = pGroup.position.z;
-
+      rainGeo.attributes.position.needsUpdate = true; rain.position.z = pGroup.position.z;
       camera.position.set(0, 6.2, 13); camera.lookAt(new THREE.Vector3(pGroup.position.x * 0.4, 0.8, -25));
       renderer.render(scene, camera);
     };
     anim();
-
     const hRes = () => { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); };
     window.addEventListener("resize", hRes);
-
     return () => { window.removeEventListener("keydown", handleKey); window.removeEventListener("resize", hRes); bgm.pause(); bgm.src = ""; cancelAnimationFrame(fId); if (containerRef.current) containerRef.current.removeChild(renderer.domElement); };
-  }, [gameState]);
+  }, [gameState, isLow]);
 
   useEffect(() => { if (score > highScore) setHighScore(score); }, [score, highScore]);
+
+  if (isLow) return <MobileGating />;
 
   return (
     <div className="relative w-full h-screen bg-sky-400 overflow-hidden">
@@ -419,18 +393,10 @@ export default function GamePage() {
 
       <div ref={containerRef} className="absolute inset-0 z-10" />
       
-      {/* Cinematic Overlays - Ultra Realistic */}
       <div className="absolute inset-0 z-15 pointer-events-none overflow-hidden">
-          {/* Heavy Vignette */}
           <div className="absolute inset-0 bg-[radial-gradient(circle,transparent_40%,rgba(0,0,0,0.8)_100%)]" />
-          
-          {/* Dynamic Film Grain */}
           <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay animate-pulse bg-[url('https://www.transparenttextures.com/patterns/asphalt-dark.png')]" />
-          
-          {/* Depth Bloom Blur */}
           <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-black/80 to-transparent opacity-60" />
-          
-          {/* Inner Shadow / Color Grade */}
           <div className="absolute inset-0 shadow-[inset_0_0_200px_rgba(0,0,0,0.9)] mix-blend-multiply" />
       </div>
     </div>

@@ -31,7 +31,7 @@ export function usePerformance() {
       );
 
       // Low Tier: Mobile or very old hardware
-      if (isMobile || memory <= 4 || cores <= 4) {
+      if (isMobile || memory <= 4 || cores <= 4 || (typeof window !== "undefined" && window.innerWidth < 768)) {
         return "low";
       }
 

@@ -76,9 +76,14 @@ function Scene({ tier }: { tier: string }) {
 
 export default function ThreeBackground() {
   const { tier, isLow } = usePerformance();
+  const [mounted, setMounted] = React.useState(false);
 
-  // If low performance, don't even render the Canvas to save batteries/CPU
-  if (isLow) return <div className="fixed inset-0 mesh-bg opacity-30 z-0" />;
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // If low performance or not mounted yet, don't even render the Canvas
+  if (!mounted || isLow) return <div className="fixed inset-0 mesh-bg opacity-30 z-0" />;
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 opacity-15 dark:opacity-20 translate-z-0">

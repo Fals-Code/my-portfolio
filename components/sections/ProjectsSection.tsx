@@ -48,7 +48,7 @@ export default function ProjectsSection() {
             </p>
           </div>
           
-          <div className="flex gap-2 p-1 glass-panel rounded-2xl w-fit">
+          <div className="flex gap-2 p-1 glass-panel rounded-2xl w-fit max-w-full overflow-x-auto no-scrollbar">
             {categories.map((cat) => (
               <button
                 key={cat}

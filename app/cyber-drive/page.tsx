@@ -5,6 +5,8 @@ import * as THREE from "three";
 import Link from "next/link";
 import { ArrowLeft, RotateCcw, Zap, Target } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePerformance } from "@/hooks/usePerformance";
+import MobileGating from "@/components/global/MobileGating";
 
 /**
  * Cyberpunk Synth-Drive
@@ -16,9 +18,10 @@ export default function CyberDrivePage() {
   const [score, setScore] = useState(0);
   const [gameState, setGameState] = useState<"start" | "playing" | "gameover">("start");
   const [highScore, setHighScore] = useState(0);
+  const { isLow } = usePerformance();
 
   useEffect(() => {
-    if (!containerRef.current || gameState !== "playing") return;
+    if (!containerRef.current || gameState !== "playing" || isLow) return;
 
     // --- Audio Support ---
     const bgm = new Audio("https://assets.mixkit.co/music/preview/mixkit-serene-night-1761.mp3");
@@ -151,8 +154,7 @@ export default function CyberDrivePage() {
     scene.add(cockpit);
 
     // --- State & Motion ---
-    let speed = 1.0, curL = 1, targetX = 0, isKeyLeft = false, isKeyRight = false;
-    const LANES = [-3.5, 0, 3.5];
+    let speed = 1.0, currentXPosition = 0, targetX = 0, isKeyLeft = false, isKeyRight = false;
 
     const handleKey = (e: KeyboardEvent) => {
         if(e.key === "ArrowLeft") isKeyLeft = true;
@@ -219,9 +221,13 @@ export default function CyberDrivePage() {
         cancelAnimationFrame(frameId);
         if(containerRef.current) containerRef.current.removeChild(renderer.domElement);
     };
-  }, [gameState]);
+  }, [gameState, isLow]);
 
   useEffect(() => { if(score > highScore) setHighScore(score); }, [score, highScore]);
+
+  if (isLow) {
+    return <MobileGating />;
+  }
 
   return (
     <div className="relative w-full h-screen bg-slate-950 overflow-hidden font-syne">
