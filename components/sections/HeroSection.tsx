@@ -16,10 +16,10 @@ import { usePerformance } from "@/hooks/usePerformance";
  * Pure, elegant greeting and quick summary.
  */
 export default function HeroSection() {
-  const { isLow } = usePerformance();
-  const MotionDiv = isLow ? "div" : motion.div;
-  const MotionH1 = isLow ? "h1" : motion.h1;
-  const MotionP = isLow ? "p" : motion.p;
+  const { isLow, isMobileDevice } = usePerformance();
+  const MotionDiv = (isLow || isMobileDevice) ? "div" : motion.div;
+  const MotionH1 = (isLow || isMobileDevice) ? "h1" : motion.h1;
+  const MotionP = (isLow || isMobileDevice) ? "p" : motion.p;
 
   return (
     <section className="relative overflow-hidden min-h-[85vh] flex items-center pt-28 md:pt-12 pb-12">
@@ -74,13 +74,13 @@ export default function HeroSection() {
 
           {/* CTA Buttons */}
           <MotionDiv 
-            initial={isLow ? false : "hidden"}
-            animate={isLow ? { opacity: 1 } : "visible"}
-            variants={isLow ? undefined : fadeReveal}
+            initial={(isLow || isMobileDevice) ? false : "hidden"}
+            animate={(isLow || isMobileDevice) ? { opacity: 1 } : "visible"}
+            variants={(isLow || isMobileDevice) ? undefined : fadeReveal}
             custom={{ i: 3, isLow }}
             className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 md:gap-6 pt-6 w-full"
           >
-            <Magnetic disabledOnMobile>
+            <Magnetic disabledOnMobile={true}>
               <Button variant="primary" size="lg" asChild className="rounded-full px-10 group w-full sm:w-auto h-14 md:h-16">
                 <Link href="/projects" className="flex items-center justify-center gap-3 font-semibold text-lg">
                   View My Work <ArrowRight className="w-5 h-5 group-hover:-rotate-45 transition-transform duration-300" />

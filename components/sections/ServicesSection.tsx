@@ -24,8 +24,8 @@ function ServiceIcon({ name }: { name: string }) {
  * Compact "What I Do" snippet for the Home page.
  */
 export default function ServicesSection() {
-  const { isLow } = usePerformance();
-  const MotionDiv = isLow ? "div" : motion.div;
+  const { isLow, isMobileDevice } = usePerformance();
+  const MotionDiv = (isLow || isMobileDevice) ? "div" : motion.div;
   return (
     <section className="container mx-auto px-6 py-24">
       <div className="space-y-12 max-w-7xl mx-auto">

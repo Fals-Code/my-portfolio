@@ -4,6 +4,7 @@ import React, { useRef, useEffect, useState } from "react";
 import { useChatbot } from "@/context/ChatbotContext";
 import { MessageSquare, X, Send, Trash2, Bot, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePerformance } from "@/hooks/usePerformance";
 import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 
@@ -13,6 +14,7 @@ import remarkBreaks from "remark-breaks";
  * Text appears word-by-word just like Gemini/ChatGPT.
  */
 export default function Chatbot() {
+  const { isMobileDevice } = usePerformance();
   const { 
     messages, 
     input,
@@ -80,15 +82,23 @@ export default function Chatbot() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen, closeChat]);
 
+  const ContainerTag = (isOpen && isMobileDevice) ? "div" : motion.div;
+
   return (
     <div ref={containerRef} className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[60] hide-on-intro">
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="absolute bottom-full right-0 mb-6 w-[92vw] md:w-[480px] h-[550px] md:h-[650px] max-h-[75vh] glass-panel rounded-3xl md:rounded-[3rem] overflow-hidden flex flex-col shadow-2xl border border-black/5 dark:border-white/5 bg-bg/95"
+          <ContainerTag
+            {...(!isMobileDevice ? {
+              initial: { opacity: 0, y: 20, scale: 0.95 },
+              animate: { opacity: 1, y: 0, scale: 1 },
+              exit: { opacity: 0, y: 20, scale: 0.95 }
+            } : {})}
+            className={`absolute bottom-full right-0 mb-6 w-[92vw] md:w-[480px] h-[550px] md:h-[650px] max-h-[75vh] rounded-3xl md:rounded-[3rem] overflow-hidden flex flex-col shadow-2xl border ${
+              isMobileDevice 
+                ? "bg-bg border-white/10" 
+                : "glass-panel border-black/5 dark:border-white/5 bg-bg/95 backdrop-blur-md"
+            }`}
             style={{ transform: "translateZ(0)" }}
           >
             {/* Header */}
@@ -177,7 +187,7 @@ export default function Chatbot() {
                 </button>
               </div>
             </form>
-          </motion.div>
+          </ContainerTag>
         )}
       </AnimatePresence>
 

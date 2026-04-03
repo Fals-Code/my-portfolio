@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { MusicProvider } from "@/context/MusicContext";
 import { ChatbotProvider } from "@/context/ChatbotContext";
+import { usePerformance } from "@/hooks/usePerformance";
 
 import Navbar from "@/components/global/Navbar";
 import Footer from "@/components/global/Footer";
@@ -30,6 +31,7 @@ const BackToTop = dynamic(() => import("@/components/global/BackToTop"), { ssr: 
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const [isIntroFinished, setIsIntroFinished] = useState(false);
+  const { isMobileDevice } = usePerformance();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -63,8 +65,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       <MusicProvider>
         <ChatbotProvider>
           <Loader />
-          <ScrollProgress />
-          <CursorGlow />
+          {!isMobileDevice && <ScrollProgress />}
+          {!isMobileDevice && <CursorGlow />}
           <Navbar />
           <main className="relative z-10 flex flex-col min-h-screen pt-20">
             {children}
@@ -74,9 +76,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             <>
               <MusicPlayer />
               <Chatbot />
-              <BackToTop />
+              {!isMobileDevice && <BackToTop />}
               <CommandPalette />
-              <ThreeBackground />
+              {!isMobileDevice && <ThreeBackground />}
             </>
           )}
         </ChatbotProvider>

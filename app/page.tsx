@@ -11,11 +11,15 @@ import { GradientText } from "@/components/ui/Primitives";
  * Portfolio Home Page
  * Built with Next.js App Router.
  */
+import { usePerformance } from "@/hooks/usePerformance";
+
 export default function HomePage() {
+  const { isMobileDevice } = usePerformance();
+
   return (
     <div className="flex flex-col w-full overflow-x-hidden">
-      {/* 1. Fullscreen Command Sequence (Skip if seen) */}
-      <TerminalIntro />
+      {/* 1. Fullscreen Command Sequence (Skip on mobile) */}
+      {!isMobileDevice && <TerminalIntro />}
 
       {/* 2. Hero Section: Welcome & Core Identity */}
       <HeroSection />

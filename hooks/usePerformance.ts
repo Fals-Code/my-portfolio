@@ -11,8 +11,13 @@ export type PerformanceTier = "low" | "medium" | "high";
 export function usePerformance() {
   const [tier, setTier] = useState<PerformanceTier>("medium");
   const [isReducedMotion, setIsReducedMotion] = useState(false);
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsMobileDevice(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768);
+    }
+
     // 1. Check for reduced motion preference
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     setIsReducedMotion(mediaQuery.matches);
@@ -53,5 +58,11 @@ export function usePerformance() {
     };
   }, []);
 
-  return { tier, isLow: tier === "low", isHigh: tier === "high", isReducedMotion };
+  return { 
+    tier, 
+    isLow: tier === "low" || isMobileDevice, 
+    isHigh: tier === "high" && !isMobileDevice, 
+    isReducedMotion,
+    isMobileDevice 
+  };
 }

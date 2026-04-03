@@ -14,12 +14,14 @@ import {
   Loader2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePerformance } from "@/hooks/usePerformance";
 
 /**
  * Global Music Player UI.
  * Refined with bottom-10 spacing and airy layouts for a 'Perfect Clean' feel.
  */
 export default function MusicPlayer() {
+  const { isMobileDevice } = usePerformance();
   const { 
     isPlaying, 
     togglePlay, 
@@ -52,16 +54,24 @@ export default function MusicPlayer() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isExpanded]);
 
+  const ContainerTag = (isExpanded && isMobileDevice) ? "div" : motion.div;
+
   return (
     <div ref={containerRef} className="fixed bottom-4 left-4 md:bottom-6 md:left-6 z-[60] hide-on-intro">
       <div className="relative group">
         <AnimatePresence>
           {isExpanded && (
-            <motion.div
-              initial={{ opacity: 0, y: 20, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 20, scale: 0.9 }}
-              className="absolute bottom-full left-0 mb-6 p-6 md:p-8 glass-panel rounded-[2rem] md:rounded-[2.5rem] w-[85vw] md:w-80 space-y-6 md:space-y-8 border border-white/5 bg-bg/95 shadow-2xl"
+            <ContainerTag
+              {...(!isMobileDevice ? {
+                initial: { opacity: 0, y: 20, scale: 0.9 },
+                animate: { opacity: 1, y: 0, scale: 1 },
+                exit: { opacity: 0, y: 20, scale: 0.9 }
+              } : {})}
+              className={`absolute bottom-full left-0 mb-6 p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] w-[85vw] md:w-80 space-y-6 md:space-y-8 border shadow-2xl ${
+                isMobileDevice 
+                  ? "bg-bg border-white/10" 
+                  : "glass-panel border-white/5 bg-bg/95 backdrop-blur-md"
+              }`}
               style={{ transform: "translateZ(0)" }}
             >
               {/* Track Info */}
@@ -151,7 +161,7 @@ export default function MusicPlayer() {
                   )}
                 </button>
               </div>
-            </motion.div>
+            </ContainerTag>
           )}
         </AnimatePresence>
 
