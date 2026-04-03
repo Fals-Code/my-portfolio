@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, memo } from "react";
 import dynamic from "next/dynamic";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { MusicProvider } from "@/context/MusicContext";
@@ -13,21 +13,37 @@ import Loader from "@/components/global/Loader";
 import CursorGlow from "@/components/global/CursorGlow";
 import ScrollProgress from "@/components/global/ScrollProgress";
 
-// Dynamic Imports for Heavy Components with Loading Placeholders
+// Dynamic Imports for Heavy Components
 const ThreeBackground = dynamic(() => import("@/components/global/ThreeBackground"), { ssr: false });
-
-const Chatbot = dynamic(() => import("@/components/global/Chatbot"), { 
+const ChatbotUI = dynamic(() => import("@/components/global/Chatbot"), { 
   ssr: false, 
-  loading: () => <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 w-14 h-14 bg-accent/20 rounded-2xl animate-pulse" />
+  loading: () => null 
 });
-
-const MusicPlayer = dynamic(() => import("@/components/global/MusicPlayer"), { 
+const MusicPlayerUI = dynamic(() => import("@/components/global/MusicPlayer"), { 
   ssr: false, 
-  loading: () => <div className="fixed bottom-4 left-4 md:bottom-6 md:left-6 w-14 h-14 bg-accent/20 rounded-2xl animate-pulse" />
+  loading: () => null 
 });
-
 const CommandPalette = dynamic(() => import("@/components/global/CommandPalette"), { ssr: false });
 const BackToTop = dynamic(() => import("@/components/global/BackToTop"), { ssr: false });
+
+/**
+ * Optimized "Cold-Mode" Layout.
+ * Isolates providers to prevent the main Page tree from re-rendering
+ * when the Music or Chatbot states change.
+ */
+
+// Isolated Content to prevent re-renders traveling down from Top Providers
+const MainContent = memo(function MainContent({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <Navbar />
+      <main className="relative z-10 flex flex-col min-h-screen pt-20">
+        {children}
+      </main>
+      <Footer />
+    </>
+  );
+});
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const [isIntroFinished, setIsIntroFinished] = useState(false);
@@ -36,7 +52,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   useEffect(() => {
     if (typeof window !== "undefined") {
       const shown = sessionStorage.getItem("terminal-shown");
-      if (shown) {
+      if (shown || isMobileDevice) {
         setIsIntroFinished(true);
       } else {
         const interval = setInterval(() => {
@@ -48,7 +64,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         return () => clearInterval(interval);
       }
     }
-  }, []);
+  }, [isMobileDevice]);
 
   useEffect(() => {
     if ("serviceWorker" in navigator) {
@@ -62,27 +78,29 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
   return (
     <ThemeProvider>
-      <MusicProvider>
-        <ChatbotProvider>
-          <Loader />
-          {!isMobileDevice && <ScrollProgress />}
-          {!isMobileDevice && <CursorGlow />}
-          <Navbar />
-          <main className="relative z-10 flex flex-col min-h-screen pt-20">
-            {children}
-          </main>
-          <Footer />
-          {isIntroFinished && (
-            <>
-              <MusicPlayer />
-              <Chatbot />
-              {!isMobileDevice && <BackToTop />}
-              <CommandPalette />
-              {!isMobileDevice && <ThreeBackground />}
-            </>
-          )}
-        </ChatbotProvider>
-      </MusicProvider>
+      <Loader />
+      {!isMobileDevice && <ScrollProgress />}
+      {!isMobileDevice && <CursorGlow />}
+      
+      {/* 1. Main Page Content - Isolated from Music/Chatbot Re-renders */}
+      <MainContent>{children}</MainContent>
+
+      {/* 2. Isolated UI Features - They have their own providers locally */}
+      {isIntroFinished && (
+        <>
+          <MusicProvider>
+            <MusicPlayerUI />
+          </MusicProvider>
+          
+          <ChatbotProvider>
+            <ChatbotUI />
+          </ChatbotProvider>
+          
+          {!isMobileDevice && <BackToTop />}
+          <CommandPalette />
+          {!isMobileDevice && <ThreeBackground />}
+        </>
+      )}
     </ThemeProvider>
   );
 }

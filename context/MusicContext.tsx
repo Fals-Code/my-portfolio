@@ -58,10 +58,7 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // It will now be triggered only on user interaction.
 
   const initYouTube = () => {
-    if (window.YT && window.YT.Player) {
-      setIsApiReady(true);
-      return;
-    }
+    if (typeof window === "undefined") return;
     if (initializingRef.current) return;
     initializingRef.current = true;
 
