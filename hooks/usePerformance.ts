@@ -11,7 +11,12 @@ export type PerformanceTier = "low" | "medium" | "high";
 export function usePerformance() {
   const [tier, setTier] = useState<PerformanceTier>("medium");
   const [isReducedMotion, setIsReducedMotion] = useState(false);
-  const [isMobileDevice, setIsMobileDevice] = useState(false);
+  const [isMobileDevice, setIsMobileDevice] = useState(() => {
+    if (typeof window !== "undefined") {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+    }
+    return false;
+  });
 
   useEffect(() => {
     if (typeof window !== "undefined") {

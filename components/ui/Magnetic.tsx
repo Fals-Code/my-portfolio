@@ -1,23 +1,20 @@
 "use client";
 
-import React, { useRef, useState, ReactElement } from "react";
-import { motion, useSpring, useMotionValue, useTransform } from "framer-motion";
+import React, { useRef, useState, ReactElement, useEffect } from "react";
+import { motion, useSpring, useMotionValue } from "framer-motion";
 
 interface MagneticProps {
   children: ReactElement;
-  amount?: number; // Strength of the pull
+  amount?: number; 
   disabledOnMobile?: boolean;
   intense?: boolean;
 }
 
-export default function Magnetic({ children, amount = 0.5, disabledOnMobile = false, intense = true }: MagneticProps) {
+/**
+ * Desktop-only animated magnetic component using springs.
+ */
+function MagneticDesktop({ children, amount, intense }: { children: ReactElement, amount: number, intense: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
-
-  React.useEffect(() => {
-    setIsMobile(window.innerWidth < 768);
-  }, []);
-  
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -29,14 +26,10 @@ export default function Magnetic({ children, amount = 0.5, disabledOnMobile = fa
   const y = useSpring(mouseY, springConfig);
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (disabledOnMobile && isMobile) return;
-    
     const { clientX, clientY } = e;
     const { height, width, left, top } = ref.current!.getBoundingClientRect();
     const middleX = clientX - (left + width / 2);
     const middleY = clientY - (top + height / 2);
-    
-    // Scale the movement by the 'amount' prop
     mouseX.set(middleX * amount);
     mouseY.set(middleY * amount);
   };
@@ -46,17 +39,33 @@ export default function Magnetic({ children, amount = 0.5, disabledOnMobile = fa
     mouseY.set(0);
   };
 
-  const isDisabled = disabledOnMobile && isMobile;
-
   return (
     <motion.div
       ref={ref}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      style={isDisabled ? undefined : { x, y }}
+      style={{ x, y }}
       className="inline-block relative"
     >
       {children}
     </motion.div>
+  );
+}
+
+export default function Magnetic({ children, amount = 0.5, disabledOnMobile = false, intense = true }: MagneticProps) {
+  const [useStatic, setUseStatic] = useState(true);
+
+  useEffect(() => {
+    setUseStatic(disabledOnMobile && window.innerWidth < 768);
+  }, [disabledOnMobile]);
+
+  if (useStatic) {
+    return <div className="inline-block relative">{children}</div>;
+  }
+
+  return (
+    <MagneticDesktop amount={amount} intense={intense}>
+      {children}
+    </MagneticDesktop>
   );
 }

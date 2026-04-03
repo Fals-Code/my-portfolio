@@ -18,14 +18,14 @@ import { usePerformance } from "@/hooks/usePerformance";
 export default function Navbar() {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
-  const { isLow } = usePerformance();
+  const { isLow, isMobileDevice } = usePerformance();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // Disable scroll tracking on low-tier mobile to save CPU
-    if (isLow) {
-      setIsScrolled(true); // Always show 'scrolled' state for visibility
+    // Disable scroll tracking on mobile/low-tier to save CPU
+    if (isLow || isMobileDevice) {
+      if (!isScrolled) setIsScrolled(true);
       return;
     }
 
@@ -41,7 +41,7 @@ export default function Navbar() {
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [isLow]);
+  }, [isLow, isMobileDevice, isScrolled]);
 
   // Body Scroll Lock - Improved to prevent layout shifts
   useEffect(() => {

@@ -136,8 +136,6 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const togglePlay = () => {
     if (!isApiReady) {
       initYouTube();
-      // Delay the actual call to allow API to init if needed
-      setTimeout(() => togglePlay(), 500);
       return;
     }
     if (!isPlayerReady || !playerRef.current) return;

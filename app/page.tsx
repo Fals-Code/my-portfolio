@@ -3,7 +3,9 @@
 import dynamic from "next/dynamic";
 const TerminalIntro = dynamic(() => import("@/components/sections/TerminalIntro"), { ssr: false });
 const HeroSection = dynamic(() => import("@/components/sections/HeroSection"), { ssr: false });
+const HeroSectionStatic = dynamic(() => import("@/components/sections/HeroSection.static"), { ssr: false });
 import ServicesSection from "@/components/sections/ServicesSection";
+import ServicesSectionStatic from "@/components/sections/ServicesSection.static";
 import Link from "next/link";
 import { GradientText } from "@/components/ui/Primitives";
 
@@ -22,13 +24,13 @@ export default function HomePage() {
       {!isMobileDevice && <TerminalIntro />}
 
       {/* 2. Hero Section: Welcome & Core Identity */}
-      <HeroSection />
+      {isMobileDevice ? <HeroSectionStatic key="hero-static" /> : <HeroSection key="hero-desktop" />}
 
       {/* 3. Services: What I do */}
-      <ServicesSection />
+      {isMobileDevice ? <ServicesSectionStatic key="services-static" /> : <ServicesSection key="services-desktop" />}
 
-      {/* 4. CTA: Call to action */}
-      <section className="container mx-auto px-6 py-24 text-center space-y-8">
+      {/* 4. CTA: Call to action - Keeping it simple for mobile */}
+      <section className="container mx-auto px-6 py-24 text-center space-y-8 bg-bg relative z-10">
         <h2 className="text-3xl md:text-5xl font-syne font-extrabold text-[var(--text)]">
           Ready to build something <GradientText>great?</GradientText>
         </h2>
@@ -37,7 +39,7 @@ export default function HomePage() {
         </p>
         <Link 
           href="/contact"
-          className="inline-flex items-center gap-2 bg-accent text-white px-10 py-5 rounded-2xl text-xs font-bold uppercase tracking-widest hover:bg-accent-hover transition-all shadow-lg shadow-accent/20 hover:shadow-accent/40"
+          className={`inline-flex items-center gap-2 bg-accent text-white px-10 py-5 rounded-2xl text-[10px] font-bold uppercase tracking-widest ${isMobileDevice ? "active:scale-95 transition-none" : "hover:bg-accent-hover transition-all"}`}
         >
           Start a Conversation →
         </Link>
