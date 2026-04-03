@@ -130,9 +130,13 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Lighting Effects */}
-      <div className="absolute top-0 -right-1/4 w-[600px] h-[600px] bg-accent/5 rounded-full blur-[150px] -translate-y-1/2 pointer-events-none" />
-      <div className="absolute bottom-0 -left-1/4 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
+      {/* Lighting Effects - Disabled on Low Performance to save GPU */}
+      {!isLow && (
+        <>
+          <div className="absolute top-0 -right-1/4 w-[600px] h-[600px] bg-accent/5 rounded-full blur-[150px] -translate-y-1/2 pointer-events-none" />
+          <div className="absolute bottom-0 -left-1/4 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
+        </>
+      )}
     </section>
   );
 }

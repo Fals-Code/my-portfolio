@@ -2,18 +2,22 @@
 
 import { useEffect, useState } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
+import { usePerformance } from "@/hooks/usePerformance";
 
 /**
  * Global Scroll Progress Bar (The Code Line).
  * Displays a thin, glowing accent line at the top to indicate scroll progress.
  */
 export default function ScrollProgress() {
+  const { isLow } = usePerformance();
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,
     restDelta: 0.001
   });
+
+  if (isLow) return null;
 
   return (
     <motion.div

@@ -60,7 +60,12 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className={`hide-on-intro fixed top-0 w-full transition-[background,padding,box-shadow,color] duration-500 ease-in-out transform-gpu ${isOpen ? "z-[150]" : "z-50"} ${isScrolled ? "glass-panel py-3 shadow-sm shadow-black/5" : "bg-transparent py-4 md:py-7"}`} style={{ willChange: "padding, background" }}>
+    <nav 
+      className={`hide-on-intro fixed top-0 w-full transition-all duration-500 ease-in-out transform-gpu ${isOpen ? "z-[150]" : "z-50"} ${
+        isScrolled ? "glass-panel py-3 shadow-sm" : "bg-transparent py-4 md:py-7"
+      }`} 
+      style={isLow ? {} : { willChange: "padding, background" }}
+    >
       <div className="max-w-7xl mx-auto px-6 md:px-10 flex items-center justify-between relative z-[100]">
         <Link href="/" className="text-2xl md:text-3xl font-syne font-extrabold text-[var(--text)] hover:text-accent transition-colors">
           Falah.

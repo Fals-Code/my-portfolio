@@ -99,13 +99,13 @@ export default function MusicPlayer() {
                   <button onClick={toggleMute} className="text-text-muted hover:text-accent transition-colors flex-shrink-0">
                     {isMuted || volume === 0 ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
                   </button>
-                  <div className="relative flex-1 group h-6 flex items-center">
+                  <div className={`relative flex-1 group h-6 flex items-center transition-opacity duration-300 ${isMuted ? "opacity-60" : "opacity-100"}`}>
                     {/* Visual Track */}
                     <div className="absolute inset-x-0 h-1.5 bg-black/5 dark:bg-white/10 rounded-full overflow-hidden">
                       <motion.div 
                         initial={false}
-                        animate={{ width: `${(isMuted ? 0 : volume) * 100}%` }}
-                        className="h-full bg-accent"
+                        animate={{ width: `${volume * 100}%` }}
+                        className={`h-full ${isMuted ? "bg-neutral-500" : "bg-accent"}`}
                       />
                     </div>
                     {/* Interactive Input */}
@@ -114,15 +114,17 @@ export default function MusicPlayer() {
                       min="0"
                       max="1"
                       step="0.01"
-                      value={isMuted ? 0 : volume}
+                      value={volume}
                       onChange={(e) => setVolume(parseFloat(e.target.value))}
                       className="absolute inset-x-0 w-full h-full opacity-0 cursor-pointer z-10"
                     />
                     {/* Custom Thumb (Pseudo-indicator) */}
                     <motion.div 
                       initial={false}
-                      animate={{ left: `calc(${(isMuted ? 0 : volume) * 100}% - 4px)` }}
-                      className="absolute w-3 h-3 bg-accent rounded-full shadow-lg border-2 border-white pointer-events-none z-20"
+                      animate={{ left: `calc(${volume * 100}% - 4px)` }}
+                      className={`absolute w-3 h-3 rounded-full shadow-lg border-2 border-white pointer-events-none z-20 ${
+                        isMuted ? "bg-neutral-500" : "bg-accent"
+                      }`}
                     />
                   </div>
                   <span className="text-[10px] font-mono font-bold text-text-muted w-8 text-right">{Math.round(volume * 100)}%</span>

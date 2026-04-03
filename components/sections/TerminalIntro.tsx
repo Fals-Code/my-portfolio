@@ -24,6 +24,7 @@ export default function TerminalIntro() {
     // Check if seen before in session
     if (sessionStorage.getItem("terminal-shown")) {
       setIsVisible(false);
+      document.body.classList.remove("intro-running");
       return;
     }
 

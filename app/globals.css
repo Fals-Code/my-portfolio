@@ -145,8 +145,18 @@
     .glass-panel {
       backdrop-filter: none !important;
       -webkit-backdrop-filter: none !important;
-      background-color: rgba(255, 255, 255, 0.97);
+      background-color: rgba(255, 255, 255, 0.98);
       border: 1px solid var(--border);
+    }
+    
+    [data-theme="dark"] .glass-panel {
+      background-color: rgba(18, 18, 20, 0.98);
+    }
+    
+    /* Zero blur for global components on mobile */
+    .mobile-low-blur {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
     }
   }
 
@@ -182,6 +192,14 @@
     background-attachment: fixed;
     /* Prevent layout thrashing on scroll */
     transform: translateZ(0); 
+  }
+
+  /* Disable background effects on mobile/tablets for cooling */
+  @media (max-width: 1024px) {
+    .mesh-bg {
+      display: none !important;
+      background-attachment: scroll !important;
+    }
   }
 
   .markdown-content p {

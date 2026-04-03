@@ -83,7 +83,7 @@ export default function ThreeBackground() {
   }, []);
 
   // Only render on HIGH tier desktop machines
-  if (!mounted || tier !== "high") return <div className="fixed inset-0 mesh-bg opacity-30 z-0" />;
+  if (!mounted || tier !== "high") return null;
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 opacity-15 dark:opacity-20 translate-z-0">

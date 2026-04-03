@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { MusicProvider } from "@/context/MusicContext";
@@ -29,12 +29,30 @@ const CommandPalette = dynamic(() => import("@/components/global/CommandPalette"
 const BackToTop = dynamic(() => import("@/components/global/BackToTop"), { ssr: false });
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
+  const [isIntroFinished, setIsIntroFinished] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const shown = sessionStorage.getItem("terminal-shown");
+      if (shown) {
+        setIsIntroFinished(true);
+      } else {
+        const interval = setInterval(() => {
+          if (!document.body.classList.contains("intro-running")) {
+            setIsIntroFinished(true);
+            clearInterval(interval);
+          }
+        }, 500);
+        return () => clearInterval(interval);
+      }
+    }
+  }, []);
+
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
         navigator.serviceWorker
           .register("/sw.js")
-          .then((reg) => console.log("Service Worker registered:", reg))
           .catch((err) => console.log("Service Worker failed:", err));
       });
     }
@@ -52,11 +70,15 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             {children}
           </main>
           <Footer />
-          <MusicPlayer />
-          <Chatbot />
-          <BackToTop />
-          <CommandPalette />
-          <ThreeBackground />
+          {isIntroFinished && (
+            <>
+              <MusicPlayer />
+              <Chatbot />
+              <BackToTop />
+              <CommandPalette />
+              <ThreeBackground />
+            </>
+          )}
         </ChatbotProvider>
       </MusicProvider>
     </ThemeProvider>

@@ -156,8 +156,19 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const setVolume = (v: number) => {
     const vol = Math.max(0, Math.min(1, v));
     setVolumeState(vol);
-    if (isPlayerReady && playerRef.current && typeof playerRef.current.setVolume === "function") {
-      playerRef.current.setVolume(vol * 100);
+    
+    if (isPlayerReady && playerRef.current) {
+      if (typeof playerRef.current.setVolume === "function") {
+        playerRef.current.setVolume(vol * 100);
+      }
+      
+      // Auto-unmute if volume is increased
+      if (vol > 0 && isMuted) {
+        setIsMuted(false);
+        if (typeof playerRef.current.unMute === "function") {
+          playerRef.current.unMute();
+        }
+      }
     }
   };
 

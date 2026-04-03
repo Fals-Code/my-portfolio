@@ -48,7 +48,9 @@ export default function ServicesSection() {
               transition={isLow ? { duration: 0.1 } : { delay: idx * 0.1, duration: 0.5 }}
               className="group h-full"
             >
-              <GlassPanel className="h-full p-8 group-hover:-translate-y-2 transition-transform duration-300 flex flex-col items-center text-center">
+              <GlassPanel className={`h-full p-8 transition-all duration-300 flex flex-col items-center text-center ${
+              !isLow ? "group-hover:-translate-y-2" : ""
+            }`}>
                 <div className="w-12 h-12 mb-6 rounded-full bg-accent/5 flex items-center justify-center group-hover:bg-accent/20 group-hover:scale-110 transition-all">
                   <ServiceIcon name={service.icon} />
                 </div>
