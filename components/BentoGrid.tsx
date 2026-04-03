@@ -17,8 +17,8 @@ import { usePerformance } from "@/hooks/usePerformance";
 import { GlassPanel } from "./ui/Primitives";
 import dynamic from "next/dynamic";
 
-// Dynamic Import for heavy 3D components if any (none here currently, but for future proofing)
-const SkillsOrbit = dynamic(() => import("./SkillsOrbit"), { 
+// Dynamic Import for heavy 3D components if any
+const SkillsOrbit = dynamic(() => import("./ui/SkillsOrbit"), { 
     ssr: false,
     loading: () => <div className="w-full h-full bg-accent/5 animate-pulse rounded-[2.5rem]" />
 });
