@@ -146,7 +146,7 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className={`text-3xl font-syne font-extrabold transition-all duration-300 ${
+                className={`text-3xl py-3 font-syne font-extrabold transition-all duration-300 flex items-center ${
                   pathname === link.href ? "text-accent translate-x-2" : "text-text-muted hover:text-[var(--text)]"
                 }`}
               >
@@ -176,10 +176,10 @@ export default function Navbar() {
 
              <div className="flex items-center justify-between pt-6 border-t border-white/5">
                 <div className="flex gap-4">
-                  <Link href="https://github.com/MathlaulFalah" target="_blank" className="text-text-muted hover:text-accent transition-colors">
+                   <Link href="https://github.com/MathlaulFalah" target="_blank" className="p-2 -m-2 text-text-muted hover:text-accent transition-colors">
                     <GitHub className="w-6 h-6" />
                   </Link>
-                  <Link href="https://instagram.com/mathlaul_falah" target="_blank" className="text-text-muted hover:text-accent transition-colors">
+                  <Link href="https://instagram.com/mathlaul_falah" target="_blank" className="p-2 -m-2 text-text-muted hover:text-accent transition-colors">
                     <Instagram className="w-6 h-6" />
                   </Link>
                 </div>

@@ -168,7 +168,15 @@ export default function ProjectsSection() {
                     )}
                     {proj.image ? (
                       <div className="w-full aspect-video md:aspect-[16/10] relative rounded-2xl overflow-hidden mb-6 group-hover:shadow-2xl transition-all duration-500">
-                        <Image src={proj.image} alt={proj.title} fill priority={index <= 1} decoding="async" className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                        <Image 
+                          src={proj.image} 
+                          alt={proj.title} 
+                          fill 
+                          priority={index <= 1} 
+                          decoding="async" 
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          className="object-cover group-hover:scale-105 transition-transform duration-700" 
+                        />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                       </div>
                     ) : (

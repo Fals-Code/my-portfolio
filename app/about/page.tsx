@@ -90,6 +90,7 @@ export default function AboutPage() {
                   alt="Ahmad Mathlaul Falah" 
                   fill 
                   priority
+                  sizes="(max-width: 768px) 100vw, 500px"
                   className="object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
                />
                <div className="absolute bottom-6 left-6 right-6 z-20">
@@ -191,8 +192,10 @@ export default function AboutPage() {
                    <div className="relative pl-6 md:pl-8 space-y-16 md:space-y-20 before:absolute before:inset-0 before:ml-[7px] md:before:ml-[11px] before:-translate-x-px md:before:translate-x-0 before:h-full before:w-[2px] before:bg-gradient-to-b before:from-accent before:via-accent/20 before:to-transparent">
                       {timeline.map((item, i) => (
                          <div key={item.id} className="relative group flex flex-col md:flex-row gap-6 md:gap-12">
-                            {/* Timeline Node */}
-                            <div className="absolute -left-[30px] md:-left-[39px] mt-2.5 w-4 h-4 rounded-full bg-accent border-[3px] border-bg shadow-[0_0_15px_rgba(232,83,58,0.5)] group-hover:scale-125 transition-transform" />
+                            {/* Timeline Node - Increased hit-zone for mobile accessibility (48px) */}
+                            <div className="absolute -left-[38px] md:-left-[47px] mt-0.5 w-[48px] h-[48px] flex items-center justify-center">
+                               <div className="w-4 h-4 rounded-full bg-accent border-[3px] border-bg shadow-[0_0_15px_rgba(232,83,58,0.5)] group-hover:scale-125 transition-transform" />
+                            </div>
                             
                             {/* Left Side: Date/Place metadata */}
                             <div className="w-full md:w-1/3 shrink-0 flex flex-col gap-3">
