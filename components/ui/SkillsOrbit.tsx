@@ -82,7 +82,7 @@ function Cloud({ count = 8, radius = 5, tier }: { count?: number; radius?: numbe
 export default function SkillsOrbit() {
   const { tier, isLow } = usePerformance();
 
-  if (isLow) {
+  if (tier !== "high") {
     const skills = [
       "Laravel", "MySQL", "PHP", 
       "Docker", "Git", "TypeScript", 
@@ -109,11 +109,11 @@ export default function SkillsOrbit() {
   return (
     <div className="w-full h-[320px] md:h-[400px] cursor-grab active:cursor-grabbing transform-gpu">
       <Canvas 
-        dpr={tier === "high" ? [1, 2] : [1, 1]} 
+        dpr={[1, 2]} 
         camera={{ position: [0, 0, 10], fov: 60 }}
         performance={{ min: 0.5 }}
         gl={{ 
-          antialias: tier === "high", 
+          antialias: true, 
           powerPreference: "high-performance",
           alpha: true,
           stencil: false,
@@ -122,8 +122,8 @@ export default function SkillsOrbit() {
         }}
       >
         <Suspense fallback={null}>
-          <Cloud tier={tier} radius={isLow ? 5 : 6} />
-          {tier !== "low" && <TrackballControls noPan noZoom rotateSpeed={2} />}
+          <Cloud tier={tier} radius={6} />
+          <TrackballControls noPan noZoom rotateSpeed={2} />
         </Suspense>
       </Canvas>
     </div>

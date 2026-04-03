@@ -64,3 +64,19 @@ export const pageTransition: Transition = {
   duration: 0.6,
   ease: [0.22, 1, 0.36, 1] // Quint-out
 };
+
+/**
+ * 5. getAnimationVariants
+ * Helper to get reduced motion variants based on performance tier.
+ */
+export const getAnimationVariants = (isLow: boolean) => ({
+  hidden: { opacity: 0, y: isLow ? 0 : 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { 
+      duration: isLow ? 0.2 : 0.8, 
+      ease: isLow ? "linear" : [0.16, 1, 0.3, 1] 
+    }
+  }
+});

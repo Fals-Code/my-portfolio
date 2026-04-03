@@ -139,14 +139,14 @@
     transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
     /* Force GPU for smoother rendering */
     transform: translateZ(0);
-    will-change: transform;
   }
 
   @media (max-width: 768px) {
     .glass-panel {
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      background-color: rgba(255, 255, 255, 0.9);
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      background-color: rgba(255, 255, 255, 0.97);
+      border: 1px solid var(--border);
     }
   }
 
@@ -165,8 +165,13 @@
 
   @media (max-width: 768px) {
     [data-theme="dark"] .glass-panel {
-      background-color: rgba(var(--bg-rgb), 0.85);
+      background-color: rgba(22, 22, 22, 0.97);
     }
+  }
+
+  /* Only apply will-change to actively animating elements */
+  .actively-animating {
+    will-change: transform, opacity;
   }
 
   .mesh-bg {

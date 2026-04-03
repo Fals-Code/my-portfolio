@@ -12,7 +12,7 @@ interface TiltCardProps {
 
 export default function TiltCard({ children, className }: TiltCardProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const { isLow } = usePerformance();
+  const { isLow, tier } = usePerformance();
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -26,7 +26,7 @@ export default function TiltCard({ children, className }: TiltCardProps) {
   const { playHover } = useSound();
 
   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    if (!ref.current || isLow) return;
+    if (!ref.current || isLow || tier !== "high") return;
     
     // Play sound on first enter
     if (x.get() === 0 && y.get() === 0) {
@@ -58,10 +58,10 @@ export default function TiltCard({ children, className }: TiltCardProps) {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{
-        rotateY: isLow ? 0 : rotateY,
-        rotateX: isLow ? 0 : rotateX,
-        transformStyle: isLow ? "flat" : "preserve-3d",
-        perspective: isLow ? "none" : "1000px"
+        rotateY: (isLow || tier !== "high") ? 0 : rotateY,
+        rotateX: (isLow || tier !== "high") ? 0 : rotateX,
+        transformStyle: (isLow || tier !== "high") ? "flat" : "preserve-3d",
+        perspective: (isLow || tier !== "high") ? "none" : "1000px"
       }}
       className={`relative h-full w-full rounded-2xl overflow-hidden ${className} transform-gpu`}
     >

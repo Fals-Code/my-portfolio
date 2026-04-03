@@ -78,7 +78,7 @@ const BentoItem = ({ title, description, icon, className = "", isLow }: BentoIte
 );
 
 export default function BentoGrid() {
-  const { isLow } = usePerformance();
+  const { isLow, tier } = usePerformance();
 
   const skills = [
     {
@@ -124,7 +124,9 @@ export default function BentoGrid() {
       >
         {/* Main interactive visualization or fallback */}
         <div className="md:col-span-2 md:row-span-2 relative min-h-[350px] overflow-hidden rounded-[2.5rem] bg-accent/5 border border-accent/10">
-            {isLow ? (
+            {tier === "high" ? (
+                <SkillsOrbit />
+            ) : (
                 <div className="absolute inset-0 flex flex-col items-center justify-center p-12 text-center space-y-6">
                     <div className="w-20 h-20 rounded-full bg-accent/10 flex items-center justify-center">
                         <Globe className="w-10 h-10 text-accent animate-pulse" />
@@ -134,8 +136,6 @@ export default function BentoGrid() {
                         <p className="text-text-muted max-w-sm mx-auto">Deploying scalable backend services that connect global users with seamless performance.</p>
                     </div>
                 </div>
-            ) : (
-                <SkillsOrbit />
             )}
         </div>
 

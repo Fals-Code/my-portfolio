@@ -5,6 +5,7 @@ import { GlassPanel, Button } from "@/components/ui/Primitives";
 import { Mail, MapPin, Send, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { GitHub, Instagram } from "@/components/ui/Icons";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePerformance } from "@/hooks/usePerformance";
 
 /**
  * Headless Contact Form using fetch to Formspree
@@ -182,15 +183,31 @@ function ContactSidebar() {
  * Main Contact Layout
  */
 export default function ContactLayout() {
+  const { isLow } = usePerformance();
+
   return (
     <section className="container mx-auto px-6 section-pad">
       <div className="grid grid-cols-1 lg:grid-cols-12 grid-airy items-start">
-        <div className="lg:col-span-4">
+        <motion.div 
+          initial={isLow ? false : { opacity: 0, x: -30 }}
+          whileInView={isLow ? undefined : { opacity: 1, x: 0 }}
+          animate={isLow ? { opacity: 1, x: 0 } : undefined}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="lg:col-span-4"
+        >
           <ContactSidebar />
-        </div>
-        <div className="lg:col-span-8">
+        </motion.div>
+        <motion.div 
+          initial={isLow ? false : { opacity: 0, x: 30 }}
+          whileInView={isLow ? undefined : { opacity: 1, x: 0 }}
+          animate={isLow ? { opacity: 1, x: 0 } : undefined}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="lg:col-span-8"
+        >
           <ContactForm />
-        </div>
+        </motion.div>
       </div>
     </section>
   );

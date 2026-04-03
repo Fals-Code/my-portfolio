@@ -8,6 +8,7 @@ import { GlassPanel, Button, GradientText, SectionLabel } from "@/components/ui/
 import { ExternalLink, ArrowRight, Hospital, Warehouse, Book, Rocket } from "lucide-react";
 import { GitHub } from "@/components/ui/Icons";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePerformance } from "@/hooks/usePerformance";
 
 /**
  * Maps icon names to Lucide components for projects.
@@ -27,6 +28,7 @@ function ProjectIcon({ name, color }: { name: string; color?: string }) {
  * Filterable Projects Gallery with Airy Layout.
  */
 export default function ProjectsSection() {
+  const { isLow } = usePerformance();
   const [filter, setFilter] = useState("All");
   const categories = ["All", "Laravel", "Full-stack", "WIP"];
 
@@ -68,14 +70,14 @@ export default function ProjectsSection() {
         <motion.div 
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-airy"
         >
-          <AnimatePresence>
+          <AnimatePresence mode="popLayout">
             {filteredProjects.map((proj, index) => (
               <motion.div
                 key={proj.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.4 }}
+                initial={isLow ? false : { opacity: 0, scale: 0.9 }}
+                animate={isLow ? { opacity: 1, scale: 1 } : { opacity: 1, scale: 1 }}
+                exit={isLow ? { opacity: 0 } : { opacity: 0, scale: 0.9 }}
+                transition={isLow ? { duration: 0.2 } : { duration: 0.4 }}
                 className="group"
               >
                 <GlassPanel className={`h-full flex flex-col p-6 transition-all duration-500 overflow-hidden relative ${

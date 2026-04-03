@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { usePerformance } from "@/hooks/usePerformance";
 
 const codeLines = [
   { text: "import { auth } from '@falah/secure';", type: "keyword", delay: 0 },
@@ -29,6 +30,9 @@ const codeLines = [
 ];
 
 export default function CodeAnimation() {
+  const { isLow } = usePerformance();
+  if (isLow) return null;
+
   const [displayedLines, setDisplayedLines] = useState<number>(0);
   const [key, setKey] = useState(0); // Used to restart the animation
 

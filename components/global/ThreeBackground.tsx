@@ -82,8 +82,8 @@ export default function ThreeBackground() {
     setMounted(true);
   }, []);
 
-  // If low performance or not mounted yet, don't even render the Canvas
-  if (!mounted || isLow) return <div className="fixed inset-0 mesh-bg opacity-30 z-0" />;
+  // Only render on HIGH tier desktop machines
+  if (!mounted || tier !== "high") return <div className="fixed inset-0 mesh-bg opacity-30 z-0" />;
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 opacity-15 dark:opacity-20 translate-z-0">

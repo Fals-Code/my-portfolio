@@ -23,23 +23,26 @@ export function usePerformance() {
     mediaQuery.addEventListener("change", handleMotionChange);
 
     // 2. Deterministic Performance Check
-    const checkPerformance = () => {
-      const memory = (navigator as any).deviceMemory || 8; // Default 8GB if unknown
-      const cores = navigator.hardwareConcurrency || 4; // Default 4 cores
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent
-      );
+    const checkPerformance = (): PerformanceTier => {
+      if (typeof window === "undefined") return "medium";
 
-      // Low Tier: Mobile or very old hardware
-      if (isMobile || memory <= 4 || cores <= 4 || (typeof window !== "undefined" && window.innerWidth < 768)) {
+      const memory = (navigator as any).deviceMemory; 
+      const cores = navigator.hardwareConcurrency || 2;
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const isSmallScreen = window.innerWidth < 768;
+      const connection = (navigator as any).connection;
+      const isSlowNetwork = connection && (connection.saveData || connection.effectiveType === '2g' || connection.effectiveType === '3g');
+      
+      // Force low for mobile OR slow network OR unknown/low memory
+      if (isMobile || isSmallScreen || isSlowNetwork || !memory || memory <= 4) {
         return "low";
       }
-
-      // High Tier: Modern Desktop (8GB+ RAM, 8+ cores)
+      
+      // High Tier: Modern Desktop (8GB+ RAM AND 8+ cores)
       if (memory >= 8 && cores >= 8) {
         return "high";
       }
-
+      
       return "medium";
     };
 

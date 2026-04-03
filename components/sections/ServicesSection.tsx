@@ -5,6 +5,7 @@ import { services } from "@/data/services";
 import { GlassPanel, GradientText } from "@/components/ui/Primitives";
 import { Code, Database, Terminal, Rocket } from "lucide-react";
 import { motion } from "framer-motion";
+import { usePerformance } from "@/hooks/usePerformance";
 
 /**
  * Maps icon names to Lucide components.
@@ -23,6 +24,7 @@ function ServiceIcon({ name }: { name: string }) {
  * Compact "What I Do" snippet for the Home page.
  */
 export default function ServicesSection() {
+  const { isLow } = usePerformance();
   return (
     <section className="container mx-auto px-6 py-24">
       <div className="space-y-12 max-w-7xl mx-auto">
@@ -39,10 +41,11 @@ export default function ServicesSection() {
           {services.map((service, idx) => (
             <motion.div
               key={service.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={isLow ? false : { opacity: 0, y: 20 }}
+              whileInView={isLow ? undefined : { opacity: 1, y: 0 }}
+              animate={isLow ? { opacity: 1, y: 0 } : undefined}
               viewport={{ once: true }}
-              transition={{ delay: idx * 0.1, duration: 0.5 }}
+              transition={isLow ? { duration: 0.1 } : { delay: idx * 0.1, duration: 0.5 }}
               className="group h-full"
             >
               <GlassPanel className="h-full p-8 group-hover:-translate-y-2 transition-transform duration-300 flex flex-col items-center text-center">

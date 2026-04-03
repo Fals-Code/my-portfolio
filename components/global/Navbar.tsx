@@ -124,7 +124,7 @@ export default function Navbar() {
             initial={{ x: "105%" }}
             animate={{ x: 0 }}
             exit={{ x: "105%" }}
-            transition={isLow ? { duration: 0.3, ease: "easeOut" } : { duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            transition={isLow ? { duration: 0.15, ease: "linear" } : { duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
             className="md:hidden fixed top-0 right-0 h-[100dvh] w-[82vw] md:w-[60vw] bg-[var(--bg)] border-l border-[var(--border)] dark:border-accent/20 z-[101] p-8 md:p-12 flex flex-col justify-between shadow-2xl transition-colors duration-200 rounded-l-[2rem] md:rounded-l-[3.5rem] transform-gpu overflow-hidden"
             style={{ willChange: "transform" }}
           >

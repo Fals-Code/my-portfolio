@@ -30,9 +30,9 @@ export default function HeroSection() {
           <div className="order-1 space-y-10 flex flex-col items-center lg:items-start text-center lg:text-left">
           {/* Status Label */}
           <motion.div 
-            initial="hidden"
-            animate="visible"
-            variants={fadeReveal}
+            initial={isLow ? false : "hidden"}
+            animate={isLow ? { opacity: 1 } : "visible"}
+            variants={isLow ? undefined : fadeReveal}
             custom={{ i: 0, isLow }}
             className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full glass-panel border-accent/20 bg-accent/15"
           >
@@ -48,9 +48,9 @@ export default function HeroSection() {
           {/* Main Headline - Huge Greeting */}
           <div className="space-y-6">
             <motion.h1 
-              initial="hidden"
-              animate="visible"
-              variants={fadeReveal}
+              initial={isLow ? false : "hidden"}
+              animate={isLow ? { opacity: 1 } : "visible"}
+              variants={isLow ? undefined : fadeReveal}
               custom={{ i: 1, isLow }}
               className="font-syne font-extrabold leading-[0.95] tracking-tight text-[var(--text)] drop-shadow-2xl"
               style={{ fontSize: "clamp(2.8rem, 12vw, 7.5rem)" }}
@@ -59,9 +59,9 @@ export default function HeroSection() {
             </motion.h1>
             
             <motion.p 
-              initial="hidden"
-              animate="visible"
-              variants={fadeReveal}
+              initial={isLow ? false : "hidden"}
+              animate={isLow ? { opacity: 1 } : "visible"}
+              variants={isLow ? undefined : fadeReveal}
               custom={{ i: 2, isLow }}
               className="text-lg md:text-3xl text-text-muted font-syne max-w-2xl leading-relaxed font-medium"
             >
@@ -71,9 +71,9 @@ export default function HeroSection() {
 
           {/* CTA Buttons */}
           <motion.div 
-            initial="hidden"
-            animate="visible"
-            variants={fadeReveal}
+            initial={isLow ? false : "hidden"}
+            animate={isLow ? { opacity: 1 } : "visible"}
+            variants={isLow ? undefined : fadeReveal}
             custom={{ i: 3, isLow }}
             className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 md:gap-6 pt-6 w-full"
           >
