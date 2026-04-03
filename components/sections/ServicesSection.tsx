@@ -25,6 +25,7 @@ function ServiceIcon({ name }: { name: string }) {
  */
 export default function ServicesSection() {
   const { isLow } = usePerformance();
+  const MotionDiv = isLow ? "div" : motion.div;
   return (
     <section className="container mx-auto px-6 py-24">
       <div className="space-y-12 max-w-7xl mx-auto">
@@ -39,7 +40,7 @@ export default function ServicesSection() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {services.map((service, idx) => (
-            <motion.div
+            <MotionDiv
               key={service.id}
               initial={isLow ? false : { opacity: 0, y: 20 }}
               whileInView={isLow ? undefined : { opacity: 1, y: 0 }}
@@ -61,7 +62,7 @@ export default function ServicesSection() {
                   {service.description}
                 </p>
               </GlassPanel>
-            </motion.div>
+            </MotionDiv>
           ))}
         </div>
       </div>

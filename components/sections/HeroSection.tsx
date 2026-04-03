@@ -17,10 +17,13 @@ import { usePerformance } from "@/hooks/usePerformance";
  */
 export default function HeroSection() {
   const { isLow } = usePerformance();
+  const MotionDiv = isLow ? "div" : motion.div;
+  const MotionH1 = isLow ? "h1" : motion.h1;
+  const MotionP = isLow ? "p" : motion.p;
 
   return (
     <section className="relative overflow-hidden min-h-[85vh] flex items-center pt-28 md:pt-12 pb-12">
-      {/* Background Decorative Mesh */}
+      {/* Background Decorative Mesh - Hidden on Mobile via CSS */}
       <div className="absolute inset-0 mesh-bg opacity-30 pointer-events-none" />
 
       <div className="container mx-auto px-6 relative z-10">
@@ -29,7 +32,7 @@ export default function HeroSection() {
           {/* Left Column: Greeting & Info */}
           <div className="order-1 space-y-10 flex flex-col items-center lg:items-start text-center lg:text-left">
           {/* Status Label */}
-          <motion.div 
+          <MotionDiv 
             initial={isLow ? false : "hidden"}
             animate={isLow ? { opacity: 1 } : "visible"}
             variants={isLow ? undefined : fadeReveal}
@@ -37,17 +40,17 @@ export default function HeroSection() {
             className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full glass-panel border-accent/20 bg-accent/15"
           >
             <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+              <span className="animate-none absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent"></span>
             </span>
             <span className="text-[12px] font-bold uppercase tracking-[0.3em] text-accent">
               Let's talk code
             </span>
-          </motion.div>
+          </MotionDiv>
 
           {/* Main Headline - Huge Greeting */}
           <div className="space-y-6">
-            <motion.h1 
+            <MotionH1 
               initial={isLow ? false : "hidden"}
               animate={isLow ? { opacity: 1 } : "visible"}
               variants={isLow ? undefined : fadeReveal}
@@ -56,9 +59,9 @@ export default function HeroSection() {
               style={{ fontSize: "clamp(2.8rem, 12vw, 7.5rem)" }}
             >
               Hi. I'm <GradientText>Falah.</GradientText>
-            </motion.h1>
+            </MotionH1>
             
-            <motion.p 
+            <MotionP 
               initial={isLow ? false : "hidden"}
               animate={isLow ? { opacity: 1 } : "visible"}
               variants={isLow ? undefined : fadeReveal}
@@ -66,11 +69,11 @@ export default function HeroSection() {
               className="text-lg md:text-3xl text-text-muted font-syne max-w-2xl leading-relaxed font-medium"
             >
               A passionate <span className="text-[var(--text)]">Backend Developer</span> transforming complex problems into elegant, scalable logic.
-            </motion.p>
+            </MotionP>
           </div>
 
           {/* CTA Buttons */}
-          <motion.div 
+          <MotionDiv 
             initial={isLow ? false : "hidden"}
             animate={isLow ? { opacity: 1 } : "visible"}
             variants={isLow ? undefined : fadeReveal}
@@ -92,13 +95,13 @@ export default function HeroSection() {
                    </a>
                </Button>
             </Magnetic>
-          </motion.div>
+          </MotionDiv>
 
           {/* Quick Socials & Info */}
-          <motion.div 
-            initial="hidden"
-            animate="visible"
-            variants={fadeReveal}
+          <MotionDiv 
+            initial={isLow ? false : "hidden"}
+            animate={isLow ? { opacity: 1 } : "visible"}
+            variants={isLow ? undefined : fadeReveal}
             custom={{ i: 4, isLow }}
             className="flex flex-col lg:flex-row items-center lg:items-start gap-6 lg:gap-12 pt-10 mt-10 border-t border-white/5 w-full"
           >
@@ -118,7 +121,7 @@ export default function HeroSection() {
                 </Link>
               ))}
             </div>
-          </motion.div>
+          </MotionDiv>
           </div>
 
           {/* Right Column: Code Animation (Hidden on mobile) */}

@@ -4,15 +4,16 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
-import { Sun, Moon, Menu, X, Mail, ArrowLeft } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import Magnetic from "../ui/Magnetic";
+import { Menu, X, Sun, Moon, Laptop, Volume2, VolumeX, Ghost } from "lucide-react";
+import { useMusic } from "@/context/MusicContext";
+import { GlassPanel } from "../ui/Primitives";
 import { GitHub, Instagram } from "../ui/Icons";
 import { usePerformance } from "@/hooks/usePerformance";
 
 /**
  * Global Navigation Component.
  * Features a dynamic background on scroll and a mobile-responsive drawer.
+ * Optimized for low-end devices by disabling scroll listeners.
  */
 export default function Navbar() {
   const pathname = usePathname();
@@ -22,6 +23,12 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
+    // Disable scroll tracking on low-tier mobile to save CPU
+    if (isLow) {
+      setIsScrolled(true); // Always show 'scrolled' state for visibility
+      return;
+    }
+
     let ticking = false;
     const handleScroll = () => {
       if (!ticking) {
@@ -34,7 +41,7 @@ export default function Navbar() {
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isLow]);
 
   // Body Scroll Lock - Improved to prevent layout shifts
   useEffect(() => {
@@ -59,11 +66,13 @@ export default function Navbar() {
     { label: "Contact", href: "/contact" },
   ];
 
+  const { isPlaying, togglePlay, isMuted, toggleMute, volume } = useMusic();
+
   return (
     <nav 
-      className={`hide-on-intro fixed top-0 w-full transition-all duration-500 ease-in-out transform-gpu ${isOpen ? "z-[150]" : "z-50"} ${
-        isScrolled ? "glass-panel py-3 shadow-sm" : "bg-transparent py-4 md:py-7"
-      }`} 
+      className={`hide-on-intro fixed top-0 w-full ${isOpen ? "z-[150]" : "z-50"} ${
+        isScrolled || isLow ? "glass-panel py-3 shadow-sm" : "bg-transparent py-4 md:py-7"
+      } ${!isLow ? "transition-all duration-500 ease-in-out transform-gpu" : ""}`} 
       style={isLow ? {} : { willChange: "padding, background" }}
     >
       <div className="max-w-7xl mx-auto px-6 md:px-10 flex items-center justify-between relative z-[100]">
@@ -71,146 +80,114 @@ export default function Navbar() {
           Falah.
         </Link>
 
-        {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-12">
+        {/* Desktop Links */}
+        <div className="hidden lg:flex items-center gap-10">
           {navLinks.map((link) => (
-            <Link 
+            <Link
               key={link.href}
-              href={link.href} 
-              className={`text-[10px] font-bold uppercase tracking-[0.3em] transition-all hover:text-accent p-2 ${
+              href={link.href}
+              className={`text-[12px] font-bold uppercase tracking-[0.3em] transition-all duration-300 hover:text-accent relative group ${
                 pathname === link.href ? "text-accent" : "text-text-muted"
               }`}
             >
               {link.label}
+              <span className={`absolute -bottom-2 left-0 h-[2px] bg-accent transition-all duration-300 ${
+                pathname === link.href ? "w-full" : "w-0 group-hover:w-full"
+              }`} />
             </Link>
           ))}
-          <button 
-            onClick={(e) => toggleTheme(e)} 
-            className="p-3 rounded-2xl glass-panel hover:bg-white/5 transition-all outline-none"
+        </div>
+
+        {/* Desktop Actions */}
+        <div className="hidden lg:flex items-center gap-6">
+          <div className="flex items-center gap-2 p-1.5 glass-panel rounded-full">
+            <button 
+              onClick={togglePlay}
+              className={`p-2 rounded-full transition-all ${isPlaying ? "bg-accent text-white" : "text-text-muted hover:bg-white/5"}`}
+              title={isPlaying ? "Pause Music" : "Play Music"}
+            >
+              {isPlaying ? <Ghost className="w-4 h-4 animate-bounce" /> : <Volume2 className="w-4 h-4" />}
+            </button>
+            <button 
+              onClick={toggleMute}
+              className="p-2 text-text-muted hover:bg-white/5 rounded-full transition-all"
+            >
+              {isMuted || volume === 0 ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+            </button>
+          </div>
+
+          <button
+            onClick={toggleTheme}
+            className="p-3 glass-panel rounded-full text-text-muted hover:text-accent transition-all duration-300 group"
           >
-            {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            {theme === "dark" ? <Sun className="w-5 h-5 group-hover:rotate-90 transition-transform duration-500" /> : <Moon className="w-5 h-5 group-hover:-rotate-12 transition-transform" />}
           </button>
         </div>
 
-        {/* Mobile Toggle */}
-        <div className="md:hidden flex items-center gap-3">
-          <button 
-            onClick={(e) => toggleTheme(e)} 
-            className="p-3 rounded-2xl glass-panel relative z-[160]"
-          >
-            {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-          </button>
-          <button 
-            onClick={() => setIsOpen(!isOpen)} 
-            className="p-2 relative z-[160]"
-          >
-            {isOpen ? <X className="w-6 h-6 text-accent" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
+        {/* Mobile Menu Toggle */}
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="lg:hidden p-3 glass-panel rounded-2xl text-[var(--text)] relative z-[200]"
+        >
+          {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
       </div>
 
-      {/* Mobile Menu Backdrop */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setIsOpen(false)}
-            className="md:hidden fixed inset-0 bg-black/90 z-[90]"
-          />
-        )}
-      </AnimatePresence>
-
-      {/* The Tech Drawer */}
-      <AnimatePresence mode="wait">
-        {isOpen && (
-          <motion.div 
-            initial={{ x: "105%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "105%" }}
-            transition={isLow ? { duration: 0.15, ease: "linear" } : { duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-            className="md:hidden fixed top-0 right-0 h-[100dvh] w-[82vw] md:w-[60vw] bg-[var(--bg)] border-l border-[var(--border)] dark:border-accent/20 z-[101] p-8 md:p-12 flex flex-col justify-between shadow-2xl transition-colors duration-200 rounded-l-[2rem] md:rounded-l-[3.5rem] transform-gpu overflow-hidden"
-            style={{ willChange: "transform" }}
-          >
-            <div className="space-y-10">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="h-8 w-1.5 bg-accent rounded-full" />
-                  <span className="text-xl font-syne font-black tracking-tighter text-accent">Navigation.</span>
-                </div>
-                <button 
-                  onClick={() => setIsOpen(false)}
-                  className="p-3 bg-black/5 dark:bg-white/5 rounded-xl hover:bg-accent/10 transition-colors group"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              <nav className="space-y-3">
-                {navLinks.map((link, i) => (
-                  <motion.div
-                    key={link.href}
-                    initial={isLow ? { opacity: 0 } : { opacity: 0, x: 30 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ 
-                      delay: isLow ? (i * 0.05) : (0.2 + i * 0.08),
-                      duration: 0.4,
-                      ease: "easeOut"
-                    }}
-                  >
-                    <Link 
-                      href={link.href} 
-                      onClick={() => setIsOpen(false)}
-                      className={`flex items-center justify-between group py-5 px-4 rounded-3xl transition-all ${
-                        pathname === link.href ? "text-accent bg-accent/5 font-bold" : "text-[var(--text)] hover:text-accent hover:bg-black/5 dark:hover:bg-white/5"
-                      }`}
-                    >
-                       <span className="text-2xl font-syne font-bold uppercase tracking-tight">{link.label}</span>
-                       <ArrowLeft className={`w-5 h-5 transition-all duration-500 scale-0 group-hover:scale-100 ${pathname === link.href ? "scale-100 rotate-180" : ""}`} />
-                    </Link>
-                  </motion.div>
-                ))}
-              </nav>
-            </div>
-
-            {/* Drawer Footer */}
-            <div className="space-y-12">
-              <div 
-                 onClick={(e) => toggleTheme(e)}
-                 className="flex items-center justify-between p-6 rounded-[2rem] bg-[var(--bg-card)] border border-[var(--border)] cursor-pointer hover:bg-[var(--bg-hover)] transition-all"
+      {/* Mobile Drawer */}
+      <div className={`fixed inset-0 bg-black/60 backdrop-blur-md z-[140] lg:hidden transition-all duration-500 ${
+        isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+      }`}>
+        <div className={`absolute right-0 top-0 h-full w-[85%] max-w-sm bg-[var(--bg)] border-l border-white/5 p-10 flex flex-col transition-transform duration-500 ease-out-expo ${
+          isOpen ? "translate-x-0" : "translate-x-full"
+        }`}>
+          <div className="flex flex-col gap-10 mt-16">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                className={`text-3xl font-syne font-extrabold transition-all duration-300 ${
+                  pathname === link.href ? "text-accent translate-x-2" : "text-text-muted hover:text-[var(--text)]"
+                }`}
               >
-                 <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-xl bg-accent/10">
-                       {theme === "dark" ? <Moon className="w-5 h-5 text-accent" /> : <Sun className="w-5 h-5 text-accent" />}
-                    </div>
-                    <div>
-                       <p className="text-xs font-bold text-[var(--text)] tracking-wide">Theme</p>
-                       <p className="text-[10px] text-text-muted uppercase tracking-widest">{theme === "dark" ? "Dark" : "Light"}</p>
-                    </div>
-                 </div>
+                {link.label}
+              </Link>
+            ))}
+          </div>
 
-                 <div className={`w-12 h-6 rounded-full relative transition-colors duration-500 ${theme === "dark" ? "bg-accent" : "bg-neutral-200 dark:bg-neutral-800"}`}>
-                    <motion.div 
-                      animate={{ x: theme === "dark" ? 28 : 4 }}
-                      transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                      className="absolute top-1 w-4 h-4 bg-white rounded-full shadow-md" 
-                    />
-                 </div>
-              </div>
+          <div className="mt-auto space-y-10">
+             <div className="flex items-center gap-4">
+                <button 
+                  onClick={togglePlay}
+                  className={`flex-1 py-4 flex items-center justify-center gap-3 rounded-2xl border transition-all ${
+                    isPlaying ? "bg-accent border-accent text-white" : "border-white/5 text-text-muted"
+                  }`}
+                >
+                  {isPlaying ? <Ghost className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                  <span className="font-bold uppercase tracking-widest text-[10px]">{isPlaying ? "Playing" : "Music Off"}</span>
+                </button>
+                <button
+                  onClick={toggleTheme}
+                  className="p-4 glass-panel rounded-2xl text-text-muted flex items-center justify-center"
+                >
+                  {theme === "dark" ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
+                </button>
+             </div>
 
-              <div className="space-y-6">
-                <p className="text-[10px] font-bold text-text-muted uppercase tracking-[0.2em] pl-4">Socials & Contact</p>
+             <div className="flex items-center justify-between pt-6 border-t border-white/5">
                 <div className="flex gap-4">
-                  <a href="https://github.com/Fals-Code" className="flex-1 flex items-center justify-center p-6 bg-[var(--bg-card)] border border-[var(--border)] rounded-3xl text-[var(--text)] hover:border-accent hover:text-accent hover:shadow-xl hover:shadow-accent/5 transition-all"><GitHub className="w-6 h-6" /></a>
-                  <a href="https://instagram.com/falahh.am" className="flex-1 flex items-center justify-center p-6 bg-[var(--bg-card)] border border-[var(--border)] rounded-3xl text-[var(--text)] hover:border-accent hover:text-accent hover:shadow-xl hover:shadow-accent/5 transition-all"><Instagram className="w-6 h-6" /></a>
-                  <a href="mailto:ahmadmathlaulfalah14@gmail.com" className="flex-1 flex items-center justify-center p-6 bg-[var(--bg-card)] border border-[var(--border)] rounded-3xl text-[var(--text)] hover:border-accent hover:text-accent hover:shadow-xl hover:shadow-accent/5 transition-all"><Mail className="w-6 h-6" /></a>
+                  <Link href="https://github.com/MathlaulFalah" target="_blank" className="text-text-muted hover:text-accent transition-colors">
+                    <GitHub className="w-6 h-6" />
+                  </Link>
+                  <Link href="https://instagram.com/mathlaul_falah" target="_blank" className="text-text-muted hover:text-accent transition-colors">
+                    <Instagram className="w-6 h-6" />
+                  </Link>
                 </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted opacity-40">© 2024 Falah</span>
+             </div>
+          </div>
+        </div>
+      </div>
     </nav>
   );
 }
