@@ -20,8 +20,8 @@ interface TiltCardProps {
  * by splitting the rendering into a PureStatic version and a RichDynamic version.
  */
 export default function TiltCard({ children, className }: TiltCardProps) {
-  const { isLow, tier } = usePerformance();
-  const isHighPerf = !isLow && tier === "high";
+  const { isLow, tier, isMobileDevice } = usePerformance();
+  const isHighPerf = !isLow && !isMobileDevice && tier === "high";
 
   if (!isHighPerf) {
     return (

@@ -29,7 +29,7 @@ function ProjectIcon({ name, color }: { name: string; color?: string }) {
  * Optimized for mobile with Ultra-Lite mode.
  */
 export default function ProjectsSection() {
-  const { isLow } = usePerformance();
+  const { isLow, isMobileDevice } = usePerformance();
   const [filter, setFilter] = useState("All");
   const categories = ["All", "Laravel", "Full-stack", "WIP"];
 
@@ -37,7 +37,7 @@ export default function ProjectsSection() {
     filter === "All" || p.tags.some(t => t.toLowerCase() === filter.toLowerCase())
   );
 
-  const ContainerTag = isLow ? "div" : motion.div;
+  const ContainerTag = isMobileDevice || isLow ? "div" as any : motion.div;
 
   return (
     <section className="container mx-auto px-6 section-pad overflow-hidden">
@@ -71,7 +71,7 @@ export default function ProjectsSection() {
         </div>
 
         <ContainerTag className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-airy">
-          {isLow ? (
+          {isLow || isMobileDevice ? (
             filteredProjects.map((proj, index) => (
               <div key={proj.id} className="group">
                 <GlassPanel className={`h-full flex flex-col p-6 overflow-hidden relative ${

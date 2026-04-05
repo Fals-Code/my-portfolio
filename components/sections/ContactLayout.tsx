@@ -183,31 +183,33 @@ function ContactSidebar() {
  * Main Contact Layout
  */
 export default function ContactLayout() {
-  const { isLow } = usePerformance();
+  const { isLow, isMobileDevice } = usePerformance();
+
+  const MotionDiv = isMobileDevice ? "div" as any : motion.div;
 
   return (
     <section className="container mx-auto px-6 section-pad">
       <div className="grid grid-cols-1 lg:grid-cols-12 grid-airy items-start">
-        <motion.div 
-          initial={isLow ? false : { opacity: 0, x: -30 }}
-          whileInView={isLow ? undefined : { opacity: 1, x: 0 }}
-          animate={isLow ? { opacity: 1, x: 0 } : undefined}
+        <MotionDiv 
+          initial={isMobileDevice || isLow ? false : { opacity: 0, x: -30 }}
+          whileInView={isMobileDevice || isLow ? undefined : { opacity: 1, x: 0 }}
+          animate={isLow && !isMobileDevice ? { opacity: 1, x: 0 } : undefined}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
           className="lg:col-span-4"
         >
           <ContactSidebar />
-        </motion.div>
-        <motion.div 
-          initial={isLow ? false : { opacity: 0, x: 30 }}
-          whileInView={isLow ? undefined : { opacity: 1, x: 0 }}
-          animate={isLow ? { opacity: 1, x: 0 } : undefined}
+        </MotionDiv>
+        <MotionDiv 
+          initial={isMobileDevice || isLow ? false : { opacity: 0, x: 30 }}
+          whileInView={isMobileDevice || isLow ? undefined : { opacity: 1, x: 0 }}
+          animate={isLow && !isMobileDevice ? { opacity: 1, x: 0 } : undefined}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
           className="lg:col-span-8"
         >
           <ContactForm />
-        </motion.div>
+        </MotionDiv>
       </div>
     </section>
   );

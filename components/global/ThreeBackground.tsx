@@ -75,7 +75,7 @@ function Scene({ tier }: { tier: string }) {
 }
 
 export default function ThreeBackground() {
-  const { tier, isLow } = usePerformance();
+  const { tier, isLow, isMobileDevice } = usePerformance();
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
@@ -83,7 +83,7 @@ export default function ThreeBackground() {
   }, []);
 
   // Only render on HIGH tier desktop machines
-  if (!mounted || tier !== "high") return null;
+  if (!mounted || tier !== "high" || isMobileDevice) return null;
 
   return (
     <div className="fixed inset-0 pointer-events-none z-0 opacity-15 dark:opacity-20 translate-z-0">

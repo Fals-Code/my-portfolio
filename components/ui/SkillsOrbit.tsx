@@ -82,7 +82,7 @@ function Cloud({ count = 8, radius = 5, tier }: { count?: number; radius?: numbe
 export default function SkillsOrbit() {
   const { tier, isLow } = usePerformance();
 
-  if (tier !== "high") {
+  if (tier !== "high" || isLow) {
     const skills = [
       "Laravel", "MySQL", "PHP", 
       "Docker", "Git", "TypeScript", 

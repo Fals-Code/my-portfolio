@@ -78,7 +78,8 @@ const BentoItem = ({ title, description, icon, className = "", isLow }: BentoIte
 );
 
 export default function BentoGrid() {
-  const { isLow, tier } = usePerformance();
+  const { isLow, tier, isMobileDevice } = usePerformance();
+  const MotionDiv = isMobileDevice ? "div" as any : motion.div;
 
   const skills = [
     {
@@ -115,7 +116,7 @@ export default function BentoGrid() {
 
   return (
     <div className="w-full">
-      <motion.div 
+      <MotionDiv 
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
@@ -124,7 +125,7 @@ export default function BentoGrid() {
       >
         {/* Main interactive visualization or fallback */}
         <div className="md:col-span-2 md:row-span-2 relative min-h-[350px] overflow-hidden rounded-[2.5rem] bg-accent/5 border border-accent/10">
-            {tier === "high" ? (
+            {tier === "high" && !isMobileDevice ? (
                 <SkillsOrbit />
             ) : (
                 <div className="absolute inset-0 flex flex-col items-center justify-center p-12 text-center space-y-6">
@@ -146,7 +147,7 @@ export default function BentoGrid() {
             isLow={isLow}
           />
         ))}
-      </motion.div>
+      </MotionDiv>
     </div>
   );
 }

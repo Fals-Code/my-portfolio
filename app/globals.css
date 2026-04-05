@@ -156,9 +156,18 @@
       text-shadow: none !important;
     }
 
+    /* Kill all filter effects */
     * {
       /* Disable smooth scrolling on low-end to prevent animation lag */
       scroll-behavior: auto !important;
+      will-change: auto !important;
+      filter: none !important;
+      text-shadow: none !important;
+    }
+
+    /* Prevent JS animations from creating composite layers */
+    .actively-animating,
+    [style*="will-change"] {
       will-change: auto !important;
     }
 
@@ -167,15 +176,20 @@
       animation: none !important;
     }
 
+    /* Kill glassmorphism — biggest GPU composite killer on Mali/Adreno mid-range */
     .glass-panel {
-      background-color: rgba(var(--bg-rgb), 1) !important;
-      border: 1px solid var(--border) !important;
       backdrop-filter: none !important;
       -webkit-backdrop-filter: none !important;
-      filter: none !important;
+      background-color: rgba(var(--bg-rgb), 0.97) !important;
+      box-shadow: none !important;
+      border: 1px solid var(--border) !important;
     }
 
-    .mesh-bg, .glow-effect {
+    /* Kill decorative blurs and glows */
+    .mesh-bg,
+    [class*="blur"],
+    [class*="glow"],
+    #custom-cursor-glow {
       display: none !important;
     }
 

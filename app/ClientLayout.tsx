@@ -11,8 +11,18 @@ import Navbar from "@/components/global/Navbar";
 import Footer from "@/components/global/Footer";
 import Loader from "@/components/global/Loader";
 // Dynamic Imports for Global UI (Desktop Only)
-const ScrollProgress = dynamic(() => import("@/components/global/ScrollProgress"), { ssr: false });
-const CursorGlow = dynamic(() => import("@/components/global/CursorGlow"), { ssr: false });
+// Desktop-only dynamic imports moved to a component wrapper to prevent module loading on mobile
+const DesktopOnlyGlobalUI = memo(function DesktopOnlyGlobalUI() {
+  const ScrollProgress = dynamic(() => import("@/components/global/ScrollProgress"), { ssr: false });
+  const CursorGlow = dynamic(() => import("@/components/global/CursorGlow"), { ssr: false });
+  
+  return (
+    <>
+      <ScrollProgress />
+      <CursorGlow />
+    </>
+  );
+});
 
 // Dynamic Imports for Heavy Components
 const ThreeBackground = dynamic(() => import("@/components/global/ThreeBackground"), { ssr: false });
@@ -74,14 +84,13 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   return (
     <ThemeProvider>
       <Loader />
-      {!isMobileDevice && <ScrollProgress />}
-      {!isMobileDevice && <CursorGlow />}
+      {!isMobileDevice && <DesktopOnlyGlobalUI />}
       
       {/* 1. Main Page Content - Isolated from Music/Chatbot Re-renders */}
       <MainContent>{children}</MainContent>
 
-      {/* 2. Isolated UI Features - They have their own providers locally */}
-      {isIntroFinished && !isMobileDevice && (
+      {/* 2. Isolated Features - Cross-device */}
+      {isIntroFinished && (
         <>
           <MusicProvider>
             <MusicPlayerUI />
@@ -90,7 +99,12 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
           <ChatbotProvider>
             <ChatbotUI />
           </ChatbotProvider>
-          
+        </>
+      )}
+
+      {/* 3. Desktop Exclusive Features */}
+      {isIntroFinished && !isMobileDevice && (
+        <>
           <BackToTop />
           <CommandPalette />
           <ThreeBackground />
