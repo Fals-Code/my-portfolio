@@ -119,6 +119,9 @@ export default async function CaseStudyPage({ params }: { params: any }) {
                 src={cs.heroImage} 
                 alt={cs.title} 
                 fill 
+                quality={60}
+                loading="lazy"
+                decoding="async"
                 className="object-cover group-hover:scale-105 transition-transform duration-[2s] unoptimized" 
              />
              <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/60 to-transparent opacity-90" />

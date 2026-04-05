@@ -3,8 +3,8 @@
 import React, { useEffect, useState, memo } from "react";
 import dynamic from "next/dynamic";
 import { ThemeProvider } from "@/context/ThemeContext";
-import { MusicProvider } from "@/context/MusicContext";
-import { ChatbotProvider } from "@/context/ChatbotContext";
+const MusicProvider = dynamic(() => import("@/context/MusicContext").then(mod => mod.MusicProvider), { ssr: false });
+const ChatbotProvider = dynamic(() => import("@/context/ChatbotContext").then(mod => mod.ChatbotProvider), { ssr: false });
 import { usePerformance } from "@/hooks/usePerformance";
 
 import Navbar from "@/components/global/Navbar";

@@ -73,6 +73,7 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     window.onYouTubeIframeAPIReady = () => {
       console.log("MusicContext: onYouTubeIframeAPIReady fired.");
       setIsApiReady(true);
+      delete (window as any).onYouTubeIframeAPIReady;
     };
   };
 

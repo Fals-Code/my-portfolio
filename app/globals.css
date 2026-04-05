@@ -100,7 +100,7 @@
     padding-bottom: clamp(4rem, 10vh, 10rem);
     /* Performance: Skip rendering off-screen sections */
     content-visibility: auto;
-    contain-intrinsic-size: 1px 500px;
+    contain-intrinsic-size: 1px 1000px;
   }
 
   .grid-airy {
@@ -159,6 +159,7 @@
     * {
       /* Disable smooth scrolling on low-end to prevent animation lag */
       scroll-behavior: auto !important;
+      will-change: auto !important;
     }
 
     /* Kill pulse & bounce specifically */
@@ -169,6 +170,9 @@
     .glass-panel {
       background-color: rgba(var(--bg-rgb), 1) !important;
       border: 1px solid var(--border) !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      filter: none !important;
     }
 
     .mesh-bg, .glow-effect {
