@@ -60,22 +60,26 @@ interface BentoItemProps {
   isLow?: boolean;
 }
 
-const BentoItem = ({ title, description, icon, className = "", isLow }: BentoItemProps) => (
-  <motion.div 
-    variants={isLow ? lowPerfItemVariants : itemVariants}
-    className={`group ${className}`}
-  >
-    <GlassPanel className="h-full p-6 md:p-8 flex flex-col gap-4 hover:border-accent/40 transition-colors duration-500">
-      <div className="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center text-accent group-hover:scale-110 transition-transform duration-500">
-        {icon}
-      </div>
-      <div className="space-y-2">
-        <h3 className="text-xl font-syne font-bold text-[var(--text)]">{title}</h3>
-        <p className="text-sm text-text-muted leading-relaxed">{description}</p>
-      </div>
-    </GlassPanel>
-  </motion.div>
-);
+const BentoItem = ({ title, description, icon, className = "", isLow, isMobileDevice }: BentoItemProps & { isMobileDevice?: boolean }) => {
+  const MotionDiv = (isLow || isMobileDevice) ? "div" : motion.div;
+  
+  return (
+    <MotionDiv 
+      variants={isLow ? lowPerfItemVariants : itemVariants}
+      className={`group ${className}`}
+    >
+      <GlassPanel className="h-full p-6 md:p-8 flex flex-col gap-4 hover:border-accent/40 transition-colors duration-500">
+        <div className="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center text-accent group-hover:scale-110 transition-transform duration-500">
+          {icon}
+        </div>
+        <div className="space-y-2">
+          <h3 className="text-xl font-syne font-bold text-[var(--text)]">{title}</h3>
+          <p className="text-sm text-text-muted leading-relaxed">{description}</p>
+        </div>
+      </GlassPanel>
+    </MotionDiv>
+  );
+};
 
 export default function BentoGrid() {
   const { isLow, tier, isMobileDevice } = usePerformance();
@@ -145,6 +149,7 @@ export default function BentoGrid() {
             key={index}
             {...skill}
             isLow={isLow}
+            isMobileDevice={isMobileDevice}
           />
         ))}
       </MotionDiv>

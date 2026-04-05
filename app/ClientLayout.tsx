@@ -89,8 +89,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       {/* 1. Main Page Content - Isolated from Music/Chatbot Re-renders */}
       <MainContent>{children}</MainContent>
 
-      {/* 2. Isolated Features - Cross-device */}
-      {isIntroFinished && (
+      {/* 2. Isolated Features - Cross-device (Desktop Only) */}
+      {isIntroFinished && !isMobileDevice && (
         <>
           <MusicProvider>
             <MusicPlayerUI />

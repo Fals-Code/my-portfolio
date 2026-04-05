@@ -11,6 +11,7 @@ import { usePerformance } from "@/hooks/usePerformance";
  * Headless Contact Form using fetch to Formspree
  */
 function ContactForm() {
+  const { isMobileDevice, isLow } = usePerformance();
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [formData, setFormData] = useState({
     name: "",
@@ -116,14 +117,14 @@ function ContactForm() {
 
         <AnimatePresence>
           {status === "success" && (
-            <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-2 text-green-500 text-sm font-bold">
+            <div className="flex items-center gap-2 text-green-500 text-sm font-bold">
               <CheckCircle2 className="w-5 h-5" /> Message sent successfully!
-            </motion.div>
+            </div>
           )}
           {status === "error" && (
-            <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-2 text-red-500 text-sm font-bold">
+            <div className="flex items-center gap-2 text-red-500 text-sm font-bold">
               <AlertCircle className="w-5 h-5" /> Something went wrong. Try again.
-            </motion.div>
+            </div>
           )}
         </AnimatePresence>
       </div>

@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useRef, useState, ReactElement, useEffect } from "react";
+import React, { useRef, ReactElement } from "react";
 import { motion, useSpring, useMotionValue } from "framer-motion";
+import { usePerformance } from "@/hooks/usePerformance";
 
 interface MagneticProps {
   children: ReactElement;
@@ -52,14 +53,11 @@ function MagneticDesktop({ children, amount, intense }: { children: ReactElement
   );
 }
 
-export default function Magnetic({ children, amount = 0.5, disabledOnMobile = false, intense = true }: MagneticProps) {
-  const [useStatic, setUseStatic] = useState(true);
+export default function Magnetic({ children, amount = 0.5, disabledOnMobile = true, intense = true }: MagneticProps) {
+  const { isMobileDevice, isLow } = usePerformance();
+  const shouldDisable = (disabledOnMobile && isMobileDevice) || isLow;
 
-  useEffect(() => {
-    setUseStatic(disabledOnMobile && window.innerWidth < 768);
-  }, [disabledOnMobile]);
-
-  if (useStatic) {
+  if (shouldDisable) {
     return <div className="inline-block relative">{children}</div>;
   }
 
