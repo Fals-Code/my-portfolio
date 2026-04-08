@@ -21,9 +21,10 @@ import {
   Code2,
   Database,
   Rocket,
-  AlertCircle
+  AlertCircle,
+  Share2
 } from "lucide-react";
-import { GitHub } from "@/components/ui/Icons";
+import { GitHub, Twitter, Linkedin } from "@/components/ui/Icons";
 import TiltCard from "@/components/ui/TiltCard";
 
 /**
@@ -188,7 +189,48 @@ export default async function CaseStudyPage({ params }: { params: any }) {
                 </div>
              </TiltCard>
           </div>
-
+          {/* Social Share (1x1) */}
+          <div className="md:col-span-1">
+             <TiltCard className="p-1 glass-panel">
+                <div className="p-8 h-full flex flex-col justify-between items-center text-center">
+                   <div className="p-4 bg-accent/5 rounded-3xl border border-accent/10 mb-6">
+                      <Share2 className="w-12 h-12 text-accent" />
+                   </div>
+                   <div className="space-y-4 w-full">
+                      <h4 className="text-sm font-bold uppercase tracking-widest text-[var(--text)]">Spread The Word</h4>
+                      <p className="text-[10px] text-text-muted">Share project to social media.</p>
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="outline" 
+                          asChild 
+                          className="flex-1 rounded-xl"
+                        >
+                          <a 
+                            href={`https://twitter.com/intent/tweet?text=Check out ${cs.title} by @MathlaulFalah&url=https://falah.com/projects/${cs.slug}`}
+                            target="_blank"
+                            aria-label="Share on Twitter"
+                          >
+                            <Twitter className="w-4 h-4" />
+                          </a>
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          asChild 
+                          className="flex-1 rounded-xl"
+                        >
+                          <a 
+                            href={`https://www.linkedin.com/sharing/share-offsite/?url=https://falah.com/projects/${cs.slug}`}
+                            target="_blank"
+                            aria-label="Share on LinkedIn"
+                          >
+                            <Linkedin className="w-4 h-4" />
+                          </a>
+                        </Button>
+                      </div>
+                   </div>
+                </div>
+             </TiltCard>
+          </div>
           {/* Challenge (2x1) */}
           <div className="md:col-span-2">
              <TiltCard className="p-1 glass-panel">

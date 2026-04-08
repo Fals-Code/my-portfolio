@@ -19,7 +19,9 @@ import {
   Coffee,
   Gamepad2,
   BookOpen,
-  Italic
+  Italic,
+  Award,
+  ShieldCheck
 } from "lucide-react";
 import { GlassPanel, GradientText, Button } from "@/components/ui/Primitives";
 import TiltCard from "@/components/ui/TiltCard";
@@ -162,6 +164,43 @@ export default function AboutPage() {
                           <h4 className="font-bold text-[var(--text)] font-syne text-lg">Pro Evolution Soccer 21</h4>
                           <p className="text-sm text-text-muted mt-1 leading-relaxed">Mengasah mental taktikal dan istirahat sejenak lewat mode <strong>Local Match</strong> alias <i>Bantai-bantai player lain</i> di PES 21.</p>
                         </div>
+                      </div>
+                   </div>
+                </div>
+             </TiltCard>
+          </motion.div>
+
+          {/* Experience Vertical Timeline (Full Width below) */}
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="md:col-span-12 mt-8 mb-8"
+          >
+             <TiltCard className="p-1 glass-panel overflow-hidden">
+                <div className="p-10 border border-white/5 bg-accent/5 relative">
+                   <div className="absolute top-0 right-0 p-8 opacity-10">
+                      <GraduationCap className="w-32 h-32" />
+                   </div>
+                   <h3 className="text-2xl font-syne font-bold mb-8">Certifications & Achievements</h3>
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="flex gap-4 p-5 rounded-2xl glass-panel bg-white/5">
+                         <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center shrink-0">
+                            <Award className="w-6 h-6 text-accent" />
+                         </div>
+                         <div>
+                            <h4 className="font-bold text-lg font-syne">Laravel Advanced Course</h4>
+                            <p className="text-sm text-text-muted">Mastering high-performance backend systems and patterns.</p>
+                         </div>
+                      </div>
+                      <div className="flex gap-4 p-5 rounded-2xl glass-panel bg-white/5">
+                         <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center shrink-0">
+                            <ShieldCheck className="w-6 h-6 text-blue-400" />
+                         </div>
+                         <div>
+                            <h4 className="font-bold text-lg font-syne">Informatics Competition</h4>
+                            <p className="text-sm text-text-muted">Academic group achievement in building scalable web solutions.</p>
+                         </div>
                       </div>
                    </div>
                 </div>

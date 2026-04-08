@@ -3,6 +3,7 @@ import { Syne, DM_Sans } from "next/font/google";
 import "./globals.css";
 import ClientLayout from "./ClientLayout";
 import PageTransition from "@/components/global/PageTransition";
+import { Toaster } from "sonner";
 
 const syne = Syne({
   variable: "--font-syne",
@@ -96,16 +97,11 @@ export default function RootLayout({
                 loader.classList.add('hidden');
                 setTimeout(function() { loader.remove(); }, 500);
               }
-              // Service Worker Registration (Non-blocking)
-              if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/sw.js').catch(function(err) {
-                  console.log('SW failed:', err);
-                });
-              }
             });
           `}} />
         </div>
         <ClientLayout>
+          <Toaster position="top-center" richColors />
           <PageTransition>
             {children}
           </PageTransition>

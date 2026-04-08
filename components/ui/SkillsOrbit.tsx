@@ -9,7 +9,6 @@ import * as THREE from "three";
 function Word({ children, tier, ...props }: { children: string; tier: string } & any) {
   const color = new THREE.Color();
   const fontProps = { 
-    font: '/fonts/Inter-Bold.woff', 
     fontSize: tier === "high" ? 0.25 : 0.22, 
     letterSpacing: -0.05, 
     lineHeight: 1, 

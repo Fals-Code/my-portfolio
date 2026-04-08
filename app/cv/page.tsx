@@ -39,7 +39,7 @@ export default function CVPage() {
       <motion.main 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-4xl mx-auto bg-bg-card dark:bg-neutral-900/50 p-12 md:p-20 rounded-[3rem] border border-black/5 dark:border-white/5 shadow-2xl print:shadow-none print:border-none print:p-0 print:bg-transparent print:rounded-none"
+        className="max-w-4xl mx-auto bg-bg-card p-12 md:p-20 rounded-[3rem] border border-black/5 dark:border-white/5 shadow-2xl print:shadow-none print:border-none print:p-0 print:bg-transparent print:rounded-none"
       >
         {/* Header Section */}
         <section className="border-b-2 border-accent/20 pb-12 mb-12 flex flex-col md:flex-row md:items-end justify-between gap-8">

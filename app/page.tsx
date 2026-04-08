@@ -24,13 +24,17 @@ export default function HomePage() {
       {!isMobileDevice && <TerminalIntro />}
 
       {/* 2. Hero Section: Welcome & Core Identity */}
-      {isMobileDevice ? <HeroSectionStatic key="hero-static" /> : <HeroSection key="hero-desktop" />}
+      <div id="hero">
+        {isMobileDevice ? <HeroSectionStatic key="hero-static" /> : <HeroSection key="hero-desktop" />}
+      </div>
 
       {/* 3. Services: What I do */}
-      {isMobileDevice ? <ServicesSectionStatic key="services-static" /> : <ServicesSection key="services-desktop" />}
+      <div id="services">
+        {isMobileDevice ? <ServicesSectionStatic key="services-static" /> : <ServicesSection key="services-desktop" />}
+      </div>
 
       {/* 4. CTA: Call to action - Keeping it simple for mobile */}
-      <section className="container mx-auto px-6 py-24 text-center space-y-8 bg-bg relative z-10">
+      <section id="cta" className="container mx-auto px-6 py-24 text-center space-y-8 bg-bg relative z-10">
         <h2 className="text-3xl md:text-5xl font-syne font-extrabold text-[var(--text)]">
           Ready to build something <GradientText>great?</GradientText>
         </h2>

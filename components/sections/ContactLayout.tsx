@@ -4,7 +4,8 @@ import React, { useState } from "react";
 import { GlassPanel, Button } from "@/components/ui/Primitives";
 import { Mail, MapPin, Send, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { GitHub, Instagram } from "@/components/ui/Icons";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import { toast } from "sonner";
 import { usePerformance } from "@/hooks/usePerformance";
 import { INSTAGRAM_URL, FORMSPREE_ENDPOINT } from "@/lib/constants";
 
@@ -37,12 +38,21 @@ function ContactForm() {
       });
 
       if (response.ok) {
-        setStatus("success");
+        toast.success("Message sent successfully!", {
+          description: "I'll get back to you as soon as possible."
+        });
         setFormData({ name: "", email: "", subject: "", message: "" });
+        setStatus("success");
       } else {
+        toast.error("Failed to send message.", {
+          description: "Please try again later or contact me via social media."
+        });
         setStatus("error");
       }
     } catch (err) {
+      toast.error("Something went wrong.", {
+        description: "Please check your internet connection."
+      });
       setStatus("error");
     }
   };
@@ -109,19 +119,6 @@ function ContactForm() {
           {status === "loading" ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
           Send Message
         </button>
-
-        <AnimatePresence>
-          {status === "success" && (
-            <div className="flex items-center gap-2 text-green-500 text-sm font-bold">
-              <CheckCircle2 className="w-5 h-5" /> Message sent successfully!
-            </div>
-          )}
-          {status === "error" && (
-            <div className="flex items-center gap-2 text-red-500 text-sm font-bold">
-              <AlertCircle className="w-5 h-5" /> Something went wrong. Try again.
-            </div>
-          )}
-        </AnimatePresence>
       </div>
     </GlassPanel>
   );

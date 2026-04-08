@@ -9,12 +9,13 @@ import { ExternalLink, ArrowRight, Hospital, Warehouse, Book, Rocket } from "luc
 import { GitHub } from "@/components/ui/Icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePerformance } from "@/hooks/usePerformance";
+import { useGitHub } from "@/hooks/useGitHub";
 
 /**
  * Maps icon names to Lucide components for projects.
  */
 function ProjectIcon({ name, color }: { name: string; color?: string }) {
-  const props = { className: "w-6 h-6", style: { color } };
+  const props = { className: "w-6 h-6", style: { color }, "aria-hidden": true as const };
   switch (name) {
     case "hospital": return <Hospital {...props} />;
     case "warehouse": return <Warehouse {...props} />;
@@ -30,12 +31,19 @@ function ProjectIcon({ name, color }: { name: string; color?: string }) {
  */
 export default function ProjectsSection() {
   const { isLow, isMobileDevice } = usePerformance();
+  const { stats, isLoading: isGitLoading } = useGitHub();
   const [filter, setFilter] = useState("All");
-  const categories = ["All", "Laravel", "Full-stack", "WIP"];
+  
+  const categories = ["All", "Laravel", "Full-stack", "MySQL", "Livewire", "WIP"];
 
-  const filteredProjects = projects.filter(p => 
-    filter === "All" || p.tags.some(t => t.toLowerCase() === filter.toLowerCase())
-  );
+  const filteredProjects = projects.filter(p => {
+    if (filter === "All") return true;
+    const lowerFilter = filter.toLowerCase();
+    return (
+      p.tags.some(t => t.toLowerCase() === lowerFilter) || 
+      (p.tech && p.tech.some(t => t.toLowerCase() === lowerFilter))
+    );
+  });
 
   const ContainerTag = isMobileDevice || isLow ? "div" as any : motion.div;
 
@@ -70,6 +78,29 @@ export default function ProjectsSection() {
           </div>
         </div>
 
+        {/* GitHub Stats Stats Bar / Skeleton */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+          {isGitLoading ? (
+            Array(4).fill(0).map((_, i) => (
+              <div key={i} className="h-20 animate-pulse bg-white/5 rounded-2xl border border-white/5" />
+            ))
+          ) : (
+            <>
+              {[
+                { label: "Total Repos", value: stats.repositories },
+                { label: "GitHub Followers", value: stats.followers },
+                { label: "Total Stars", value: stats.stars },
+                { label: "Stability", value: "99.9%" }
+              ].map((stat, i) => (
+                <div key={i} className="p-4 glass-panel flex flex-col items-center justify-center text-center">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-1">{stat.label}</span>
+                  <span className="text-xl font-syne font-extrabold text-accent">{stat.value}</span>
+                </div>
+              ))}
+            </>
+          )}
+        </div>
+
         <ContainerTag className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-airy">
           {!isMobileDevice && !isLow ? (
             <AnimatePresence mode="popLayout">
@@ -96,7 +127,7 @@ export default function ProjectsSection() {
                       <div className="w-full aspect-video md:aspect-[16/10] relative rounded-2xl overflow-hidden mb-6 group-hover:shadow-2xl transition-all duration-500">
                         <Image 
                           src={proj.image} 
-                          alt={proj.title} 
+                          alt={`Screenshot or preview of ${proj.title} project showcase`} 
                           fill 
                           quality={60}
                           loading={index <= 1 ? "eager" : "lazy"}
@@ -120,7 +151,14 @@ export default function ProjectsSection() {
                       <div className="flex justify-between items-start gap-4">
                         <h3 className="text-2xl font-syne font-extrabold text-[var(--text)] group-hover:text-accent transition-colors leading-tight">{proj.title}</h3>
                         <div className="flex items-center gap-2">
-                          <Link href={proj.github} target="_blank" className="p-2 glass-panel rounded-xl hover:text-accent transition-colors z-10 shrink-0 border-white/5 bg-white/5"><GitHub className="w-5 h-5" /></Link>
+                          <Link 
+                            href={proj.github} 
+                            target="_blank" 
+                            className="p-2 glass-panel rounded-xl hover:text-accent transition-colors z-10 shrink-0 border-white/5 bg-white/5"
+                            aria-label={`View ${proj.title} source code on GitHub`}
+                          >
+                            <GitHub className="w-5 h-5" aria-hidden="true" />
+                          </Link>
                         </div>
                       </div>
                       <p className="text-[15px] text-text-muted leading-relaxed font-medium">{proj.description}</p>
@@ -129,8 +167,17 @@ export default function ProjectsSection() {
                       </div>
                     </div>
                     <div className="pt-6 mt-6 border-t border-black/10 dark:border-white/10 flex items-center justify-between mx-2">
-                      <Link href={proj.caseStudy || "/projects"} className="text-[10px] font-bold uppercase tracking-widest text-[var(--text)] hover:text-accent flex items-center gap-2 group/link transition-colors">Read Case Study <ArrowRight className="w-3 h-3 group-hover/link:translate-x-1 transition-transform" /></Link>
-                      {proj.demo && (<Link href={proj.demo} target="_blank" className="p-2 text-text-muted hover:text-[var(--text)] transition-colors"><ExternalLink className="w-4 h-4" /></Link>)}
+                      <Link href={proj.caseStudy || "/projects"} className="text-[10px] font-bold uppercase tracking-widest text-[var(--text)] hover:text-accent flex items-center gap-2 group/link transition-colors">Read Case Study <ArrowRight className="w-3 h-3 group-hover/link:translate-x-1 transition-transform" aria-hidden="true" /></Link>
+                      {proj.demo && (
+                        <Link 
+                          href={proj.demo} 
+                          target="_blank" 
+                          className="p-2 text-text-muted hover:text-[var(--text)] transition-colors"
+                          aria-label={`Visit live demo of ${proj.title}`}
+                        >
+                          <ExternalLink className="w-4 h-4" aria-hidden="true" />
+                        </Link>
+                      )}
                     </div>
                   </GlassPanel>
                 </motion.div>
@@ -154,7 +201,7 @@ export default function ProjectsSection() {
                     <div className="w-full aspect-video md:aspect-[16/10] relative rounded-2xl overflow-hidden mb-6">
                        <Image 
                          src={proj.image} 
-                         alt={proj.title} 
+                         alt={`Screenshot showing the ${proj.title} interface`} 
                          fill 
                          quality={60}
                          loading={index <= 1 ? "eager" : "lazy"}
@@ -183,8 +230,13 @@ export default function ProjectsSection() {
                         {proj.title}
                       </h3>
                       <div className="flex items-center gap-2">
-                        <Link href={proj.github} target="_blank" className="p-2 glass-panel rounded-xl shrink-0 border-white/5 bg-white/5">
-                          <GitHub className="w-5 h-5" />
+                        <Link 
+                          href={proj.github} 
+                          target="_blank" 
+                          className="p-2 glass-panel rounded-xl shrink-0 border-white/5 bg-white/5"
+                          aria-label={`View GitHub repository for ${proj.title}`}
+                        >
+                          <GitHub className="w-5 h-5" aria-hidden="true" />
                         </Link>
                       </div>
                     </div>
@@ -202,11 +254,16 @@ export default function ProjectsSection() {
 
                   <div className="pt-6 mt-6 border-t border-black/10 dark:border-white/10 flex items-center justify-between mx-2">
                     <Link href={proj.caseStudy || "/projects"} className="text-[10px] font-bold uppercase tracking-widest text-[var(--text)] flex items-center gap-2">
-                      Read Case Study <ArrowRight className="w-3 h-3" />
+                      Read Case Study <ArrowRight className="w-3 h-3" aria-hidden="true" />
                     </Link>
                     {proj.demo && (
-                      <Link href={proj.demo} target="_blank" className="p-2 text-text-muted">
-                        <ExternalLink className="w-4 h-4" />
+                      <Link 
+                        href={proj.demo} 
+                        target="_blank" 
+                        className="p-2 text-text-muted"
+                        aria-label={`Visit live demo for ${proj.title}`}
+                      >
+                        <ExternalLink className="w-4 h-4" aria-hidden="true" />
                       </Link>
                     )}
                   </div>

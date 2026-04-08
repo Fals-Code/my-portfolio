@@ -61,11 +61,24 @@ export default function Navbar() {
   }, [isOpen]);
 
   const navLinks = [
-    { label: "Home", href: "/" },
+    { label: "Home", href: "/", anchor: "#hero" },
     { label: "About", href: "/about" },
     { label: "Projects", href: "/projects" },
+    { label: "Blog", href: "/blog" },
+    { label: "Stack", href: "/stack" },
     { label: "Contact", href: "/contact" },
   ];
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, anchor?: string) => {
+    if (pathname === "/" && anchor && anchor.startsWith("#")) {
+      e.preventDefault();
+      const element = document.querySelector(anchor);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+        setIsOpen(false);
+      }
+    }
+  };
 
   const { isPlaying, togglePlay, isMuted, toggleMute, volume } = useMusic();
 
@@ -87,6 +100,7 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
+              onClick={(e) => handleNavClick(e, link.href, link.anchor)}
               className={`text-[12px] font-bold uppercase tracking-[0.3em] transition-all duration-300 hover:text-accent relative group ${
                 pathname === link.href ? "text-accent" : "text-text-muted"
               }`}
@@ -146,7 +160,10 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                onClick={() => setIsOpen(false)}
+                onClick={(e) => {
+                  handleNavClick(e, link.href, link.anchor);
+                  if (!link.anchor) setIsOpen(false);
+                }}
                 className={`text-3xl py-3 font-syne font-extrabold transition-all duration-300 flex items-center ${
                   pathname === link.href ? "text-accent translate-x-2" : "text-text-muted hover:text-[var(--text)]"
                 }`}

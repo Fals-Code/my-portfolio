@@ -4,10 +4,47 @@ import { streamText } from "ai";
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
+// Simple in-memory rate limiting (Best-effort on serverless)
+const rateLimitMap = new Map<string, { count: number, resetTime: number }>();
+const RATE_LIMIT_MAX = 5; // 5 requests
+const RATE_LIMIT_WINDOW = 60 * 1000; // per minute
+
 export async function POST(req: Request) {
   try {
+    // 1. Origin Validation
+    const origin = req.headers.get("origin") || req.headers.get("referer") || "";
+    // Allow localhost for dev, falah.com for prod (add other domain aliases if necessary)
+    if (process.env.NODE_ENV === "production" && origin) {
+      try {
+        const url = new URL(origin);
+        if (url.hostname !== "falah.com" && url.hostname !== "www.falah.com" && url.hostname !== "localhost") {
+          return new Response(JSON.stringify({ error: "Forbidden: Invalid Origin" }), { status: 403 });
+        }
+      } catch (e) {
+        return new Response(JSON.stringify({ error: "Forbidden: Malformed Origin" }), { status: 403 });
+      }
+    }
+
+    // 2. Light In-Memory Rate Limiting
+    const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown-ip";
+    const now = Date.now();
+    let clientLimit = rateLimitMap.get(ip);
+    
+    if (!clientLimit || now > clientLimit.resetTime) {
+      clientLimit = { count: 0, resetTime: now + RATE_LIMIT_WINDOW };
+    }
+    clientLimit.count++;
+    rateLimitMap.set(ip, clientLimit);
+
+    if (clientLimit.count > RATE_LIMIT_MAX) {
+      return new Response(JSON.stringify({ error: "Too Many Requests" }), { 
+        status: 429, 
+        headers: { "Content-Type": "application/json" } 
+      });
+    }
+
     const { messages } = await req.json();
-    console.log("INCOMING MESSAGES:", JSON.stringify(messages, null, 2));
+    console.log(`[${ip}] INCOMING MESSAGES:`, messages.length);
 
     const apiKey = process.env.MY_OWN_GEMINI_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY;
     if (!apiKey) {
