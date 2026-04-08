@@ -1,9 +1,0 @@
-D:\proyek\portoV2\my-portfolio\app\about\page.tsx
-D:\proyek\portoV2\my-portfolio\app\projects\[slug]\page.tsx
-D:\proyek\portoV2\my-portfolio\components\global\Footer.tsx
-D:\proyek\portoV2\my-portfolio\components\global\UIComponents.tsx
-D:\proyek\portoV2\my-portfolio\components\sections\ContactLayout.tsx
-D:\proyek\portoV2\my-portfolio\components\sections\ProjectsSection.tsx
-D:\proyek\portoV2\my-portfolio\components\ui\LiveStatus.tsx
-D:\proyek\portoV2\my-portfolio\components\ui\Primitives.tsx
-D:\proyek\portoV2\my-portfolio\components\BentoGrid.tsx

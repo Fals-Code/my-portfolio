@@ -126,7 +126,7 @@ export default function AboutPage() {
                      Pondasi <GradientText>Clean Architecture.</GradientText>
                    </h2>
                    <p className="text-base md:text-lg text-text-muted leading-relaxed font-medium">
-                     Perjalanan saya di Universitas Airlangga mengajarkan bahwa kode yang baik bukan hanya tentang membuat aplikasi berjalan, rari tentang mendesain sistem yang kokoh dan mudah di <strong>maintenance</strong> untuk masa depan.
+                     Perjalanan saya di Universitas Airlangga mengajarkan bahwa kode yang baik bukan hanya tentang membuat aplikasi berjalan, tapi tentang mendesain sistem yang kokoh dan mudah di <strong>maintenance</strong> untuk masa depan.
                    </p>
                    <p className="text-base text-text-muted/80 leading-relaxed italic border-l-2 border-accent/40 pl-6 py-2">
                      "Fokus utama saya selalu pada ekosistem backend. Merancang struktur <strong>database</strong> yang aman (ACID compliance), membangun RESTful API yang terstruktur, dan memastikan arsitektur Laravel yang <strong>scalable</strong>."

@@ -8,7 +8,7 @@ const codeLines = [
   { text: "import { auth } from '@falah/secure';", type: "keyword", delay: 0 },
   { text: "import { Redis } from 'ioredis';", type: "keyword", delay: 0.4 },
   { text: " ", type: "empty", delay: 0.7 },
-  { text: "// Boostrapping high-performance core", type: "comment", delay: 1.0 },
+  { text: "// Bootstrapping high-performance core", type: "comment", delay: 1.0 },
   { text: "const app = new BackendCore();", type: "keyword", delay: 1.3 },
   { text: "app.use(auth.shield());", type: "function", delay: 1.8 },
   { text: "app.use(Redis.rateLimit({ ms: 100 }));", type: "function", delay: 2.3 },

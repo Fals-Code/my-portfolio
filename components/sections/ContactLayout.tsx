@@ -6,6 +6,7 @@ import { Mail, MapPin, Send, Loader2, CheckCircle2, AlertCircle } from "lucide-r
 import { GitHub, Instagram } from "@/components/ui/Icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePerformance } from "@/hooks/usePerformance";
+import { INSTAGRAM_URL, FORMSPREE_ENDPOINT } from "@/lib/constants";
 
 /**
  * Headless Contact Form using fetch to Formspree
@@ -29,13 +30,7 @@ function ContactForm() {
 
     setStatus("loading");
     try {
-      const FORMSPREE_ID = process.env.NEXT_PUBLIC_FORMSPREE_ID;
-      if (!FORMSPREE_ID) {
-        console.error("NEXT_PUBLIC_FORMSPREE_ID not set in .env.local");
-        setStatus("error");
-        return;
-      }
-      const response = await fetch(`https://formspree.io/f/xbdaeavv`, {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
@@ -138,7 +133,7 @@ function ContactForm() {
 function ContactSidebar() {
   const items = [
     { icon: <Mail className="w-5 h-5" />, label: "Email", value: "ahmadmathlaulfalah14@gmail.com", href: "mailto:ahmadmathlaulfalah14@gmail.com" },
-    { icon: <Instagram className="w-5 h-5" />, label: "Instagram", value: "@falahh.am", href: "https://instagram.com/falahh.am" },
+    { icon: <Instagram className="w-5 h-5" />, label: "Instagram", value: "@falahh.am", href: INSTAGRAM_URL },
     { icon: <GitHub className="w-5 h-5" />, label: "GitHub", value: "github.com/Fals-Code", href: "https://github.com/Fals-Code" },
     { icon: <MapPin className="w-5 h-5" />, label: "Location", value: "Gresik — Surabaya, ID", href: "https://maps.google.com/?q=Surabaya" },
   ];

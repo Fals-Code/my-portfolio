@@ -121,13 +121,14 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         console.error("MusicContext: Exception during player creation:", err);
       }
     }
-  }, [isApiReady]);
+  }, [isApiReady, currentTrackIndex]);
 
   // Handle case where playlist or index changes while player exists
   useEffect(() => {
     if (isPlayerReady && playerRef.current && typeof playerRef.current.loadVideoById === "function") {
       playerRef.current.loadVideoById(PLAYLIST[currentTrackIndex].id);
-      playerRef.current.pauseVideo();
+      playerRef.current.playVideo();
+      setIsPlaying(true);
     }
   }, [currentTrackIndex, isPlayerReady]);
 
@@ -187,14 +188,7 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       initYouTube();
       return;
     }
-    const nextIndex = (currentTrackIndex + 1) % PLAYLIST.length;
-    setCurrentTrackIndex(nextIndex);
-    if (isPlayerReady && playerRef.current && typeof playerRef.current.loadVideoById === "function") {
-      playerRef.current.loadVideoById(PLAYLIST[nextIndex].id);
-      if (typeof playerRef.current.playVideo === "function") {
-        playerRef.current.playVideo();
-      }
-    }
+    setCurrentTrackIndex(prev => (prev + 1) % PLAYLIST.length);
   };
 
   // Keep the ref in sync so the YouTube event handler always has a fresh reference
@@ -209,14 +203,7 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       initYouTube();
       return;
     }
-    const prevIndex = (currentTrackIndex - 1 + PLAYLIST.length) % PLAYLIST.length;
-    setCurrentTrackIndex(prevIndex);
-    if (isPlayerReady && playerRef.current && typeof playerRef.current.loadVideoById === "function") {
-      playerRef.current.loadVideoById(PLAYLIST[prevIndex].id);
-      if (typeof playerRef.current.playVideo === "function") {
-        playerRef.current.playVideo();
-      }
-    }
+    setCurrentTrackIndex(prev => (prev - 1 + PLAYLIST.length) % PLAYLIST.length);
   };
 
   return (

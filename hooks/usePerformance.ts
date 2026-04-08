@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 
 export type PerformanceTier = "low" | "medium" | "high";
 
@@ -9,16 +9,9 @@ export type PerformanceTier = "low" | "medium" | "high";
  * Used for adaptive rendering of heavy components (3D, complex filters).
  */
 export function usePerformance() {
-  const initialIsMobile = useMemo(() => {
-    if (typeof window !== "undefined") {
-      return window.innerWidth < 768;
-    }
-    return false;
-  }, []);
-
   const [tier, setTier] = useState<PerformanceTier>("medium");
   const [isReducedMotion, setIsReducedMotion] = useState(false);
-  const [isMobileDevice, setIsMobileDevice] = useState(initialIsMobile);
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {

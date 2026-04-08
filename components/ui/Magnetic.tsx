@@ -5,7 +5,7 @@ import { motion, useSpring, useMotionValue } from "framer-motion";
 import { usePerformance } from "@/hooks/usePerformance";
 
 interface MagneticProps {
-  children: ReactElement;
+  children: React.ReactNode;
   amount?: number; 
   disabledOnMobile?: boolean;
   intense?: boolean;
@@ -14,7 +14,7 @@ interface MagneticProps {
 /**
  * Desktop-only animated magnetic component using springs.
  */
-function MagneticDesktop({ children, amount, intense }: { children: ReactElement, amount: number, intense: boolean }) {
+function MagneticDesktop({ children, amount, intense }: { children: React.ReactNode, amount: number, intense: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -48,7 +48,7 @@ function MagneticDesktop({ children, amount, intense }: { children: ReactElement
       style={{ x, y }}
       className="inline-block relative"
     >
-      {children}
+      <>{children}</>
     </motion.div>
   );
 }

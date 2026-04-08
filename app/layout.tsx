@@ -1,13 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Outfit, DM_Sans } from "next/font/google";
+import { Syne, DM_Sans } from "next/font/google";
 import "./globals.css";
 import ClientLayout from "./ClientLayout";
 import PageTransition from "@/components/global/PageTransition";
 
-const outfit = Outfit({
+const syne = Syne({
   variable: "--font-syne",
   subsets: ["latin"],
-  weight: ["400", "700", "800", "900"],
+  weight: ["400", "700", "800"],
   display: "swap",
 });
 
@@ -52,7 +52,6 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
         <link rel="preconnect" href="https://skillicons.dev" />
-        <link rel="preload" href="/fonts/outfit-bold.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <style dangerouslySetInnerHTML={{ __html: `
           #instant-boot-loader {
             position: fixed;
@@ -79,7 +78,7 @@ export default function RootLayout({
           }
         `}} />
       </head>
-      <body className={`${outfit.variable} ${dmSans.variable} font-dm-sans antialiased mesh-bg min-h-screen relative overflow-x-hidden`}>
+      <body className={`${syne.variable} ${dmSans.variable} font-dm-sans antialiased mesh-bg min-h-screen relative overflow-x-hidden`}>
         <script dangerouslySetInnerHTML={{ __html: `
           (function() {
             try {

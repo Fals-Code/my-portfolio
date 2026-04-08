@@ -12,18 +12,15 @@ export default function CursorGlow() {
   const glowRef = useRef<HTMLDivElement>(null);
   const { isLow } = usePerformance();
   const [isEnabled, setIsEnabled] = useState(false);
-  const enabledRef = useRef(false);
 
   useEffect(() => {
     // HARD DISABLED on mobile or low-perf devices
     if (isLow || typeof window === "undefined" || window.innerWidth < 1024) {
       setIsEnabled(false);
-      enabledRef.current = false;
       return;
     }
 
     setIsEnabled(true);
-    enabledRef.current = true;
     const glow = glowRef.current;
     if (!glow) return;
 
@@ -50,7 +47,6 @@ export default function CursorGlow() {
 
     let animId: number;
     const updatePosition = () => {
-      if (!enabledRef.current) return;
       // Smooth lerp (0.1) for buttery movement
       currentX += (mouseX - currentX) * 0.1;
       currentY += (mouseY - currentY) * 0.1;
@@ -66,7 +62,6 @@ export default function CursorGlow() {
     animId = requestAnimationFrame(updatePosition);
 
     return () => {
-      enabledRef.current = false;
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseout", handleMouseLeave);
       cancelAnimationFrame(animId);

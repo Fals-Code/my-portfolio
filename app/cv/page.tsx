@@ -77,7 +77,7 @@ export default function CVPage() {
         <section className="mb-16">
           <SectionLabel>Professional Summary</SectionLabel>
           <p className="text-lg leading-relaxed text-text-muted max-w-2xl print:text-black print:text-base">
-            Highly skilled Backend Developer specializing in the **Laravel** ecosystem. Passionate about architecting robust, 
+            Highly skilled Backend Developer specializing in the <strong>Laravel</strong> ecosystem. Passionate about architecting robust, 
             high-performance database systems and write clean, scalable, and maintainable code. 
             Currently pursuing an Applied Science degree at Universitas Airlangga with a focus on core informatics and system precision.
           </p>

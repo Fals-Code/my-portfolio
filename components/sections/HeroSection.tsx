@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button, GradientText } from "@/components/ui/Primitives";
+import { GITHUB_USERNAME, INSTAGRAM_URL } from "@/lib/constants";
 import { Download, Terminal, Mail, Globe, ArrowRight } from "lucide-react";
 import { GitHub, Instagram } from "@/components/ui/Icons";
 import Magnetic from "@/components/ui/Magnetic";
@@ -107,8 +108,8 @@ export default function HeroSection() {
           >
             <div className="flex flex-wrap justify-center lg:justify-start items-center gap-4">
               {[
-                { Icon: GitHub, href: "https://github.com/MathlaulFalah" },
-                { Icon: Instagram, href: "https://instagram.com/mathlaul_falah" },
+                { Icon: GitHub, href: `https://github.com/${GITHUB_USERNAME}` },
+                { Icon: Instagram, href: INSTAGRAM_URL },
                 { Icon: Mail, href: "mailto:ahmadmathlaulfalah14@gmail.com" }
               ].map((social, i) => (
                 <Link 

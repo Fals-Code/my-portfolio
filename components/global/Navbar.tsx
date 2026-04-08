@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { GITHUB_USERNAME, INSTAGRAM_URL } from "@/lib/constants";
 import { useTheme } from "@/context/ThemeContext";
 import { Menu, X, Sun, Moon, Laptop, Volume2, VolumeX, Ghost } from "lucide-react";
 import { useMusic } from "@/context/MusicContext";
@@ -176,10 +177,10 @@ export default function Navbar() {
 
              <div className="flex items-center justify-between pt-6 border-t border-white/5">
                 <div className="flex gap-4">
-                   <Link href="https://github.com/MathlaulFalah" target="_blank" className="p-2 -m-2 text-text-muted hover:text-accent transition-colors">
+                   <Link href={`https://github.com/${GITHUB_USERNAME}`} target="_blank" className="p-2 -m-2 text-text-muted hover:text-accent transition-colors">
                     <GitHub className="w-6 h-6" />
                   </Link>
-                  <Link href="https://instagram.com/mathlaul_falah" target="_blank" className="p-2 -m-2 text-text-muted hover:text-accent transition-colors">
+                  <Link href={INSTAGRAM_URL} target="_blank" className="p-2 -m-2 text-text-muted hover:text-accent transition-colors">
                     <Instagram className="w-6 h-6" />
                   </Link>
                 </div>
