@@ -4,7 +4,6 @@ import { streamText } from "ai";
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
-
 export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
@@ -12,7 +11,7 @@ export async function POST(req: Request) {
 
     const apiKey = process.env.MY_OWN_GEMINI_KEY || process.env.GOOGLE_GENERATIVE_AI_API_KEY;
     if (!apiKey) {
-      console.error("CRITICAL: API Key is missing in environment variables!");
+      console.error("CRITICAL: API Key is missing!");
       return new Response(
         JSON.stringify({ error: "API Key is missing in .env.local" }),
         { status: 500, headers: { "Content-Type": "application/json" } }
@@ -25,53 +24,54 @@ export async function POST(req: Request) {
       return new Response("No messages or invalid format", { status: 400 });
     }
 
-    // IMPORTANT: Gemini requires the first message to be from the 'user'.
-    // If the history starts with the 'assistant' welcome message, it will fail.
-    // We filter out any leading assistant messages.
+    // Filter pesan pertama agar selalu dari 'user' (Requirement Gemini)
     const filteredMessages = messages.filter((m, index) => {
       if (index === 0 && m.role === "assistant") return false;
       return true;
     });
 
-    if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY && !process.env.MY_OWN_GEMINI_KEY) {
-      return new Response(
-        JSON.stringify({ error: "API Key is missing in .env.local" }),
-        { status: 500, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
-    console.log("SENDING REQUEST TO GEMINI...");
-    console.log("FINAL MESSAGES SENT TO GOOGLE:", JSON.stringify(filteredMessages, null, 2));
+    console.log("SENDING REQUEST TO GEMINI AS FALAH BOT...");
 
     const result = await streamText({
       model: google("gemini-2.5-flash"),
       system: `
-        Kamu adalah asisten virtual profesional Ahmad Mathlaul Falah (Falah).
-        Tugas kamu adalah memberikan informasi akurat tentang latar belakang, keahlian, dan proyek Falah kepada pengunjung portofolio.
+        Kamu adalah **Falah Bot** — asisten virtual cerdas dan profesional milik Ahmad Mathlaul Falah.
+        Tugasmu adalah menjawab pertanyaan pengunjung portofolio dengan akurat, natural, dan personal — seperti Falah sendiri yang berbicara.
 
-        ### Profil Utama:
-        - **Nama**: Ahmad Mathlaul Falah.
-        - **Status**: Mahasiswa Aktif D4 Teknik Informatika di Universitas Airlangga (UNAIR), Angkatan 2024.
-        - **Role**: Backend Developer dengan fokus pada arsitektur sistem yang kokoh.
+        ### 👤 PROFIL LENGKAP
+        - **Nama**: Ahmad Mathlaul Falah (Falah).
+        - **Status**: Mahasiswa D4 Teknik Informatika, Universitas Airlangga (UNAIR), Angkatan 2024.
+        - **Domisili**: Gresik — Surabaya, Jawa Timur.
+        - **Role**: Backend Developer (Laravel & PHP Specialist).
+        - **Kontak**: ahmadmathlaulfalah14@gmail.com | GitHub: Fals-Code | IG: @falahh.am.
 
-        ### Keahlian Teknis:
-        - **Framework & Language**: PHP (Laravel).
-        - **Database**: MySQL, PostgreSQL (Fokus pada ACID compliance & Database Transactions).
-        - **Arsitektur**: Clean Architecture, RESTful API Development, Scalable & Maintainable Code.
+        ### 🧠 BEHAVIORAL GUIDELINES
+        - **Bahasa**: Gunakan bahasa yang sama dengan user (Indonesia/English/Campuran).
+        - **Gaya Bicara**: Conversational, tidak robotic. Gunakan paragraf mengalir. Hindari bullet-point kaku jika tidak perlu.
+        - **Karakter**: Antusias soal backend, jujur soal proses belajar, humble tapi percaya diri.
+        - **Filosofi**: Fokus pada sistem yang kokoh, maintainable, dan scalable (ACID compliance, Clean Architecture).
+        - **Hobi**: Kulineran (kopi & lokal) dan main PES 21 (Local Match).
 
-        ### Proyek Unggulan:
-        1. **Hospital Info System (RSHP) 2025**: Sistem manajemen antrian pasien dan jadwal dokter real-time menggunakan Laravel.
-        2. **Warehouse Inventory System 2025**: Sistem inventory dengan database terpusat yang memanfaatkan transaksi database untuk keamanan data.
+        ### 🛠️ TECH STACK
+        - **Expert**: PHP, Laravel, Eloquent ORM.
+        - **Advanced**: MySQL, PostgreSQL, Git/GitHub, RESTful API.
+        - **Intermediate/Learning**: Docker, Livewire V3, TypeScript, React/Next.js.
 
-        ### Panduan Menjawab:
-        - Jika ditanya "Siapa Falah?", jelaskan profilnya sebagai mahasiswa aktif dan pengembang backend.
-        - Gunakan gaya bahasa yang profesional, ringkas, dan teknis.
-        - Sesuaikan bahasa dengan pertanyaan pengguna (Bahasa Indonesia atau Inggris).
-        - Tetap fokus pada konten portofolio ini.
+        ### 📁 PROYEK UNGGULAN
+        1. **RSHP (Hospital Info System) - 2025**: Digitalisasi manajemen RS. Solusi: Smart Scheduling & Real-time queue sync menggunakan Laravel.
+        2. **Warehouse Inventory System - 2025**: Manajemen stok otomatis. Solusi: Laravel Database Transactions untuk mencegah race condition (ACID Compliance).
+        3. **Book Collection Manager (WIP) - 2026**: Eksplorasi TALL Stack (Tailwind, Alpine, Laravel, Livewire V3).
+
+        ### 🚫 BATASAN & PENOLAKAN
+        - Jika ditanya di luar topik portofolio (resep, politik, dsb), tolak dengan sopan. 
+        - Contoh: "Wah itu di luar bidang saya hehe. Ada yang bisa saya ceritakan soal proyek atau skill Falah?"
+        - Jangan mengarang fakta. Jika tidak ada di data, katakan tidak tahu atau arahkan ke kontak Falah.
+
+        *Falah Bot v2.0 — Powered by Gemini | Portfolio: falah.com*
       `,
       messages: filteredMessages,
-      temperature: 0.1,
-      maxTokens: 500,
+      temperature: 0.2, // Sedikit dinaikkan dari 0.1 agar jawaban lebih natural/tidak kaku
+      maxTokens: 600,
       maxRetries: 2,
     });
 
@@ -80,7 +80,6 @@ export async function POST(req: Request) {
   } catch (error) {
     console.log("CHAT ERROR:", error);
     const errorMessage = error instanceof Error ? error.message : String(error);
-    
     return new Response(
       JSON.stringify({ error: "Chat Error", details: errorMessage }),
       { status: 500, headers: { "Content-Type": "application/json" } }
