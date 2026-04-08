@@ -120,8 +120,12 @@ export default async function CaseStudyPage({ params }: { params: any }) {
                 alt={cs.title} 
                 fill 
                 quality={60}
-                loading="lazy"
+                loading="eager"
+                priority
                 decoding="async"
+                sizes="(max-width: 768px) 100vw, 90vw"
+                placeholder="blur"
+                blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCI+PHJlY3Qgd2lkdGg9Ijk5OSIgaGVpZ2h0PSI5OTkiIGZpbGw9IiMzMzMiLz48L3N2Zz4="
                 className="object-cover group-hover:scale-105 transition-transform duration-[2s] unoptimized" 
              />
              <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/60 to-transparent opacity-90" />

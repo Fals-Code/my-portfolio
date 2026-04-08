@@ -70,6 +70,7 @@ export default function TerminalIntro() {
       // Expand Window
       setExpandFullscreen(true);
       sessionStorage.setItem("terminal-shown", "true");
+      window.dispatchEvent(new CustomEvent("falah-intro-complete"));
       
       // Remove completely after expanding
       setTimeout(() => {
@@ -152,6 +153,7 @@ export default function TerminalIntro() {
             onClick={() => {
               setExpandFullscreen(true);
               sessionStorage.setItem("terminal-shown", "true");
+              window.dispatchEvent(new CustomEvent("falah-intro-complete"));
               setTimeout(() => {
                 setIsVisible(false);
                 document.body.classList.remove("intro-running");

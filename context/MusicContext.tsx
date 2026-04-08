@@ -63,6 +63,14 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     initializingRef.current = true;
 
     console.log("MusicContext: Lazy Initializing YouTube API...");
+
+    let playerContainer = document.getElementById("yt-player-persistent");
+    if (!playerContainer) {
+      playerContainer = document.createElement("div");
+      playerContainer.id = "yt-player-persistent";
+      playerContainer.style.display = "none";
+      document.body.appendChild(playerContainer);
+    }
     
     const tag = document.createElement("script");
     tag.id = "yt-iframe-api";
@@ -80,14 +88,6 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     if (isApiReady && !playerRef.current) {
       console.log("MusicContext: Creating YT player...");
-      
-      let playerContainer = document.getElementById("yt-player-persistent");
-      if (!playerContainer) {
-        playerContainer = document.createElement("div");
-        playerContainer.id = "yt-player-persistent";
-        playerContainer.style.display = "none";
-        document.body.appendChild(playerContainer);
-      }
 
       try {
         playerRef.current = new window.YT.Player("yt-player-persistent", {

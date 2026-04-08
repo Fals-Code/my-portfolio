@@ -202,6 +202,15 @@
       content-visibility: auto;
       contain-intrinsic-size: 1px 800px;
     }
+
+    .no-mobile-anim, .no-mobile-anim * {
+      transform: none !important;
+      transition: none !important;
+      animation: none !important;
+    }
+    .no-mobile-anim [data-framer-motion] {
+      transform: none !important;
+    }
   }
 
   /* Simplify for very old browsers or high-load situations */

@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Clock, MapPin } from "lucide-react";
 
 export default function LiveStatus() {
   const [time, setTime] = useState<string>("");
+
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const updateTime = () => {
@@ -21,13 +23,27 @@ export default function LiveStatus() {
       setTime(new Intl.DateTimeFormat("en-GB", options).format(now));
     };
 
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
+    let intervalId: ReturnType<typeof setInterval> | null = null;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        updateTime();
+        intervalId = setInterval(updateTime, 1000);
+      } else {
+        if (intervalId) clearInterval(intervalId);
+      }
+    });
+
+    const el = containerRef.current;
+    if (el) observer.observe(el);
+
+    return () => {
+      observer.disconnect();
+      if (intervalId) clearInterval(intervalId);
+    };
   }, []);
 
   return (
-    <div className="flex flex-col h-full justify-between gap-4">
+    <div ref={containerRef} className="flex flex-col h-full justify-between gap-4">
       <div className="flex items-center justify-between">
         <div className="p-2 bg-accent/10 rounded-lg">
           <Clock className="w-4 h-4 text-accent" />

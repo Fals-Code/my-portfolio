@@ -66,13 +66,11 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       if (shown || isMobileDevice) {
         setIsIntroFinished(true);
       } else {
-        const interval = setInterval(() => {
-          if (!document.body.classList.contains("intro-running")) {
-            setIsIntroFinished(true);
-            clearInterval(interval);
-          }
-        }, 500);
-        return () => clearInterval(interval);
+        const handleIntroComplete = () => {
+          setIsIntroFinished(true);
+        };
+        window.addEventListener("falah-intro-complete", handleIntroComplete);
+        return () => window.removeEventListener("falah-intro-complete", handleIntroComplete);
       }
     }
   }, [isMobileDevice]);

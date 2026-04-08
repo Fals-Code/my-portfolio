@@ -16,18 +16,12 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
  */
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>("light");
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     // 1. Check localStorage
     const savedTheme = localStorage.getItem("falah-theme-v2") as Theme;
-    
-    // Default to 'light' if no preference saved, ignoring system preference
     const initialTheme = savedTheme || "light";
-    
     setTheme(initialTheme);
-    document.documentElement.setAttribute("data-theme", initialTheme);
-    setMounted(true);
   }, []);
 
   const toggleTheme = (e?: React.MouseEvent) => {
@@ -62,7 +56,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      <div className={mounted ? theme : ""} style={!mounted ? { visibility: "hidden" } : {}}>
+      <div className={theme}>
         {children}
       </div>
     </ThemeContext.Provider>

@@ -71,7 +71,72 @@ export default function ProjectsSection() {
         </div>
 
         <ContainerTag className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-airy">
-          {isLow || isMobileDevice ? (
+          {!isMobileDevice && !isLow ? (
+            <AnimatePresence mode="popLayout">
+              {filteredProjects.map((proj, index) => (
+                <motion.div
+                  key={proj.id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.4 }}
+                  className="group"
+                >
+                  <GlassPanel className={`h-full flex flex-col p-6 transition-all duration-500 overflow-hidden relative ${
+                    proj.featured ? "border-accent/30 shadow-[0_0_40px_rgba(232,83,58,0.05)]" : ""
+                  }`}>
+                    {proj.badge && (
+                      <div className={`absolute top-0 right-0 px-4 py-1 text-[9px] font-bold uppercase tracking-widest rounded-bl-xl z-20 ${
+                        proj.badge === "featured" ? "bg-accent text-white" : "bg-amber-500 text-black"
+                      }`}>
+                        {proj.badge}
+                      </div>
+                    )}
+                    {proj.image ? (
+                      <div className="w-full aspect-video md:aspect-[16/10] relative rounded-2xl overflow-hidden mb-6 group-hover:shadow-2xl transition-all duration-500">
+                        <Image 
+                          src={proj.image} 
+                          alt={proj.title} 
+                          fill 
+                          quality={60}
+                          loading={index <= 1 ? "eager" : "lazy"}
+                          priority={index <= 1} 
+                          decoding="async" 
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          placeholder={index <= 1 ? "blur" : "empty"}
+                          blurDataURL={index <= 1 ? "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCI+PHJlY3Qgd2lkdGg9Ijk5OSIgaGVpZ2h0PSI5OTkiIGZpbGw9IiMzMzMiLz48L3N2Zz4=" : undefined}
+                          className="object-cover group-hover:scale-105 transition-transform duration-700" 
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                      </div>
+                    ) : (
+                      <div className="flex items-start justify-between mb-8 px-4 pt-4">
+                        <div className="w-16 h-16 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500" style={{ backgroundColor: proj.iconBg || "rgba(232,83,58,0.1)" }}>
+                          <ProjectIcon name={proj.icon || ""} color={proj.iconColor} />
+                        </div>
+                      </div>
+                    )}
+                    <div className="flex-1 space-y-4">
+                      <div className="flex justify-between items-start gap-4">
+                        <h3 className="text-2xl font-syne font-extrabold text-[var(--text)] group-hover:text-accent transition-colors leading-tight">{proj.title}</h3>
+                        <div className="flex items-center gap-2">
+                          <Link href={proj.github} target="_blank" className="p-2 glass-panel rounded-xl hover:text-accent transition-colors z-10 shrink-0 border-white/5 bg-white/5"><GitHub className="w-5 h-5" /></Link>
+                        </div>
+                      </div>
+                      <p className="text-[15px] text-text-muted leading-relaxed font-medium">{proj.description}</p>
+                      <div className="flex flex-wrap gap-2 pt-2">
+                        {proj.tech?.map((t) => (<span key={t} className="text-[10px] font-bold uppercase tracking-widest text-accent/80 bg-accent/5 px-3 py-1.5 rounded-lg border border-accent/10">{t}</span>))}
+                      </div>
+                    </div>
+                    <div className="pt-6 mt-6 border-t border-black/10 dark:border-white/10 flex items-center justify-between mx-2">
+                      <Link href={proj.caseStudy || "/projects"} className="text-[10px] font-bold uppercase tracking-widest text-[var(--text)] hover:text-accent flex items-center gap-2 group/link transition-colors">Read Case Study <ArrowRight className="w-3 h-3 group-hover/link:translate-x-1 transition-transform" /></Link>
+                      {proj.demo && (<Link href={proj.demo} target="_blank" className="p-2 text-text-muted hover:text-[var(--text)] transition-colors"><ExternalLink className="w-4 h-4" /></Link>)}
+                    </div>
+                  </GlassPanel>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          ) : (
             filteredProjects.map((proj, index) => (
               <div key={proj.id} className="group">
                 <GlassPanel className={`h-full flex flex-col p-6 overflow-hidden relative ${
@@ -95,7 +160,9 @@ export default function ProjectsSection() {
                          loading={index <= 1 ? "eager" : "lazy"}
                          priority={index <= 1}
                          decoding="async"
-                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                         placeholder={index <= 1 ? "blur" : "empty"}
+                         blurDataURL={index <= 1 ? "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCI+PHJlY3Qgd2lkdGg9Ijk5OSIgaGVpZ2h0PSI5OTkiIGZpbGw9IiMzMzMiLz48L3N2Zz4=" : undefined}
                          className="object-cover"
                        />
                     </div>
@@ -146,71 +213,9 @@ export default function ProjectsSection() {
                 </GlassPanel>
               </div>
             ))
-          ) : (
-            <AnimatePresence mode="popLayout">
-              {filteredProjects.map((proj, index) => (
-                <motion.div
-                  key={proj.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.4 }}
-                  className="group"
-                >
-                  <GlassPanel className={`h-full flex flex-col p-6 transition-all duration-500 overflow-hidden relative ${
-                    proj.featured ? "border-accent/30 shadow-[0_0_40px_rgba(232,83,58,0.05)]" : ""
-                  }`}>
-                    {proj.badge && (
-                      <div className={`absolute top-0 right-0 px-4 py-1 text-[9px] font-bold uppercase tracking-widest rounded-bl-xl z-20 ${
-                        proj.badge === "featured" ? "bg-accent text-white" : "bg-amber-500 text-black"
-                      }`}>
-                        {proj.badge}
-                      </div>
-                    )}
-                    {proj.image ? (
-                      <div className="w-full aspect-video md:aspect-[16/10] relative rounded-2xl overflow-hidden mb-6 group-hover:shadow-2xl transition-all duration-500">
-                        <Image 
-                          src={proj.image} 
-                          alt={proj.title} 
-                          fill 
-                          quality={60}
-                          loading={index <= 1 ? "eager" : "lazy"}
-                          priority={index <= 1} 
-                          decoding="async" 
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          className="object-cover group-hover:scale-105 transition-transform duration-700" 
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                      </div>
-                    ) : (
-                      <div className="flex items-start justify-between mb-8 px-4 pt-4">
-                        <div className="w-16 h-16 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500" style={{ backgroundColor: proj.iconBg || "rgba(232,83,58,0.1)" }}>
-                          <ProjectIcon name={proj.icon || ""} color={proj.iconColor} />
-                        </div>
-                      </div>
-                    )}
-                    <div className="flex-1 space-y-4">
-                      <div className="flex justify-between items-start gap-4">
-                        <h3 className="text-2xl font-syne font-extrabold text-[var(--text)] group-hover:text-accent transition-colors leading-tight">{proj.title}</h3>
-                        <div className="flex items-center gap-2">
-                          <Link href={proj.github} target="_blank" className="p-2 glass-panel rounded-xl hover:text-accent transition-colors z-10 shrink-0 border-white/5 bg-white/5"><GitHub className="w-5 h-5" /></Link>
-                        </div>
-                      </div>
-                      <p className="text-[15px] text-text-muted leading-relaxed font-medium">{proj.description}</p>
-                      <div className="flex flex-wrap gap-2 pt-2">
-                        {proj.tech?.map((t) => (<span key={t} className="text-[10px] font-bold uppercase tracking-widest text-accent/80 bg-accent/5 px-3 py-1.5 rounded-lg border border-accent/10">{t}</span>))}
-                      </div>
-                    </div>
-                    <div className="pt-6 mt-6 border-t border-black/10 dark:border-white/10 flex items-center justify-between mx-2">
-                      <Link href={proj.caseStudy || "/projects"} className="text-[10px] font-bold uppercase tracking-widest text-[var(--text)] hover:text-accent flex items-center gap-2 group/link transition-colors">Read Case Study <ArrowRight className="w-3 h-3 group-hover/link:translate-x-1 transition-transform" /></Link>
-                      {proj.demo && (<Link href={proj.demo} target="_blank" className="p-2 text-text-muted hover:text-[var(--text)] transition-colors"><ExternalLink className="w-4 h-4" /></Link>)}
-                    </div>
-                  </GlassPanel>
-                </motion.div>
-              ))}
-            </AnimatePresence>
           )}
         </ContainerTag>
+
       </div>
     </section>
   );

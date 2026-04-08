@@ -80,6 +80,14 @@ export default function RootLayout({
         `}} />
       </head>
       <body className={`${outfit.variable} ${dmSans.variable} font-dm-sans antialiased mesh-bg min-h-screen relative overflow-x-hidden`}>
+        <script dangerouslySetInnerHTML={{ __html: `
+          (function() {
+            try {
+              var t = localStorage.getItem('falah-theme-v2') || 'light';
+              document.documentElement.setAttribute('data-theme', t);
+            } catch (e) {}
+          })();
+        `}} />
         <div id="instant-boot-loader" suppressHydrationWarning>
           <div className="boot-logo">FALAH.DEV</div>
           <script dangerouslySetInnerHTML={{ __html: `
