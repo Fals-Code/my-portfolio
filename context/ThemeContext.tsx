@@ -12,60 +12,70 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 /**
  * Provides theme management (light/dark) across the application.
- * Persists choice to localStorage and detects system preferences.
+ * - Default: "dark" (sesuai desain)
+ * - Anti-flash: inline script di layout.tsx menangani init sebelum React render
+ * - Class diterapkan ke <html> element agar CSS vars (:root/.dark/.light) bekerja
  */
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>("light");
+export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  // Default "dark" — inline script di layout sudah apply class sebelum hydration
+  const [theme, setTheme] = useState<Theme>("dark");
 
   useEffect(() => {
-    // 1. Check localStorage
-    const savedTheme = localStorage.getItem("falah-theme-v2") as Theme;
-    const initialTheme = savedTheme || "light";
-    setTheme(initialTheme);
+    // Baca dari localStorage setelah mount, sinkronkan dengan state
+    try {
+      const saved = localStorage.getItem("falah-theme-v2") as Theme | null;
+      const initial: Theme = saved === "light" || saved === "dark" ? saved : "dark";
+
+      setTheme(initial);
+      applyTheme(initial);
+    } catch {
+      // localStorage tidak tersedia (SSR / private mode)
+    }
   }, []);
 
-  const toggleTheme = (e?: React.MouseEvent) => {
-    const newTheme = theme === "light" ? "dark" : "light";
+  const applyTheme = (next: Theme) => {
+    const html = document.documentElement;
+    html.classList.remove("light", "dark");
+    html.classList.add(next);
+    html.setAttribute("data-theme", next);
+  };
 
-    // Fallback for browsers that don't support View Transitions API
+  const toggleTheme = (e?: React.MouseEvent) => {
+    const next: Theme = theme === "dark" ? "light" : "dark";
+
+    // Fallback untuk browser tanpa View Transitions API
     if (!(document as any).startViewTransition) {
-      setTheme(newTheme);
-      localStorage.setItem("falah-theme-v2", newTheme);
-      document.documentElement.setAttribute("data-theme", newTheme);
+      setTheme(next);
+      applyTheme(next);
+      try { localStorage.setItem("falah-theme-v2", next); } catch {}
       return;
     }
 
-    // Set transition origin if event is provided
+    // Set origin titik transisi
     if (e) {
-      const x = e.clientX;
-      const y = e.clientY;
-      document.documentElement.style.setProperty("--transition-x", `${x}px`);
-      document.documentElement.style.setProperty("--transition-y", `${y}px`);
+      document.documentElement.style.setProperty("--transition-x", `${e.clientX}px`);
+      document.documentElement.style.setProperty("--transition-y", `${e.clientY}px`);
     } else {
-      // Default to center if no event (e.g., keyboard toggle)
       document.documentElement.style.setProperty("--transition-x", "50%");
       document.documentElement.style.setProperty("--transition-y", "50%");
     }
 
     (document as any).startViewTransition(() => {
-      setTheme(newTheme);
-      localStorage.setItem("falah-theme-v2", newTheme);
-      document.documentElement.setAttribute("data-theme", newTheme);
+      setTheme(next);
+      applyTheme(next);
+      try { localStorage.setItem("falah-theme-v2", next); } catch {}
     });
   };
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      <div className={theme}>
-        {children}
-      </div>
+      {children}
     </ThemeContext.Provider>
   );
 };
 
-/**
- * Access the current theme and toggle function.
- */
 export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (context === undefined) {

@@ -42,14 +42,44 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
+/**
+ * Anti-flash script — dijalankan SEBELUM React hydration.
+ * Membaca localStorage dan langsung menerapkan class ke <html>,
+ * mencegah "flash of wrong theme" (FOWT).
+ */
+const ANTI_FLASH_SCRIPT = `
+(function() {
+  try {
+    var saved = localStorage.getItem('falah-theme-v2');
+    var theme = (saved === 'light' || saved === 'dark') ? saved : 'dark';
+    var html = document.documentElement;
+    html.classList.remove('light', 'dark');
+    html.classList.add(theme);
+    html.setAttribute('data-theme', theme);
+  } catch(e) {
+    // Fallback jika localStorage tidak tersedia
+    document.documentElement.classList.add('dark');
+  }
+})();
+`.trim();
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${syne.variable} ${spaceMono.variable} antialiased min-h-screen relative flex flex-col`}>
+    <html lang="en" suppressHydrationWarning className="dark">
+      <head>
+        {/*
+          Anti-flash script: harus blocking (tanpa async/defer)
+          agar theme diterapkan sebelum browser render konten pertama.
+        */}
+        <script dangerouslySetInnerHTML={{ __html: ANTI_FLASH_SCRIPT }} />
+      </head>
+      <body
+        className={`${syne.variable} ${spaceMono.variable} antialiased min-h-screen relative flex flex-col`}
+      >
         <CustomCursor />
         <ClientLayout>
           <Toaster position="top-center" richColors theme="dark" />

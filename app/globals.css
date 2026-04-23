@@ -6,7 +6,11 @@
 }
 
 @layer base {
-  :root {
+  /* =====================
+     DARK THEME (default)
+     ===================== */
+  :root,
+  .dark {
     --bg: #0C0C0F;
     --bg-card: #131318;
     --bg-card2: #1A1A22;
@@ -20,23 +24,48 @@
     --patch: #FFB347;
     --delete: #FF5C6A;
     --put: #C77DFF;
+
+    /* Accent (maps to GET for primary actions) */
+    --accent: #00E5A0;
+    --accent-hover: #00c988;
+  }
+
+  /* =====================
+     LIGHT THEME
+     ===================== */
+  .light {
+    --bg: #F4F4F0;
+    --bg-card: #FFFFFF;
+    --bg-card2: #EBEBEB;
+    --border: #D0D0D8;
+    --text: #0C0C0F;
+    --muted: #55555F;
+
+    /* HTTP Method Colors (sedikit disesuaikan untuk kontras) */
+    --get: #008A5E;
+    --post: #1A6FCC;
+    --patch: #C47A00;
+    --delete: #CC2A38;
+    --put: #8A3DCC;
+
+    --accent: #008A5E;
+    --accent-hover: #006B49;
   }
 
   body {
     background-color: var(--bg);
     color: var(--text);
     font-family: var(--font-mono);
-    transition: background-color 0.4s ease, color 0.4s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
     width: 100%;
     overflow-x: hidden;
     position: relative;
     -webkit-font-smoothing: antialiased;
-    font-size: 0.85rem; /* API doc like font size */
+    font-size: 0.85rem;
     line-height: 1.6;
-    cursor: none; /* For custom cursor */
+    cursor: none;
   }
 
-  /* Reveal default cursor on devices that don't support hover */
   @media (hover: none) and (pointer: coarse) {
     body {
       cursor: auto;
@@ -87,7 +116,7 @@
     position: relative;
     display: inline-block;
   }
-  
+
   .glitch-text::before,
   .glitch-text::after {
     content: attr(data-text);
@@ -98,14 +127,14 @@
     height: 100%;
     background: var(--bg);
   }
-  
+
   .glitch-text::before {
     left: 2px;
     text-shadow: -2px 0 var(--delete);
     clip-path: inset(24% 0 58% 0);
     animation: glitch-anim-1 2.5s infinite linear alternate-reverse;
   }
-  
+
   .glitch-text::after {
     left: -2px;
     text-shadow: 2px 0 var(--get);
@@ -130,6 +159,9 @@
   }
 }
 
+/* =====================
+   KEYFRAMES
+   ===================== */
 @keyframes glitch-anim-1 {
   0% { clip-path: inset(20% 0 80% 0); transform: translate(-2px, 1px); }
   20% { clip-path: inset(60% 0 10% 0); transform: translate(2px, -1px); }
