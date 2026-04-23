@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import Terminal from "@/components/ui/Terminal";
 import HttpBadge from "@/components/ui/HttpBadge";
-import { Send, Github, Linkedin, Mail } from "lucide-react";
+import { Send, Mail } from "lucide-react";
+import { FaGithub, FaInstagram } from "react-icons/fa";
 
 export default function ContactPage() {
   const [formStatus, setFormStatus] = useState<"idle" | "sending" | "success">("idle");
@@ -21,15 +22,16 @@ export default function ContactPage() {
     }, 1500);
   };
 
-  const payloadPreview = \`{
+  // HAPUS backslash (\) di awal, akhir, dan di depan tanda dollar ($)
+  const payloadPreview = `{
   "endpoint": "/api/contact/message",
   "method": "POST",
   "payload": {
-    "name": "\${formData.name || '...'}",
-    "email": "\${formData.email || '...'}",
-    "message": "\${formData.message || '...'}"
+    "name": "${formData.name || '...'}",
+    "email": "${formData.email || '...'}",
+    "message": "${formData.message || '...'}"
   }
-}\`;
+}`;
 
   return (
     <div className="max-w-7xl mx-auto px-6 md:px-10 py-12 min-h-[80vh]">
@@ -118,27 +120,20 @@ export default function ContactPage() {
           <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-6">
             <h3 className="font-mono text-xs text-[var(--muted)] uppercase tracking-widest mb-6">Social Endpoints</h3>
             <div className="space-y-4">
-              <a href="https://github.com/Mathlaul" target="_blank" rel="noreferrer" className="flex items-center gap-4 p-3 rounded-lg border border-transparent hover:border-[var(--border)] hover:bg-[var(--bg)] transition-all group">
-                <Github className="w-5 h-5 text-[var(--text)] group-hover:text-[var(--get)] transition-colors" />
+              <a href="https://github.com/Fals-code" target="_blank" rel="noreferrer" className="flex items-center gap-4 p-3 rounded-lg border border-transparent hover:border-[var(--border)] hover:bg-[var(--bg)] transition-all group">
+                <FaGithub className="w-5 h-5 text-[var(--text)] group-hover:text-[var(--get)] transition-colors" />
                 <div className="flex flex-col">
                   <span className="font-syne font-bold text-[var(--text)] group-hover:text-[var(--get)] transition-colors">GitHub</span>
-                  <span className="font-mono text-xs text-[var(--muted)]">github.com/Mathlaul</span>
+                  <span className="font-mono text-xs text-[var(--muted)]">github.com/Fals-code</span>
                 </div>
               </a>
               
-              <a href="https://linkedin.com/in/ahmad-mathlaul-falah" target="_blank" rel="noreferrer" className="flex items-center gap-4 p-3 rounded-lg border border-transparent hover:border-[var(--border)] hover:bg-[var(--bg)] transition-all group">
-                <Linkedin className="w-5 h-5 text-[var(--text)] group-hover:text-[var(--post)] transition-colors" />
-                <div className="flex flex-col">
-                  <span className="font-syne font-bold text-[var(--text)] group-hover:text-[var(--post)] transition-colors">LinkedIn</span>
-                  <span className="font-mono text-xs text-[var(--muted)]">/in/ahmad-mathlaul-falah</span>
-                </div>
-              </a>
 
-              <a href="mailto:falah@example.com" className="flex items-center gap-4 p-3 rounded-lg border border-transparent hover:border-[var(--border)] hover:bg-[var(--bg)] transition-all group">
+              <a href="mailto: ahmadmathlaulfalah14@gmail.com" className="flex items-center gap-4 p-3 rounded-lg border border-transparent hover:border-[var(--border)] hover:bg-[var(--bg)] transition-all group">
                 <Mail className="w-5 h-5 text-[var(--text)] group-hover:text-[var(--patch)] transition-colors" />
                 <div className="flex flex-col">
                   <span className="font-syne font-bold text-[var(--text)] group-hover:text-[var(--patch)] transition-colors">Email</span>
-                  <span className="font-mono text-xs text-[var(--muted)]">falah@example.com</span>
+                  <span className="font-mono text-xs text-[var(--muted)]">ahmadmathlaulfalah14@gmail.com</span>
                 </div>
               </a>
             </div>
