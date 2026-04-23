@@ -1,277 +1,101 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { projects } from "@/data/projects";
-import { GlassPanel, GradientText, SectionLabel } from "@/components/ui/Primitives";
-import { ExternalLink, ArrowRight, Hospital, Warehouse, Book, Rocket } from "lucide-react";
-import { GitHub } from "@/components/ui/Icons";
-import { motion, AnimatePresence } from "framer-motion";
-import { usePerformance } from "@/hooks/usePerformance";
-import { useGitHub } from "@/hooks/useGitHub";
+import HttpBadge from "../ui/HttpBadge";
 
-/**
- * Maps icon names to Lucide components for projects.
- */
-function ProjectIcon({ name, color }: { name: string; color?: string }) {
-  const props = { className: "w-6 h-6", style: { color }, "aria-hidden": true as const };
-  switch (name) {
-    case "hospital": return <Hospital {...props} />;
-    case "warehouse": return <Warehouse {...props} />;
-    case "book": return <Book {...props} />;
-    case "rocket": return <Rocket {...props} />;
-    default: return <Rocket {...props} />;
-  }
-}
-
-/**
- * Filterable Projects Gallery with Airy Layout.
- * Optimized for mobile with Ultra-Lite mode.
- */
-export default function ProjectsSection() {
-  const { isLow, isMobileDevice } = usePerformance();
-  const { stats, isLoading: isGitLoading } = useGitHub();
-  const [filter, setFilter] = useState("All");
+function ProjectCard({ proj }: { proj: any }) {
+  const isFeatured = proj.badge?.toLowerCase() === "featured";
+  const isWIP = proj.badge?.toLowerCase() === "wip";
   
-  const categories = ["All", "Laravel", "Full-stack", "MySQL", "Livewire", "WIP"];
-
-  const filteredProjects = projects.filter(p => {
-    if (filter === "All") return true;
-    const lowerFilter = filter.toLowerCase();
-    return (
-      p.tags.some(t => t.toLowerCase() === lowerFilter) || 
-      (p.tech && p.tech.some(t => t.toLowerCase() === lowerFilter))
-    );
-  });
-
-  const ContainerTag = isMobileDevice || isLow ? "div" as any : motion.div;
+  const method = isWIP ? "PATCH" : (isFeatured ? "GET" : "POST");
+  const status = isWIP ? "202 Accepted" : "200 OK";
+  
+  // Create a slug from title if not provided
+  const slug = proj.title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
   return (
-    <section className="container mx-auto px-6 section-pad overflow-hidden">
-      <div className="space-y-16">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-          <div className="max-w-2xl space-y-4">
-            <SectionLabel>Selected Work</SectionLabel>
-            <h2 className="text-4xl md:text-5xl font-syne font-extrabold text-[var(--text)]">
-              Innovation Through <GradientText>Code & Design</GradientText>
-            </h2>
-            <p className="text-text-muted text-lg leading-relaxed">
-              Pameran proyek pilihan yang menunjukkan keahlian saya dalam arsitektur backend dan pengembangan sistem.
-            </p>
+    <div 
+      className={`group flex flex-col bg-[var(--bg-card)] border rounded-lg overflow-hidden interactive-hover transition-all duration-300 ${
+        isFeatured 
+          ? "border-[var(--get)]/50 hover:border-[var(--get)] hover:shadow-[0_0_20px_rgba(0,229,160,0.1)]" 
+          : "border-[var(--border)] hover:border-[var(--muted)]"
+      }`}
+    >
+      {/* Endpoint Header */}
+      <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--border)] bg-[var(--bg-card2)] font-mono text-xs">
+        <div className="flex items-center gap-3">
+          <span className={`font-bold ${isWIP ? "text-[var(--patch)]" : (isFeatured ? "text-[var(--get)]" : "text-[var(--post)]")}`}>
+            [{isWIP ? "WIP" : method}]
+          </span>
+          <span className="text-[var(--text)]">/api/projects/{slug}</span>
+        </div>
+        <div className={`font-bold ${isWIP ? "text-[var(--patch)]" : "text-[var(--get)]"}`}>
+          {status}
+        </div>
+      </div>
+
+      {/* Body */}
+      <div className="flex flex-col flex-1 p-6 gap-4 relative">
+        <h3 className="font-syne text-2xl font-bold text-[var(--text)] group-hover:text-[var(--get)] transition-colors">
+          {proj.title}
+        </h3>
+        
+        <p className="text-[var(--muted)] font-mono text-sm leading-relaxed flex-1">
+          {proj.description}
+        </p>
+
+        {/* Tech Stack Tags */}
+        <div className="flex flex-wrap gap-2 mt-2">
+          {proj.tech?.map((t: string) => (
+            <span key={t} className="font-mono text-[0.7rem] px-2 py-1 bg-[var(--bg-card2)] border border-[var(--border)] rounded text-[var(--text)]">
+              [{t}]
+            </span>
+          ))}
+        </div>
+
+        {/* Footer KPI & CTA */}
+        <div className="mt-6 pt-4 border-t border-[var(--border)] flex items-center justify-between font-mono text-xs">
+          <div className="flex items-center gap-4 text-[var(--muted)]">
+            {proj.kpi && <span>{proj.kpi}</span>}
+            {!proj.kpi && <span>100% RELIABLE</span>}
           </div>
           
-          <div className="flex gap-2 p-1 glass-panel rounded-2xl w-fit max-w-full overflow-x-auto no-scrollbar">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setFilter(cat)}
-                className={`px-6 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all duration-300 ${
-                  filter === cat 
-                    ? "bg-accent text-white shadow-lg shadow-accent/20" 
-                    : "text-text-muted hover:text-[var(--text)]"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+          <Link 
+            href={proj.demo || proj.github || "#"} 
+            className="flex items-center gap-2 text-[var(--text)] hover:text-[var(--get)] transition-colors group/link"
+          >
+            <span>→ STUDY</span>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function ProjectsSection() {
+  // Taking only first 4 projects for the homepage
+  const displayProjects = projects.slice(0, 4);
+
+  return (
+    <section id="projects" className="py-20 border-t border-[var(--border)]">
+      <div className="max-w-7xl mx-auto px-6 md:px-10 scroll-reveal">
+        
+        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6 mb-12">
+          <div>
+            <div className="font-mono text-xs text-[var(--get)] mb-2">/* recent endpoints */</div>
+            <h2 className="text-4xl md:text-5xl">Available Projects</h2>
           </div>
+          
+          <HttpBadge method="GET" endpoint="/projects/all" href="/projects" className="text-sm" />
         </div>
 
-        {/* GitHub Stats Stats Bar / Skeleton */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-          {isGitLoading ? (
-            Array(4).fill(0).map((_, i) => (
-              <div key={i} className="h-20 animate-pulse bg-white/5 rounded-2xl border border-white/5" />
-            ))
-          ) : (
-            <>
-              {[
-                { label: "Total Repos", value: stats.repositories },
-                { label: "GitHub Followers", value: stats.followers },
-                { label: "Total Stars", value: stats.stars },
-                { label: "Stability", value: "99.9%" }
-              ].map((stat, i) => (
-                <div key={i} className="p-4 glass-panel flex flex-col items-center justify-center text-center">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-1">{stat.label}</span>
-                  <span className="text-xl font-syne font-extrabold text-accent">{stat.value}</span>
-                </div>
-              ))}
-            </>
-          )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {displayProjects.map((proj) => (
+            <ProjectCard key={proj.id} proj={proj} />
+          ))}
         </div>
-
-        <ContainerTag className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-airy">
-          {!isMobileDevice && !isLow ? (
-            <AnimatePresence mode="popLayout">
-              {filteredProjects.map((proj, index) => (
-                <motion.div
-                  key={proj.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.4 }}
-                  className="group"
-                >
-                  <GlassPanel className={`h-full flex flex-col p-6 transition-all duration-500 overflow-hidden relative ${
-                    proj.featured ? "border-accent/30 shadow-[0_0_40px_rgba(232,83,58,0.05)]" : ""
-                  }`}>
-                    {proj.badge && (
-                      <div className={`absolute top-0 right-0 px-4 py-1 text-[9px] font-bold uppercase tracking-widest rounded-bl-xl z-20 ${
-                        proj.badge === "featured" ? "bg-accent text-white" : "bg-amber-500 text-black"
-                      }`}>
-                        {proj.badge}
-                      </div>
-                    )}
-                    {proj.image ? (
-                      <div className="w-full aspect-video md:aspect-[16/10] relative rounded-2xl overflow-hidden mb-6 group-hover:shadow-2xl transition-all duration-500">
-                        <Image 
-                          src={proj.image} 
-                          alt={`Screenshot or preview of ${proj.title} project showcase`} 
-                          fill 
-                          quality={60}
-                          loading={index <= 1 ? "eager" : "lazy"}
-                          priority={index <= 1} 
-                          decoding="async" 
-                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          placeholder={index <= 1 ? "blur" : "empty"}
-                          blurDataURL={index <= 1 ? "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCI+PHJlY3Qgd2lkdGg9Ijk5OSIgaGVpZ2h0PSI5OTkiIGZpbGw9IiMzMzMiLz48L3N2Zz4=" : undefined}
-                          className="object-cover group-hover:scale-105 transition-transform duration-700" 
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                      </div>
-                    ) : (
-                      <div className="flex items-start justify-between mb-8 px-4 pt-4">
-                        <div className="w-16 h-16 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500" style={{ backgroundColor: proj.iconBg || "rgba(232,83,58,0.1)" }}>
-                          <ProjectIcon name={proj.icon || ""} color={proj.iconColor} />
-                        </div>
-                      </div>
-                    )}
-                    <div className="flex-1 space-y-4">
-                      <div className="flex justify-between items-start gap-4">
-                        <h3 className="text-2xl font-syne font-extrabold text-[var(--text)] group-hover:text-accent transition-colors leading-tight">{proj.title}</h3>
-                        <div className="flex items-center gap-2">
-                          <Link 
-                            href={proj.github} 
-                            target="_blank" 
-                            className="p-2 glass-panel rounded-xl hover:text-accent transition-colors z-10 shrink-0 border-white/5 bg-white/5"
-                            aria-label={`View ${proj.title} source code on GitHub`}
-                          >
-                            <GitHub className="w-5 h-5" aria-hidden="true" />
-                          </Link>
-                        </div>
-                      </div>
-                      <p className="text-[15px] text-text-muted leading-relaxed font-medium">{proj.description}</p>
-                      <div className="flex flex-wrap gap-2 pt-2">
-                        {proj.tech?.map((t) => (<span key={t} className="text-[10px] font-bold uppercase tracking-widest text-accent/80 bg-accent/5 px-3 py-1.5 rounded-lg border border-accent/10">{t}</span>))}
-                      </div>
-                    </div>
-                    <div className="pt-6 mt-6 border-t border-black/10 dark:border-white/10 flex items-center justify-between mx-2">
-                      <Link href={proj.caseStudy || "/projects"} className="text-[10px] font-bold uppercase tracking-widest text-[var(--text)] hover:text-accent flex items-center gap-2 group/link transition-colors">Read Case Study <ArrowRight className="w-3 h-3 group-hover/link:translate-x-1 transition-transform" aria-hidden="true" /></Link>
-                      {proj.demo && (
-                        <Link 
-                          href={proj.demo} 
-                          target="_blank" 
-                          className="p-2 text-text-muted hover:text-[var(--text)] transition-colors"
-                          aria-label={`Visit live demo of ${proj.title}`}
-                        >
-                          <ExternalLink className="w-4 h-4" aria-hidden="true" />
-                        </Link>
-                      )}
-                    </div>
-                  </GlassPanel>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          ) : (
-            filteredProjects.map((proj, index) => (
-              <div key={proj.id} className="group">
-                <GlassPanel className={`h-full flex flex-col p-6 overflow-hidden relative ${
-                  proj.featured ? "border-accent/30" : ""
-                }`}>
-                  {proj.badge && (
-                    <div className={`absolute top-0 right-0 px-4 py-1 text-[9px] font-bold uppercase tracking-widest rounded-bl-xl z-20 ${
-                      proj.badge === "featured" ? "bg-accent text-white" : "bg-amber-500 text-black"
-                    }`}>
-                      {proj.badge}
-                    </div>
-                  )}
-
-                  {proj.image ? (
-                    <div className="w-full aspect-video md:aspect-[16/10] relative rounded-2xl overflow-hidden mb-6">
-                       <Image 
-                         src={proj.image} 
-                         alt={`Screenshot showing the ${proj.title} interface`} 
-                         fill 
-                         quality={60}
-                         loading={index <= 1 ? "eager" : "lazy"}
-                         priority={index <= 1}
-                         decoding="async"
-                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                         placeholder={index <= 1 ? "blur" : "empty"}
-                         blurDataURL={index <= 1 ? "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCI+PHJlY3Qgd2lkdGg9Ijk5OSIgaGVpZ2h0PSI5OTkiIGZpbGw9IiMzMzMiLz48L3N2Zz4=" : undefined}
-                         className="object-cover"
-                       />
-                    </div>
-                  ) : (
-                    <div className="flex items-start justify-between mb-8 px-4 pt-4">
-                      <div 
-                        className="w-16 h-16 rounded-2xl flex items-center justify-center"
-                        style={{ backgroundColor: proj.iconBg || "rgba(232,83,58,0.1)" }}
-                      >
-                        <ProjectIcon name={proj.icon || ""} color={proj.iconColor} />
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="flex-1 space-y-4">
-                    <div className="flex justify-between items-start gap-4">
-                      <h3 className="text-2xl font-syne font-extrabold text-[var(--text)] leading-tight">
-                        {proj.title}
-                      </h3>
-                      <div className="flex items-center gap-2">
-                        <Link 
-                          href={proj.github} 
-                          target="_blank" 
-                          className="p-2 glass-panel rounded-xl shrink-0 border-white/5 bg-white/5"
-                          aria-label={`View GitHub repository for ${proj.title}`}
-                        >
-                          <GitHub className="w-5 h-5" aria-hidden="true" />
-                        </Link>
-                      </div>
-                    </div>
-                    <p className="text-[15px] text-text-muted leading-relaxed font-medium">
-                      {proj.description}
-                    </p>
-                    <div className="flex flex-wrap gap-2 pt-2">
-                      {proj.tech?.map((t) => (
-                        <span key={t} className="text-[10px] font-bold uppercase tracking-widest text-accent/80 bg-accent/5 px-3 py-1.5 rounded-lg border border-accent/10">
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="pt-6 mt-6 border-t border-black/10 dark:border-white/10 flex items-center justify-between mx-2">
-                    <Link href={proj.caseStudy || "/projects"} className="text-[10px] font-bold uppercase tracking-widest text-[var(--text)] flex items-center gap-2">
-                      Read Case Study <ArrowRight className="w-3 h-3" aria-hidden="true" />
-                    </Link>
-                    {proj.demo && (
-                      <Link 
-                        href={proj.demo} 
-                        target="_blank" 
-                        className="p-2 text-text-muted"
-                        aria-label={`Visit live demo for ${proj.title}`}
-                      >
-                        <ExternalLink className="w-4 h-4" aria-hidden="true" />
-                      </Link>
-                    )}
-                  </div>
-                </GlassPanel>
-              </div>
-            ))
-          )}
-        </ContainerTag>
 
       </div>
     </section>

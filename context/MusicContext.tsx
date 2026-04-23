@@ -29,6 +29,10 @@ const MusicContext = createContext<MusicContextType | undefined>(undefined);
 // Hardcoded Favorite Tracks
 const PLAYLIST: Track[] = [
   { id: "y4zdDXPYo0I", title: "Viva La Vida", artist: "Coldplay" },
+  { id: "jfKfPfyJRdk", title: "Midnight City (Lofi)", artist: "Lofi Girl" },
+  { id: "5qap5aO4i9A", title: "Focus Study Beats", artist: "ChilledCow" },
+  { id: "X8mE43g8xIs", title: "Celestial Ambient", artist: "Focus Flow" },
+  { id: "S6_C_yN9N0g", title: "No Time For Caution", artist: "H. Zimmer" },
 ];
 
 declare global {

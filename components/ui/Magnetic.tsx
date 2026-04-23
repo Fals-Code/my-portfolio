@@ -9,6 +9,7 @@ interface MagneticProps {
   amount?: number; 
   disabledOnMobile?: boolean;
   intense?: boolean;
+  disabled?: boolean;
 }
 
 /**
@@ -53,9 +54,15 @@ function MagneticDesktop({ children, amount, intense }: { children: React.ReactN
   );
 }
 
-export default function Magnetic({ children, amount = 0.5, disabledOnMobile = true, intense = true }: MagneticProps) {
+export default function Magnetic({ 
+  children, 
+  amount = 0.5, 
+  disabledOnMobile = true, 
+  intense = true,
+  disabled = false 
+}: MagneticProps) {
   const { isMobileDevice, isLow } = usePerformance();
-  const shouldDisable = (disabledOnMobile && isMobileDevice) || isLow;
+  const shouldDisable = (disabledOnMobile && isMobileDevice) || isLow || disabled;
 
   if (shouldDisable) {
     return <div className="inline-block relative">{children}</div>;

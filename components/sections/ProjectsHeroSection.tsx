@@ -1,31 +1,31 @@
 "use client";
 
 import React from "react";
-import { SectionLabel, GradientText } from "@/components/ui/Primitives";
+import { EditorialHeading } from "@/components/ui/Primitives";
 import { motion } from "framer-motion";
+import { fadeReveal } from "@/lib/motion-tokens";
 
 /**
  * Projects Hero Section
  */
 export default function ProjectsHeroSection() {
   return (
-    <section className="container mx-auto px-6 pt-20 md:pt-12 pb-8">
-      <div className="max-w-3xl space-y-8">
-        <SectionLabel>What I've Built</SectionLabel>
-        <motion.h1 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-4xl md:text-6xl font-syne font-extrabold leading-tight text-[var(--text)]"
+    <section className="container mx-auto px-6 pt-32 pb-12">
+      <div className="max-w-4xl">
+        <EditorialHeading 
+          sub="Artifacts of Logic"
         >
-          My <GradientText>Projects</GradientText>
-        </motion.h1>
+          Selected <br />
+          <span className="text-white/40 italic">Industrial Works.</span>
+        </EditorialHeading>
         <motion.p 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial="hidden"
+          animate="visible"
+          variants={fadeReveal}
           transition={{ delay: 0.2 }}
-          className="text-lg md:text-xl text-text-muted leading-relaxed"
+          className="text-lg md:text-xl text-white/50 leading-relaxed mt-10 max-w-2xl font-medium"
         >
-          A curated collection of real-world systems, backend architectures, and technical experiments focused on scalability and data integrity.
+          A highly curated collection of backend systems, API ecosystems, and architectural experiments focused on stability, performance, and intent.
         </motion.p>
       </div>
     </section>

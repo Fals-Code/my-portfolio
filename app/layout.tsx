@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Syne, DM_Sans } from "next/font/google";
+import { Syne, Space_Mono } from "next/font/google";
 import "./globals.css";
 import ClientLayout from "./ClientLayout";
-import PageTransition from "@/components/global/PageTransition";
 import { Toaster } from "sonner";
+import CustomCursor from "@/components/global/CustomCursor";
+import StatusBar from "@/components/global/StatusBar";
 
 const syne = Syne({
   variable: "--font-syne",
@@ -12,8 +13,8 @@ const syne = Syne({
   display: "swap",
 });
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+const spaceMono = Space_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
   weight: ["400", "700"],
   display: "swap",
@@ -21,14 +22,14 @@ const dmSans = DM_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: "Falah. | Backend Developer",
+    default: "Falah. | Backend Architect",
     template: "%s | Falah.",
   },
-  description: "Crafting Digital Experiences with Backend Precision. Portfolio of Ahmad Mathlaul Falah.",
+  description: "API Explorer Portfolio. Crafting Digital Experiences with Backend Precision.",
   authors: [{ name: "Ahmad Mathlaul Falah" }],
   creator: "Ahmad Mathlaul Falah",
-  metadataBase: new URL("https://falah.com"),
-  keywords: ["Next.js", "Backend Developer", "Laravel", "Portofolio", "Ahmad Falah"],
+  metadataBase: new URL("https://falah.dev"),
+  keywords: ["Next.js", "Backend Developer", "Laravel", "Portofolio", "Ahmad Falah", "API"],
   icons: {
     icon: "/icon.png",
     apple: "/icon.png",
@@ -36,7 +37,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#e8533a",
+  themeColor: "#0C0C0F",
   width: "device-width",
   initialScale: 1,
 };
@@ -47,64 +48,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://images.unsplash.com" />
-        <link rel="preconnect" href="https://skillicons.dev" />
-        <style dangerouslySetInnerHTML={{ __html: `
-          #instant-boot-loader {
-            position: fixed;
-            inset: 0;
-            background: #0a0a0a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            transition: opacity 0.5s ease;
-          }
-          #instant-boot-loader.hidden { opacity: 0; pointer-events: none; }
-          .boot-logo { 
-            font-family: sans-serif; 
-            font-weight: 900; 
-            font-size: 2rem; 
-            color: #e8533a; 
-            letter-spacing: -2px;
-            animation: boot-pulse 1s ease-in-out infinite alternate;
-          }
-          @keyframes boot-pulse { 
-            from { opacity: 0.5; transform: scale(0.95); } 
-            to { opacity: 1; transform: scale(1); } 
-          }
-        `}} />
-      </head>
-      <body className={`${syne.variable} ${dmSans.variable} font-dm-sans antialiased mesh-bg min-h-screen relative overflow-x-hidden`}>
-        <script dangerouslySetInnerHTML={{ __html: `
-          (function() {
-            try {
-              var t = localStorage.getItem('falah-theme-v2') || 'light';
-              document.documentElement.setAttribute('data-theme', t);
-            } catch (e) {}
-          })();
-        `}} />
-        <div id="instant-boot-loader" suppressHydrationWarning>
-          <div className="boot-logo">FALAH.DEV</div>
-          <script dangerouslySetInnerHTML={{ __html: `
-            window.addEventListener('load', function() {
-              var loader = document.getElementById('instant-boot-loader');
-              if (loader) {
-                loader.classList.add('hidden');
-                setTimeout(function() { loader.remove(); }, 500);
-              }
-            });
-          `}} />
-        </div>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${syne.variable} ${spaceMono.variable} antialiased min-h-screen relative flex flex-col`}>
+        <CustomCursor />
         <ClientLayout>
-          <Toaster position="top-center" richColors />
-          <PageTransition>
+          <Toaster position="top-center" richColors theme="dark" />
+          <main className="flex-grow">
             {children}
-          </PageTransition>
+          </main>
+          <StatusBar />
         </ClientLayout>
       </body>
     </html>

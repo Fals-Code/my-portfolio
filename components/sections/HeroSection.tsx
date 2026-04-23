@@ -1,146 +1,85 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
-import { motion } from "framer-motion";
-import { Button, GradientText } from "@/components/ui/Primitives";
-import { GITHUB_USERNAME, INSTAGRAM_URL } from "@/lib/constants";
-import { Download, Terminal, Mail, Globe, ArrowRight } from "lucide-react";
-import { GitHub, Instagram } from "@/components/ui/Icons";
-import Magnetic from "@/components/ui/Magnetic";
-import { fadeReveal } from "@/lib/motion-tokens";
-import CodeAnimation from "./CodeAnimation";
-import { usePerformance } from "@/hooks/usePerformance";
+import Terminal from "../ui/Terminal";
+import HttpBadge from "../ui/HttpBadge";
 
-/**
- * Hero Section (Home Page)
- * Pure, elegant greeting and quick summary.
- */
 export default function HeroSection() {
-  const { isLow, isMobileDevice } = usePerformance();
-  const MotionDiv = (isLow || isMobileDevice) ? "div" : motion.div;
-  const MotionH1 = (isLow || isMobileDevice) ? "h1" : motion.h1;
-  const MotionP = (isLow || isMobileDevice) ? "p" : motion.p;
+  const terminalData = `{
+  "name": "Ahmad Mathlaul Falah",
+  "role": "Backend Developer",
+  "university": "Universitas Airlangga",
+  "focus": "Laravel · MySQL · Clean Architecture",
+  "available": true,
+  "open_to": ["freelance", "collaboration"],
+  "location": "Gresik → Surabaya, ID",
+  "status": "200 OK | Sistem Online ✓"
+}`;
 
   return (
-    <section className="relative overflow-hidden min-h-[85vh] flex items-center pt-28 md:pt-12 pb-12">
-      {/* Background Decorative Mesh - Hidden on Mobile via CSS */}
-      <div className="absolute inset-0 mesh-bg opacity-30 pointer-events-none" />
+    <section id="hero" className="min-h-[85vh] flex items-center pt-10 pb-20 relative">
+      <div className="max-w-7xl mx-auto px-6 md:px-10 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center scroll-reveal">
+        
+        {/* Left Column: Text & CTA */}
+        <div className="flex flex-col items-start gap-6">
+          <div className="flex items-center gap-3 bg-[var(--bg-card)] px-4 py-2 rounded-full border border-[var(--border)]">
+            <span className="status-dot" />
+            <span className="font-mono text-xs text-[var(--muted)]">HTTP 200 | available for new projects</span>
+          </div>
 
-      <div className="container mx-auto px-6 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 lg:items-center max-w-7xl mx-auto">
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-syne leading-[1.1]">
+            the<br/>
+            <span className="glitch-wrapper text-[var(--get)]">
+              <span className="glitch-text" data-text="Backend">Backend</span>
+            </span>
+            <br/>
+            Architect.
+          </h1>
+
+          <div className="pl-4 border-l-2 border-[var(--get)] my-4">
+            <p className="text-[var(--muted)] font-mono max-w-md">
+              Crafting robust APIs, scalable databases, and seamless server-side architectures from Surabaya, ID.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-4 mt-2">
+            <HttpBadge method="GET" endpoint="/projects" href="#projects" className="text-base px-5 py-2.5" />
+            <HttpBadge method="POST" endpoint="/contact" href="/contact" className="text-base px-5 py-2.5" />
+          </div>
           
-          {/* Left Column: Greeting & Info */}
-          <div className="order-1 space-y-10 flex flex-col items-center lg:items-start text-center lg:text-left">
-          {/* Status Label */}
-          <MotionDiv 
-            initial={isLow ? false : "hidden"}
-            animate={isLow ? { opacity: 1 } : "visible"}
-            variants={isLow ? undefined : fadeReveal}
-            custom={{ i: 0, isLow }}
-            className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full glass-panel border-accent/20 bg-accent/15"
-          >
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-none absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent"></span>
-            </span>
-            <span className="text-[12px] font-bold uppercase tracking-[0.3em] text-accent">
-              Let's talk code
-            </span>
-          </MotionDiv>
-
-          {/* Main Headline - Huge Greeting */}
-          <div className="space-y-6">
-            <MotionH1 
-              initial={isLow ? false : "hidden"}
-              animate={isLow ? { opacity: 1 } : "visible"}
-              variants={isLow ? undefined : fadeReveal}
-              custom={{ i: 1, isLow }}
-              className="font-syne font-extrabold leading-[0.95] tracking-tight text-[var(--text)] drop-shadow-2xl"
-              style={{ fontSize: "clamp(2.8rem, 12vw, 7.5rem)" }}
-            >
-              Hi. I'm <GradientText>Falah.</GradientText>
-            </MotionH1>
-            
-            <MotionP 
-              initial={isLow ? false : "hidden"}
-              animate={isLow ? { opacity: 1 } : "visible"}
-              variants={isLow ? undefined : fadeReveal}
-              custom={{ i: 2, isLow }}
-              className="text-lg md:text-3xl text-text-muted font-syne max-w-2xl leading-relaxed font-medium"
-            >
-              A passionate <span className="text-[var(--text)]">Backend Developer</span> transforming complex problems into elegant, scalable logic.
-            </MotionP>
+          <div className="mt-8 flex items-center gap-2 font-mono text-xs text-[var(--muted)] bg-[var(--bg-card)] px-3 py-1.5 rounded-md border border-[var(--border)]">
+            <span className="text-[var(--get)] font-bold">GET</span>
+            <span>/api/location</span>
+            <span className="text-[var(--text)] mx-2">→</span>
+            <span>Surabaya, ID</span>
           </div>
-
-          {/* CTA Buttons */}
-          <MotionDiv 
-            initial={(isLow || isMobileDevice) ? false : "hidden"}
-            animate={(isLow || isMobileDevice) ? { opacity: 1 } : "visible"}
-            variants={(isLow || isMobileDevice) ? undefined : fadeReveal}
-            custom={{ i: 3, isLow }}
-            className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 md:gap-6 pt-6 w-full"
-          >
-            <Magnetic disabledOnMobile={true}>
-              <Button variant="primary" size="lg" asChild className="rounded-full px-10 group w-full sm:w-auto h-14 md:h-16">
-                <Link href="/projects" className="flex items-center justify-center gap-3 font-semibold text-lg">
-                  View My Work <ArrowRight className="w-5 h-5 group-hover:-rotate-45 transition-transform duration-300" />
-                </Link>
-              </Button>
-            </Magnetic>
-            
-            <Magnetic disabledOnMobile>
-               <Button variant="outline" size="lg" asChild className="rounded-full px-10 group border-white/10 hover:border-accent w-full sm:w-auto h-14 md:h-16">
-                   <a href="/cv.pdf" download className="flex items-center justify-center gap-3 font-medium text-lg">
-                     Download CV <Download className="w-5 h-5 opacity-60 group-hover:opacity-100 transition-opacity" />
-                   </a>
-               </Button>
-            </Magnetic>
-          </MotionDiv>
-
-          {/* Quick Socials & Info */}
-          <MotionDiv 
-            initial={isLow ? false : "hidden"}
-            animate={isLow ? { opacity: 1 } : "visible"}
-            variants={isLow ? undefined : fadeReveal}
-            custom={{ i: 4, isLow }}
-            className="flex flex-col lg:flex-row items-center lg:items-start gap-6 lg:gap-12 pt-10 mt-10 border-t border-white/5 w-full"
-          >
-            <div className="flex flex-wrap justify-center lg:justify-start items-center gap-4">
-              {[
-                { Icon: GitHub, href: `https://github.com/${GITHUB_USERNAME}` },
-                { Icon: Instagram, href: INSTAGRAM_URL },
-                { Icon: Mail, href: "mailto:ahmadmathlaulfalah14@gmail.com" }
-              ].map((social, i) => (
-                <Link 
-                  key={i} 
-                  href={social.href} 
-                  target="_blank"
-                  className="p-5 glass-panel rounded-full hover:bg-accent/10 hover:border-accent/40 text-text-muted hover:text-[var(--text)] transition-all duration-300 group"
-                >
-                  <social.Icon className="w-6 h-6 group-hover:scale-110 transition-transform" />
-                </Link>
-              ))}
-            </div>
-          </MotionDiv>
-          </div>
-
-          {/* Right Column: Code Animation (Hidden on mobile) */}
-          {!isLow && (
-            <div className="order-2 w-full flex justify-center lg:justify-end lg:pt-10">
-              <CodeAnimation />
-            </div>
-          )}
         </div>
-      </div>
 
-      {/* Lighting Effects - Disabled on Low Performance to save GPU */}
-      {!isLow && (
-        <>
-          <div className="absolute top-0 -right-1/4 w-[600px] h-[600px] bg-accent/5 rounded-full blur-[150px] -translate-y-1/2 pointer-events-none" />
-          <div className="absolute bottom-0 -left-1/4 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
-        </>
-      )}
+        {/* Right Column: Terminal & Metrics */}
+        <div className="w-full flex flex-col gap-6">
+          <Terminal 
+            title="bash - falah@backend-server"
+            content={terminalData}
+            typing={true}
+            typingSpeed={15}
+            className="w-full shadow-2xl shadow-[var(--get)]/5"
+          />
+
+          <div className="grid grid-cols-3 gap-4">
+            {[
+              { label: "Projects", value: "20+", color: "var(--get)" },
+              { label: "Years Exp", value: "3+", color: "var(--post)" },
+              { label: "Uptime", value: "99.9%", color: "var(--patch)" }
+            ].map((metric, i) => (
+              <div key={i} className="bg-[var(--bg-card)] border border-[var(--border)] p-4 rounded-lg flex flex-col items-center justify-center gap-1 hover:border-[var(--muted)] transition-colors">
+                <span className="font-mono text-xs text-[var(--muted)] uppercase tracking-wider">{metric.label}</span>
+                <span className="font-syne text-2xl font-bold" style={{ color: metric.color }}>{metric.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </div>
     </section>
   );
 }

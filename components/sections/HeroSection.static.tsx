@@ -2,61 +2,62 @@
 
 import React from "react";
 import Link from "next/link";
-import { ArrowRight, Terminal } from "lucide-react";
+import { ArrowRight, Mail } from "lucide-react";
 import { Button, GradientText } from "@/components/ui/Primitives";
 
 /**
- * ULTRA-PERFORMANT Hero for Mobile.
- * ZERO framer-motion imports. ZERO JS logic besides simple React.
- * Wrapped in React.memo to isolate it from context-driven re-renders.
+ * ULTRA-PERFORMANT Hero for Mobile - v2
+ * Zero framer-motion. Pure SSR-friendly layout.
  */
 const HeroSectionStatic = React.memo(function HeroSectionStatic() {
   return (
-    <section className="relative overflow-hidden min-h-[80vh] flex items-center pt-20 pb-12 bg-bg">
+    <section className="relative min-h-[90vh] flex items-center justify-center pt-24 pb-12 bg-bg overflow-hidden text-center">
       <div className="container mx-auto px-6 relative z-10">
-        <div className="max-w-4xl mx-auto text-center lg:text-left space-y-8">
+        <div className="max-w-4xl mx-auto space-y-10">
           
           {/* Status Badge */}
-          <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-accent/5 border border-accent/10">
+          <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-white/5 bg-white/5">
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-accent opacity-75 opacity-0"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
             </span>
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent">
-              Available for projects
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/40">
+              Backend Developer
             </span>
           </div>
 
-          {/* Main Title */}
-          <div className="space-y-4">
-            <h1 className="text-5xl sm:text-6xl md:text-8xl font-syne font-extrabold tracking-tight text-[var(--text)] leading-[1.1]">
-              Backend <br />
-              <GradientText className="inline-block">Specialist</GradientText>
+          {/* Headline */}
+          <div className="space-y-6">
+            <h1 className="text-white">
+              Crafting <span className="font-serif italic font-normal text-white/80">Elegance</span> in <br />
+              <GradientText variant="accent">Logic & Code.</GradientText>
             </h1>
-            
-            <p className="text-text-muted text-lg md:text-xl font-medium max-w-2xl mx-auto lg:mx-0 leading-relaxed pt-2">
-              Building robust architectural foundations that power seamless digital experiences.
+            <p className="text-lg text-text-muted max-w-xl mx-auto font-medium leading-relaxed">
+              Building scalable systems and refined digital experiences with precision.
             </p>
           </div>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-6 w-full">
-            <Button variant="primary" size="lg" asChild className="rounded-full px-10 w-full sm:w-auto h-14">
-              <Link href="/projects" className="flex items-center justify-center gap-3 font-semibold text-lg">
-                View My Work <ArrowRight className="w-5 h-5" />
+          {/* Actions */}
+          <div className="flex flex-col gap-4 pt-4 w-full px-4">
+            <Button variant="primary" size="lg" asChild className="h-14 font-bold">
+              <Link href="/projects" className="flex items-center justify-center gap-3">
+                See My Work <ArrowRight className="w-5 h-5" />
               </Link>
             </Button>
             
-            <Button variant="outline" size="lg" asChild className="rounded-full px-10 w-full sm:w-auto h-14 border-white/10 bg-white/5">
-              <Link href="/contact" className="flex items-center justify-center gap-3 font-semibold text-lg">
-                <Terminal className="w-5 h-5" /> Let's Talk
-              </Link>
+            <Button variant="outline" size="lg" asChild className="h-14 font-bold border-white/5 bg-white/5">
+               <Link href="/contact" className="flex items-center justify-center gap-3">
+                 Let's Talk <Mail className="w-4 h-4 opacity-40" />
+               </Link>
             </Button>
           </div>
         </div>
       </div>
+      
+      {/* Static Rings */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vw] border border-white/[0.02] rounded-full pointer-events-none" />
     </section>
   );
 });
 
 export default HeroSectionStatic;
+
