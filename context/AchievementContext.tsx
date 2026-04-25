@@ -61,6 +61,7 @@ const AchievementContext = createContext<AchievementContextType | undefined>(und
 export function AchievementProvider({ children }: { children: React.ReactNode }) {
   const [achievements, setAchievements] = useState<Achievement[]>(INITIAL_ACHIEVEMENTS);
   const [visitedPages, setVisitedPages] = useState<Set<string>>(new Set());
+  const triggeredToasts = React.useRef<Set<string>>(new Set());
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -68,6 +69,9 @@ export function AchievementProvider({ children }: { children: React.ReactNode })
     if (saved) {
       try {
         const unlockedIds = JSON.parse(saved) as string[];
+        // Pre-fill triggered toasts so we don't notify for already unlocked ones from past sessions
+        unlockedIds.forEach(id => triggeredToasts.current.add(id));
+        
         setAchievements((prev) =>
           prev.map((a) => ({
             ...a,
@@ -81,9 +85,13 @@ export function AchievementProvider({ children }: { children: React.ReactNode })
   }, []);
 
   const unlockAchievement = useCallback((id: string) => {
+    if (triggeredToasts.current.has(id)) return;
+
     setAchievements((prev) => {
       const achievement = prev.find((a) => a.id === id);
       if (achievement && !achievement.unlocked) {
+        triggeredToasts.current.add(id);
+        
         // Trigger toast
         toast.custom((t) => (
           <div className="bg-[#0c0c0f] border-2 border-[var(--get)] p-4 rounded-xl shadow-[0_0_20px_rgba(0,229,160,0.2)] flex items-center gap-4 animate-in slide-in-from-right-full duration-500">

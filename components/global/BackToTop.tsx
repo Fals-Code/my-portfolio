@@ -9,7 +9,7 @@ export default function BackToTop() {
 
   useEffect(() => {
     const toggleVisibility = () => {
-      if (window.pageYOffset > 300) {
+      if (window.pageYOffset > 200) {
         setIsVisible(true);
       } else {
         setIsVisible(false);
@@ -35,7 +35,7 @@ export default function BackToTop() {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.5 }}
           onClick={scrollToTop}
-          className="hide-on-intro fixed bottom-[80px] right-4 md:bottom-[92px] md:right-6 z-[55] p-3.5 rounded-[1.2rem] bg-[var(--accent)] text-[var(--bg)] shadow-xl hover:opacity-90 transition-all"
+          className="hide-on-intro fixed bottom-[100px] right-4 md:bottom-[92px] md:right-6 z-[55] p-3.5 rounded-[1.2rem] bg-[var(--accent)] text-[var(--bg)] shadow-xl hover:opacity-90 transition-all"
           aria-label="Back to top"
         >
           <ArrowUp className="w-6 h-6" />

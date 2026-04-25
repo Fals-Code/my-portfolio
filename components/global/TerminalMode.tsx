@@ -57,6 +57,12 @@ export default function TerminalMode() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen]);
 
+  useEffect(() => {
+    const handleToggle = () => setIsOpen(prev => !prev);
+    window.addEventListener("toggle-terminal", handleToggle);
+    return () => window.removeEventListener("toggle-terminal", handleToggle);
+  }, []);
+
   // Auto-focus input when terminal opens
   useEffect(() => {
     if (isOpen) {
@@ -148,8 +154,6 @@ export default function TerminalMode() {
                 <span>/projects</span>
                 <span>/stack</span>
                 <span>/contact</span>
-                <span>/blog</span>
-                <span>/game</span>
               </div>
             ),
           },
@@ -162,7 +166,7 @@ export default function TerminalMode() {
           setLogs((prev) => [...prev, { type: "error", content: "Error: cd requires a path" }]);
         } else {
           const target = path.startsWith("/") ? path : `/${path}`;
-          const validPaths = ["/", "/home", "/about", "/projects", "/stack", "/contact", "/blog", "/game", "/cyber-drive"];
+          const validPaths = ["/", "/home", "/about", "/projects", "/stack", "/contact", "/cyber-drive"];
           
           if (validPaths.includes(target === "/home" ? "/" : target)) {
             const actualPath = target === "/home" ? "/" : target;

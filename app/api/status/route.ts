@@ -1,7 +1,19 @@
 export const dynamic = "force-dynamic";
 
+let statusCache: any = null;
+let lastStatusTime = 0;
+const STATUS_CACHE_DURATION = 2 * 60 * 1000; // 2 menit
+
 export async function GET() {
   try {
+    const now = Date.now();
+    if (statusCache && (now - lastStatusTime < STATUS_CACHE_DURATION)) {
+      return new Response(JSON.stringify(statusCache), {
+        status: 200,
+        headers: { "Content-Type": "application/json", "X-Cache": "HIT" }
+      });
+    }
+
     const wakatimeKey = process.env.WAKATIME_API_KEY;
     const githubToken = process.env.GITHUB_TOKEN;
 
@@ -68,13 +80,17 @@ export async function GET() {
       }
     }
 
+    statusCache = { isOnline, isCoding, lastSeen, source };
+    lastStatusTime = Date.now();
+
     return new Response(
-      JSON.stringify({ isOnline, isCoding, lastSeen, source }),
+      JSON.stringify(statusCache),
       {
         status: 200,
         headers: {
           "Content-Type": "application/json",
           "Cache-Control": "s-maxage=60, stale-while-revalidate=30",
+          "X-Cache": "MISS"
         },
       }
     );

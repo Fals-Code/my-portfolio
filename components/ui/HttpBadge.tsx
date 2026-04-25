@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
 
 type HttpMethod = "GET" | "POST" | "PATCH" | "DELETE" | "PUT";
 
@@ -10,6 +11,7 @@ interface HttpBadgeProps {
   href?: string;
   onClick?: (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void;
   active?: boolean;
+  isLoading?: boolean;
   className?: string;
 }
 
@@ -35,6 +37,7 @@ export default function HttpBadge({
   href,
   onClick,
   active,
+  isLoading,
   className = "",
 }: HttpBadgeProps) {
   const pathname = usePathname();
@@ -45,7 +48,7 @@ export default function HttpBadge({
   const content = (
     <span className="flex items-center gap-2 group transition-all duration-300">
       <span
-        className="font-bold text-xs px-2 py-0.5 rounded-sm transition-all duration-300"
+        className="relative font-bold text-xs px-2 py-0.5 rounded-sm transition-all duration-300 min-w-[32px] flex items-center justify-center"
         style={{
           color: isActive ? "#000" : color,
           backgroundColor: isActive ? color : methodBgColors[method],
@@ -53,7 +56,15 @@ export default function HttpBadge({
           textShadow: isActive ? "none" : `0 0 8px ${color}40`,
         }}
       >
-        {method}
+        {isLoading ? (
+          <motion.span
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            className="inline-block w-2.5 h-2.5 border-2 border-current border-t-transparent rounded-full"
+          />
+        ) : (
+          method
+        )}
       </span>
       <span
         className={`font-mono text-sm transition-colors duration-300 ${

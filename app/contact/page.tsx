@@ -13,15 +13,18 @@ interface FormData {
   name: string;
   email: string;
   message: string;
+  priority: "LOW" | "NORMAL" | "CRITICAL";
 }
 
 export default function ContactPage() {
   const [formStatus, setFormStatus] = useState<FormStatus>("idle");
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [ticketId, setTicketId] = useState<string>("");
   const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
     message: "",
+    priority: "NORMAL"
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,24 +43,30 @@ export default function ContactPage() {
           name: formData.name,
           email: formData.email,
           message: formData.message,
+          priority: formData.priority,
+          _subject: `New Ticket: [${formData.priority}] from ${formData.name}`
         }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        // Formspree returns { errors: [...] } on validation failure
         const msg =
           data?.errors?.map((e: { message: string }) => e.message).join(", ") ||
-          "Pengiriman gagal. Coba lagi.";
+          "Ticket generation failed. Check your connection.";
         throw new Error(msg);
       }
 
+      const newId = `TIC-${new Date().getFullYear()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+      setTicketId(newId);
       setFormStatus("success");
-      setFormData({ name: "", email: "", message: "" });
+      setFormData({ name: "", email: "", message: "", priority: "NORMAL" });
 
-      // Reset ke idle setelah 4 detik
-      setTimeout(() => setFormStatus("idle"), 4000);
+      // Reset ke idle setelah 10 detik agar user sempat mencatat ticketId
+      setTimeout(() => {
+        setFormStatus("idle");
+        setTicketId("");
+      }, 10000);
     } catch (err) {
       setErrorMessage(
         err instanceof Error ? err.message : "Terjadi kesalahan. Coba lagi."
@@ -85,12 +94,15 @@ export default function ContactPage() {
 
   // Preview payload untuk terminal
   const payloadPreview = `{
-  "endpoint": "/api/contact/message",
+  "endpoint": "/api/v1/tickets",
   "method": "POST",
+  "headers": {
+    "X-Priority": "${formData.priority}"
+  },
   "payload": {
-    "name": "${formData.name || "..."}",
-    "email": "${formData.email || "..."}",
-    "message": "${formData.message || "..."}"
+    "reporter": "${formData.name || "..."}",
+    "callback": "${formData.email || "..."}",
+    "issue": "${formData.message || "..."}"
   }
 }`;
 
@@ -100,10 +112,10 @@ export default function ContactPage() {
     <div className="max-w-7xl mx-auto px-6 md:px-10 py-12 min-h-[80vh]">
       {/* Header */}
       <div className="flex items-center gap-4 mb-16 scroll-reveal">
-        <h1 className="text-4xl md:text-5xl font-syne">/contact</h1>
+        <h1 className="text-4xl md:text-5xl font-syne">/ticketing</h1>
         <HttpBadge
-          method="DELETE"
-          endpoint="boredom"
+          method="POST"
+          endpoint="priority: critical"
           className="cursor-default pointer-events-none"
         />
       </div>
@@ -115,50 +127,79 @@ export default function ContactPage() {
             {/* Header card */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border)] bg-[var(--bg-card2)]">
               <div className="font-mono text-sm text-[var(--text)]">
-                Execute Payload
+                Issue Reporting System
               </div>
-              <span className="text-[var(--post)] font-bold text-sm">
-                [POST]
-              </span>
+              <div className="flex items-center gap-4">
+                <span className="text-[var(--get)] font-bold text-[10px] animate-pulse">● SYSTEM LIVE</span>
+                <span className="text-[var(--post)] font-bold text-sm">[POST]</span>
+              </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-6">
-              {/* Name */}
-              <div className="space-y-2">
-                <label className="font-mono text-xs text-[var(--muted)] uppercase tracking-widest">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  required
-                  disabled={isDisabled}
-                  value={formData.name}
-                  onChange={handleChange("name")}
-                  className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-md px-4 py-3 text-[var(--text)] font-mono text-sm focus:outline-none focus:border-[var(--post)] focus:ring-1 focus:ring-[var(--post)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  placeholder="Masukkan Nama Anda"
-                />
+            <form onSubmit={handleSubmit} className="p-5 sm:p-8 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Name */}
+                <div className="space-y-2">
+                  <label className="font-mono text-xs text-[var(--muted)] uppercase tracking-widest">
+                    Reporter Identity
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    disabled={isDisabled}
+                    value={formData.name}
+                    onChange={handleChange("name")}
+                    className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-md px-4 py-3 text-[var(--text)] font-mono text-sm focus:outline-none focus:border-[var(--post)] focus:ring-1 focus:ring-[var(--post)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    placeholder="Enter Name..."
+                  />
+                </div>
+
+                {/* Email */}
+                <div className="space-y-2">
+                  <label className="font-mono text-xs text-[var(--muted)] uppercase tracking-widest">
+                    Callback Endpoint
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    disabled={isDisabled}
+                    value={formData.email}
+                    onChange={handleChange("email")}
+                    className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-md px-4 py-3 text-[var(--text)] font-mono text-sm focus:outline-none focus:border-[var(--post)] focus:ring-1 focus:ring-[var(--post)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    placeholder="Enter Email..."
+                  />
+                </div>
               </div>
 
-              {/* Email */}
+              {/* Priority */}
               <div className="space-y-2">
                 <label className="font-mono text-xs text-[var(--muted)] uppercase tracking-widest">
-                  Email
+                  Ticket Priority
                 </label>
-                <input
-                  type="email"
-                  required
-                  disabled={isDisabled}
-                  value={formData.email}
-                  onChange={handleChange("email")}
-                  className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-md px-4 py-3 text-[var(--text)] font-mono text-sm focus:outline-none focus:border-[var(--post)] focus:ring-1 focus:ring-[var(--post)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  placeholder="Masukkan Email Anda"
-                />
+                <div className="grid grid-cols-1 xs:grid-cols-3 gap-3">
+                  {(["LOW", "NORMAL", "CRITICAL"] as const).map((p) => (
+                    <button
+                      key={p}
+                      type="button"
+                      disabled={isDisabled}
+                      onClick={() => setFormData(prev => ({ ...prev, priority: p }))}
+                      className={`py-2 rounded border font-mono text-[10px] font-bold transition-all ${
+                        formData.priority === p 
+                          ? p === "CRITICAL" ? "bg-[var(--delete)]/20 border-[var(--delete)] text-[var(--delete)] shadow-[0_0_10px_rgba(255,92,106,0.2)]" :
+                            p === "LOW" ? "bg-[var(--get)]/20 border-[var(--get)] text-[var(--get)]" :
+                            "bg-[var(--post)]/20 border-[var(--post)] text-[var(--post)]"
+                          : "bg-[var(--bg)] border-[var(--border)] text-[var(--muted)] hover:border-[var(--muted)]"
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Message */}
               <div className="space-y-2">
                 <label className="font-mono text-xs text-[var(--muted)] uppercase tracking-widest">
-                  Message
+                  Issue Payload (Message)
                 </label>
                 <textarea
                   required
@@ -167,7 +208,7 @@ export default function ContactPage() {
                   value={formData.message}
                   onChange={handleChange("message")}
                   className="w-full bg-[var(--bg)] border border-[var(--border)] rounded-md px-4 py-3 text-[var(--text)] font-mono text-sm focus:outline-none focus:border-[var(--post)] focus:ring-1 focus:ring-[var(--post)] transition-all resize-none disabled:opacity-50 disabled:cursor-not-allowed"
-                  placeholder="Masukkan Pesan Anda"
+                  placeholder="Describe your request or bug..."
                 />
               </div>
 
@@ -209,7 +250,7 @@ export default function ContactPage() {
                 {formStatus === "success" && (
                   <>
                     <CheckCircle2 className="w-4 h-4" />
-                    201 CREATED ✓
+                    {ticketId ? `TICKET CREATED: ${ticketId}` : "201 CREATED ✓"}
                   </>
                 )}
                 {formStatus === "error" && (
@@ -269,7 +310,7 @@ export default function ContactPage() {
                   <span className="font-syne font-bold text-[var(--text)] group-hover:text-[var(--patch)] transition-colors">
                     Email
                   </span>
-                  <span className="font-mono text-xs text-[var(--muted)]">
+                  <span className="font-mono text-xs text-[var(--muted)] truncate max-w-[200px] xs:max-w-none">
                     ahmadmathlaulfalah14@gmail.com
                   </span>
                 </div>

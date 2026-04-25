@@ -15,7 +15,7 @@ const CASE_STUDY_MAP: Record<string, string> = {
 };
 
 function ProjectCard({ proj }: { proj: any }) {
-  const isFeatured = proj.badge?.toLowerCase() === "featured" || proj.stars > 0;
+  const isFeatured = proj.badge?.toLowerCase() === "featured" || (proj.stars && proj.stars > 0);
   const isWIP = proj.badge?.toLowerCase() === "wip";
   const method = isWIP ? "PATCH" : isFeatured ? "GET" : "POST";
   const status = isWIP ? "202 Accepted" : "200 OK";
@@ -24,7 +24,7 @@ function ProjectCard({ proj }: { proj: any }) {
   return (
     <div className={`group flex flex-col bg-[var(--bg-card)] border rounded-lg overflow-hidden transition-all duration-300 ${
       isFeatured
-        ? "border-[var(--get)]/50 hover:border-[var(--get)] hover:shadow-[0_0_20px_rgba(0,229,160,0.1)]"
+        ? "border-[var(--get)]/30 hover:border-[var(--get)] hover:shadow-[0_0_15px_rgba(0,229,160,0.05)]"
         : "border-[var(--border)] hover:border-[var(--muted)]"
     }`}>
       <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--border)] bg-[var(--bg-card2)] font-mono text-xs">
@@ -32,7 +32,7 @@ function ProjectCard({ proj }: { proj: any }) {
           <span className={`font-bold ${isWIP ? "text-[var(--patch)]" : isFeatured ? "text-[var(--get)]" : "text-[var(--post)]"}`}>
             [{isWIP ? "WIP" : method}]
           </span>
-          <span className="text-[var(--text)]">/api/projects/{slug}</span>
+          <span className="text-[var(--muted)]">/api/projects/{slug}</span>
         </div>
         <div className="flex items-center gap-3">
           {proj.stars !== undefined && (
@@ -46,25 +46,22 @@ function ProjectCard({ proj }: { proj: any }) {
         </div>
       </div>
 
-      <div className="flex flex-col flex-1 p-6 gap-4 relative">
-        <h3 className="font-syne text-2xl font-bold text-[var(--text)] group-hover:text-[var(--get)] transition-colors">
-          {proj.title}
-        </h3>
-        <p className="text-[var(--muted)] font-mono text-sm leading-relaxed flex-1">
-          {proj.description}
-        </p>
+      <div className="flex flex-col flex-1 p-6 gap-4">
+        <div>
+          <h3 className="font-syne text-2xl font-bold text-[var(--text)] group-hover:text-[var(--get)] transition-colors mb-2">
+            {proj.title}
+          </h3>
+          <p className="text-[var(--muted)] font-mono text-sm leading-relaxed line-clamp-3">
+            {proj.description}
+          </p>
+        </div>
 
-        <div className="flex flex-wrap gap-2 mt-2">
+        <div className="flex flex-wrap gap-2 mt-auto">
           {(proj.tech || []).slice(0, 4).map((t: string) => (
             <span key={t} className="font-mono text-[0.7rem] px-2 py-1 bg-[var(--bg-card2)] border border-[var(--border)] rounded text-[var(--text)]">
               [{t}]
             </span>
           ))}
-          {proj.language && !proj.tech?.includes(proj.language) && (
-            <span className="font-mono text-[0.7rem] px-2 py-1 bg-[var(--bg-card2)] border border-[var(--border)] rounded text-[var(--post)]">
-              [{proj.language}]
-            </span>
-          )}
         </div>
 
         <div className="mt-6 pt-4 border-t border-[var(--border)] flex items-center justify-between font-mono text-xs">
@@ -74,7 +71,7 @@ function ProjectCard({ proj }: { proj: any }) {
                 <GitFork className="w-3 h-3" /> {proj.forks}
               </span>
             )}
-            {proj.kpi && <span>{proj.kpi}</span>}
+            {proj.kpi && <span className="hidden sm:inline opacity-60 italic">{proj.kpi}</span>}
           </div>
 
           <Link
@@ -85,7 +82,7 @@ function ProjectCard({ proj }: { proj: any }) {
               proj.github ||
               "#"
             }
-            className="flex items-center gap-2 text-[var(--text)] hover:text-[var(--get)] transition-colors"
+            className="flex items-center gap-2 text-[var(--text)] group-hover:text-[var(--get)] font-bold transition-all"
           >
             <span>→ {CASE_STUDY_MAP[proj.id] ? "STUDY" : "VIEW"}</span>
           </Link>
@@ -96,14 +93,10 @@ function ProjectCard({ proj }: { proj: any }) {
 }
 
 export default function ProjectsSection() {
-  const { projects: githubProjects, isLoading, refresh } = useGitHub(true); // auto-refresh ON
+  const { projects: githubProjects, isLoading, refresh } = useGitHub(true);
 
-  // Merge: static projects punya data lebih lengkap (case study, images)
-  // GitHub projects sebagai tambahan
   const mergedProjects = React.useMemo(() => {
     const staticIds = new Set(staticProjects.map((p) => p.id));
-
-    // GitHub repos yang belum ada di static data
     const newFromGitHub = githubProjects
       .filter((gp) => !staticIds.has(gp.id) && !staticIds.has(gp.id.toLowerCase()))
       .slice(0, 2);

@@ -14,9 +14,14 @@ export function usePerformance() {
   const [isMobileDevice, setIsMobileDevice] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    const handleResize = () => {
       setIsMobileDevice(window.innerWidth < 768);
-    }
+    };
+
+    // Initial check
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
 
     // 1. Check for reduced motion preference
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -53,6 +58,7 @@ export function usePerformance() {
     setTier(checkPerformance());
 
     return () => {
+      window.removeEventListener("resize", handleResize);
       mediaQuery.removeEventListener("change", handleMotionChange);
     };
   }, []);

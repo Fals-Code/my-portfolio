@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useRef } from "react";
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from "react";
 
 interface Track {
   id: string;
@@ -25,14 +25,11 @@ interface MusicContextType {
 
 const MusicContext = createContext<MusicContextType | undefined>(undefined);
 
-// Hardcoded Lofi/Chill tracks
-// Hardcoded Favorite Tracks
 const PLAYLIST: Track[] = [
   { id: "y4zdDXPYo0I", title: "Viva La Vida", artist: "Coldplay" },
-  { id: "jfKfPfyJRdk", title: "Midnight City (Lofi)", artist: "Lofi Girl" },
-  { id: "5qap5aO4i9A", title: "Focus Study Beats", artist: "ChilledCow" },
-  { id: "X8mE43g8xIs", title: "Celestial Ambient", artist: "Focus Flow" },
-  { id: "S6_C_yN9N0g", title: "No Time For Caution", artist: "H. Zimmer" },
+  { id: "k5mX3NkA7jM", title: "Mary On A Cross", artist: "Ghost" },
+  { id: "RbeR2qLYzS8", title: "Beggin'", artist: "Måneskin" },
+  { id: "us3tczsrKQc", title: "Danza Kuduro", artist: "Extended Remix" },
 ];
 
 declare global {
@@ -42,180 +39,187 @@ declare global {
   }
 }
 
-/**
- * Handles persistent music playback using the YouTube IFrame API.
- */
+// Ensure YouTube IFrame API script is loaded once
+let ytScriptLoaded = false;
+function loadYTScript(): Promise<void> {
+  return new Promise((resolve) => {
+    if (window.YT && window.YT.Player) {
+      resolve();
+      return;
+    }
+    if (ytScriptLoaded) {
+      // Script is loading, wait for the callback
+      const prev = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = () => {
+        if (prev) prev();
+        resolve();
+      };
+      return;
+    }
+    ytScriptLoaded = true;
+    window.onYouTubeIframeAPIReady = () => resolve();
+    const tag = document.createElement("script");
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(tag);
+  });
+}
+
 export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
-  const [volume, setVolumeState] = useState(0.5);
+  const [volume, setVolumeState] = useState(0.7);
   const [isMuted, setIsMuted] = useState(false);
   const [sfxEnabled, setSfxEnabled] = useState(true);
-  
-  const playerRef = useRef<any>(null);
-  const [isApiReady, setIsApiReady] = useState(false);
   const [isPlayerReady, setIsPlayerReady] = useState(false);
-  const nextTrackRef = useRef<() => void>(() => {});
-  const initializingRef = useRef(false);
 
-  // YouTube Player initialization removed from mount to save CPU.
-  // It will now be triggered only on user interaction.
+  const playerRef = useRef<any>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const currentTrackIndexRef = useRef(currentTrackIndex);
+  currentTrackIndexRef.current = currentTrackIndex;
 
-  const initYouTube = () => {
-    if (typeof window === "undefined") return;
-    if (initializingRef.current) return;
-    initializingRef.current = true;
+  // Keep a ref to the nextTrack function for use inside YT callbacks
+  const nextTrackFn = useRef<() => void>(() => {});
 
-    console.log("MusicContext: Lazy Initializing YouTube API...");
-
-    let playerContainer = document.getElementById("yt-player-persistent");
-    if (!playerContainer) {
-      playerContainer = document.createElement("div");
-      playerContainer.id = "yt-player-persistent";
-      playerContainer.style.display = "none";
-      document.body.appendChild(playerContainer);
-    }
-    
-    const tag = document.createElement("script");
-    tag.id = "yt-iframe-api";
-    tag.src = "https://www.youtube.com/iframe_api";
-    const firstScriptTag = document.getElementsByTagName("script")[0];
-    firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
-
-    window.onYouTubeIframeAPIReady = () => {
-      console.log("MusicContext: onYouTubeIframeAPIReady fired.");
-      setIsApiReady(true);
-      delete (window as any).onYouTubeIframeAPIReady;
-    };
-  };
-
+  // Create the hidden player container once on mount
   useEffect(() => {
-    if (isApiReady && !playerRef.current) {
-      console.log("MusicContext: Creating YT player...");
+    if (containerRef.current) return;
+    const div = document.createElement("div");
+    div.id = "yt-player-host";
+    div.style.cssText = "position:fixed;bottom:5px;right:5px;width:1px;height:1px;opacity:0.01;pointer-events:none;z-index:1;";
+    document.body.appendChild(div);
+    containerRef.current = div;
+    return () => { div.remove(); };
+  }, []);
 
-      try {
-        playerRef.current = new window.YT.Player("yt-player-persistent", {
-          height: "0",
-          width: "0",
-          videoId: PLAYLIST[currentTrackIndex].id,
-          playerVars: {
-            autoplay: 1, // Start immediately since this is user-triggered
-            controls: 0,
-            disablekb: 1,
-            fs: 0,
-            modestbranding: 1,
-            rel: 0,
-            enablejsapi: 1,
-            origin: typeof window !== 'undefined' ? window.location.origin : '',
-          },
-          events: {
-            onReady: (event: any) => {
-              console.log("MusicContext: Player Ready.");
-              setIsPlayerReady(true);
-              event.target.playVideo();
-            },
-            onStateChange: (event: any) => {
-              if (event.data === 1) setIsPlaying(true);
-              else if (event.data === 2) setIsPlaying(false);
-              else if (event.data === 0) nextTrackRef.current();
-            },
-          },
-        });
-      } catch (err) {
-        console.error("MusicContext: Exception during player creation:", err);
+  const createPlayer = useCallback((trackId: string, playImmediately: boolean) => {
+    return new Promise<void>((resolve) => {
+      if (!containerRef.current) { resolve(); return; }
+
+      // Destroy existing player if any
+      if (playerRef.current) {
+        try { playerRef.current.destroy(); } catch (_) {}
+        playerRef.current = null;
       }
-    }
-  }, [isApiReady, currentTrackIndex]);
 
-  // Handle case where playlist or index changes while player exists
-  useEffect(() => {
-    if (isPlayerReady && playerRef.current && typeof playerRef.current.loadVideoById === "function") {
-      playerRef.current.loadVideoById(PLAYLIST[currentTrackIndex].id);
-      playerRef.current.playVideo();
+      // Reset the inner div
+      const inner = document.createElement("div");
+      inner.id = "yt-player-inner";
+      containerRef.current.innerHTML = "";
+      containerRef.current.appendChild(inner);
+
+      playerRef.current = new window.YT.Player("yt-player-inner", {
+        height: "1",
+        width: "1",
+        videoId: trackId,
+        playerVars: {
+          autoplay: playImmediately ? 1 : 0,
+          mute: 0,
+          controls: 0,
+          disablekb: 1,
+          fs: 0,
+          modestbranding: 1,
+          rel: 0,
+          enablejsapi: 1,
+          origin: window.location.origin,
+        },
+        events: {
+          onReady: (event: any) => {
+            event.target.setVolume(volume * 100);
+            if (playImmediately) {
+              event.target.playVideo();
+              setIsPlaying(true);
+            }
+            setIsPlayerReady(true);
+            resolve();
+          },
+          onStateChange: (event: any) => {
+            // YT.PlayerState: PLAYING=1, PAUSED=2, ENDED=0
+            if (event.data === 1) setIsPlaying(true);
+            else if (event.data === 2) setIsPlaying(false);
+            else if (event.data === 0) nextTrackFn.current();
+          },
+          onError: () => {
+            // Skip errored track
+            nextTrackFn.current();
+          },
+        },
+      });
+    });
+  }, [volume]);
+
+  // togglePlay: this MUST be called directly from a user gesture on mobile
+  const togglePlay = useCallback(async () => {
+    if (!isPlayerReady || !playerRef.current) {
+      // First play: load API then create player synchronously inside gesture
+      try {
+        await loadYTScript();
+        await createPlayer(PLAYLIST[currentTrackIndexRef.current].id, true);
+      } catch (e) {
+        console.error("MusicContext: Failed to start player", e);
+      }
+      return;
+    }
+
+    if (isPlaying) {
+      playerRef.current.pauseVideo?.();
+    } else {
+      playerRef.current.unMute?.();
+      playerRef.current.setVolume?.(volume * 100);
+      playerRef.current.playVideo?.();
+    }
+  }, [isPlaying, isPlayerReady, createPlayer, volume]);
+
+  const nextTrack = useCallback(() => {
+    const nextIndex = (currentTrackIndexRef.current + 1) % PLAYLIST.length;
+    setCurrentTrackIndex(nextIndex);
+    if (isPlayerReady && playerRef.current) {
+      playerRef.current.loadVideoById?.(PLAYLIST[nextIndex].id);
       setIsPlaying(true);
     }
-  }, [currentTrackIndex, isPlayerReady]);
+  }, [isPlayerReady]);
 
-  const togglePlay = () => {
-    if (!isApiReady) {
-      initYouTube();
-      return;
+  const prevTrack = useCallback(() => {
+    const prevIndex = (currentTrackIndexRef.current - 1 + PLAYLIST.length) % PLAYLIST.length;
+    setCurrentTrackIndex(prevIndex);
+    if (isPlayerReady && playerRef.current) {
+      playerRef.current.loadVideoById?.(PLAYLIST[prevIndex].id);
+      setIsPlaying(true);
     }
-    if (!isPlayerReady || !playerRef.current) return;
-    
-    if (isPlaying) {
-      if (typeof playerRef.current.pauseVideo === "function") {
-        playerRef.current.pauseVideo();
-      }
-    } else {
-      if (typeof playerRef.current.playVideo === "function") {
-        playerRef.current.playVideo();
-      }
-    }
-  };
+  }, [isPlayerReady]);
 
-  const setVolume = (v: number) => {
+  // Keep ref in sync
+  nextTrackFn.current = nextTrack;
+
+  const setVolume = useCallback((v: number) => {
     const vol = Math.max(0, Math.min(1, v));
     setVolumeState(vol);
-    
     if (isPlayerReady && playerRef.current) {
-      if (typeof playerRef.current.setVolume === "function") {
-        playerRef.current.setVolume(vol * 100);
-      }
-      
-      // Auto-unmute if volume is increased
+      playerRef.current.setVolume?.(vol * 100);
       if (vol > 0 && isMuted) {
         setIsMuted(false);
-        if (typeof playerRef.current.unMute === "function") {
-          playerRef.current.unMute();
-        }
+        playerRef.current.unMute?.();
       }
     }
-  };
+  }, [isPlayerReady, isMuted]);
 
-  const toggleMute = () => {
+  const toggleMute = useCallback(() => {
     if (!isPlayerReady || !playerRef.current) return;
     if (isMuted) {
-      if (typeof playerRef.current.unMute === "function") {
-        playerRef.current.unMute();
-      }
+      playerRef.current.unMute?.();
     } else {
-      if (typeof playerRef.current.mute === "function") {
-        playerRef.current.mute();
-      }
+      playerRef.current.mute?.();
     }
-    setIsMuted(!isMuted);
-  };
+    setIsMuted(prev => !prev);
+  }, [isPlayerReady, isMuted]);
 
-  const nextTrack = () => {
-    if (!isApiReady) {
-      initYouTube();
-      return;
-    }
-    setCurrentTrackIndex(prev => (prev + 1) % PLAYLIST.length);
-  };
-
-  // Keep the ref in sync so the YouTube event handler always has a fresh reference
-  nextTrackRef.current = nextTrack;
-
-  const toggleSfx = () => {
-    setSfxEnabled(!sfxEnabled);
-  };
-
-  const prevTrack = () => {
-    if (!isApiReady) {
-      initYouTube();
-      return;
-    }
-    setCurrentTrackIndex(prev => (prev - 1 + PLAYLIST.length) % PLAYLIST.length);
-  };
+  const toggleSfx = useCallback(() => setSfxEnabled(prev => !prev), []);
 
   return (
-    <MusicContext.Provider 
-      value={{ 
-        isPlaying, 
-        currentTrack: PLAYLIST[currentTrackIndex], 
-        volume, 
+    <MusicContext.Provider
+      value={{
+        isPlaying,
+        currentTrack: PLAYLIST[currentTrackIndex],
+        volume,
         isMuted,
         sfxEnabled,
         isPlayerReady,
@@ -224,7 +228,7 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         toggleMute,
         toggleSfx,
         nextTrack,
-        prevTrack
+        prevTrack,
       }}
     >
       {children}
@@ -234,7 +238,6 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
 export const useMusic = () => {
   const context = useContext(MusicContext);
-  // Safe fallback to prevent crashes on mobile where Provider is skipped for performance
   if (context === undefined) {
     return {
       isPlaying: false,

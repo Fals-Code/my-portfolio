@@ -3,6 +3,7 @@
 import React, { memo } from "react";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { AchievementProvider, useAchievements } from "@/context/AchievementContext";
+import { MusicProvider } from "@/context/MusicContext";
 import Navbar from "@/components/global/Navbar";
 import { usePerformance } from "@/hooks/usePerformance";
 import dynamic from "next/dynamic";
@@ -11,10 +12,20 @@ import CustomCursor from "@/components/global/CustomCursor";
 import StatusBar from "@/components/global/StatusBar";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import NProgress from "nprogress";
+import "nprogress/nprogress.css";
+
+// Configure NProgress
+NProgress.configure({ 
+  showSpinner: false,
+  trickleSpeed: 200,
+  minimum: 0.3
+});
 
 const CommandPalette = dynamic(() => import("@/components/global/CommandPalette"), { ssr: false });
 const TerminalMode = dynamic(() => import("@/components/global/TerminalMode"), { ssr: false });
 const BackToTop = dynamic(() => import("@/components/global/BackToTop"), { ssr: false });
+const Preloader = dynamic(() => import("@/components/global/Preloader"), { ssr: false });
 
 import { useTheme } from "@/context/ThemeContext";
 
@@ -26,17 +37,41 @@ const MainContent = memo(function MainContent({ children }: { children: React.Re
   const [visitedPages, setVisitedPages] = useState<Set<string>>(new Set());
   const [initialTheme] = useState(theme);
 
-  // Track page visits
+  // Track page visits and manage NProgress
   useEffect(() => {
+    // Finish NProgress on route change
+    NProgress.done();
+
     setVisitedPages(prev => {
       const next = new Set(prev);
       next.add(pathname);
-      if (next.size >= 3) {
-        unlockAchievement("EXPLORER");
-      }
       return next;
     });
-  }, [pathname, unlockAchievement]);
+
+    // Global click listener to start NProgress on any internal link click
+    const handleAnchorClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      const anchor = target.closest("a");
+      
+      if (anchor && 
+          anchor.href && 
+          anchor.href.startsWith(window.location.origin) && 
+          !anchor.href.includes("#") &&
+          anchor.target !== "_blank") {
+        NProgress.start();
+      }
+    };
+
+    window.addEventListener("click", handleAnchorClick);
+    return () => window.removeEventListener("click", handleAnchorClick);
+  }, [pathname]);
+
+  // Unlock achievements based on stats
+  useEffect(() => {
+    if (visitedPages.size >= 3) {
+      unlockAchievement("EXPLORER");
+    }
+  }, [visitedPages.size, unlockAchievement]);
 
   // Track theme changes
   useEffect(() => {
@@ -59,23 +94,29 @@ const MainContent = memo(function MainContent({ children }: { children: React.Re
 });
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
-  const { isMobileDevice } = usePerformance();
+  const { isLow } = usePerformance();
+
+  useEffect(() => {
+    if (isLow) {
+      document.body.classList.add('low-performance');
+    } else {
+      document.body.classList.remove('low-performance');
+    }
+  }, [isLow]);
 
   return (
     <ThemeProvider>
-      <AchievementProvider>
-        <Toaster position="top-center" richColors theme="dark" />
-        <MainContent>{children}</MainContent>
+      <MusicProvider>
+        <AchievementProvider>
+          <Preloader />
+          <Toaster position="top-center" richColors theme="dark" />
+          <MainContent>{children}</MainContent>
 
-        {!isMobileDevice && (
-          <>
-            <BackToTop />
-            {/* Optional: keep command palette if user wants it */}
-            <CommandPalette />
-            <TerminalMode />
-          </>
-        )}
-      </AchievementProvider>
+          <BackToTop />
+          <CommandPalette />
+          <TerminalMode />
+        </AchievementProvider>
+      </MusicProvider>
     </ThemeProvider>
   );
 }

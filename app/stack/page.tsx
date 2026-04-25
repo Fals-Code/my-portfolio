@@ -6,6 +6,7 @@ import HttpBadge from "@/components/ui/HttpBadge";
 import { useGitHub } from "@/hooks/useGitHub";
 import { GitFork, Star, Users, BookOpen, AlertCircle } from "lucide-react";
 import dynamic from "next/dynamic";
+import ArchitectureDiagram from "@/components/ui/ArchitectureDiagram";
 
 const WakaTimeSection = dynamic(
   () => import("@/components/sections/WakaTimeSection"),
@@ -56,9 +57,9 @@ export default function StackPage() {
   // or just let GitHub data speak for itself.
   
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-10 py-12 min-h-[80vh]">
+    <div className="max-w-7xl mx-auto px-6 md:px-10 py-12 min-h-[80vh] overflow-x-hidden max-w-full w-full">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-16 scroll-reveal">
+      <div className="flex flex-wrap items-center gap-y-4 gap-x-6 mb-16 scroll-reveal">
         <h1 className="text-4xl md:text-5xl font-syne">/stack</h1>
         <HttpBadge
           method="PATCH"
@@ -82,7 +83,7 @@ export default function StackPage() {
             <span>[ERROR] Failed to sync dynamic stack — {error}</span>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 lg:gap-16">
             {isLoading ? (
               // Loading Skeletons
               Array.from({ length: 4 }).map((_, i) => (
@@ -114,7 +115,7 @@ export default function StackPage() {
           GitHub Activity
         </div>
 
-        <div className="grid grid-cols-3 gap-4 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
           {[
             { label: "Repositories", value: stats.repositories, icon: <BookOpen className="w-4 h-4" />, color: "var(--get)" },
             { label: "Stars", value: stats.stars, icon: <Star className="w-4 h-4" />, color: "var(--patch)" },
@@ -133,6 +134,10 @@ export default function StackPage() {
         </div>
       </div>
 
+      <div className="scroll-reveal" style={{ animationDelay: "0.4s" }}>
+        <ArchitectureDiagram />
+      </div>
+
       <WakaTimeSection />
 
       {/* Warning Footer */}
@@ -144,7 +149,7 @@ export default function StackPage() {
           <span className="text-[var(--patch)] font-bold">[WARN]</span>
           <span className="text-[var(--text)]">System continuously evolving</span>
         </div>
-        <p className="text-[var(--muted)] pl-14">
+        <p className="text-[var(--muted)] pl-0 sm:pl-14">
           Data sinkronisasi otomatis dari GitHub. Keahlian dihitung berdasarkan distribusi kode di seluruh repositori publik.
         </p>
       </div>

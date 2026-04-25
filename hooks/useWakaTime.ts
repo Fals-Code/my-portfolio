@@ -37,7 +37,7 @@ interface WakaTimeData {
 }
 
 let wakatimeCache: (WakaTimeData & { timestamp: number }) | null = null;
-const CACHE_DURATION = 60 * 1000; // 1 menit (untuk today status)
+const CACHE_DURATION = 5 * 60 * 1000; // 5 menit
 
 function secondsToReadable(seconds: number): string {
   const h = Math.floor(seconds / 3600);
@@ -57,30 +57,36 @@ export function useWakaTime() {
   const [isLoading, setIsLoading] = useState(!wakatimeCache);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (wakatimeCache && Date.now() - wakatimeCache.timestamp < CACHE_DURATION) {
-        setIsLoading(false);
-        return;
-      }
-      setIsLoading(true);
-      try {
-        const res = await fetch("/api/wakatime");
-        if (!res.ok) throw new Error("WakaTime unavailable");
-        const json: WakaTimeData = await res.json();
-        wakatimeCache = { ...json, timestamp: Date.now() };
-        setData(json);
-      } catch (err) {
-        setError("WakaTime data not available");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const fetchData = async (force = false) => {
+    if (!force && wakatimeCache && Date.now() - wakatimeCache.timestamp < CACHE_DURATION) {
+      setIsLoading(false);
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/wakatime");
+      if (!res.ok) throw new Error("WakaTime unavailable");
+      const json: WakaTimeData = await res.json();
+      wakatimeCache = { ...json, timestamp: Date.now() };
+      setData(json);
+    } catch (err) {
+      setError("WakaTime data not available");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
-    // Refresh every minute for live coding status
-    const interval = setInterval(fetchData, 60 * 1000);
-    return () => clearInterval(interval);
+  }, []);
+
+  // Smart refresh: only when tab is visible
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") fetchData();
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => document.removeEventListener("visibilitychange", handleVisibility);
   }, []);
 
   return {

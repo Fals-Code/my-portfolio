@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Syne, Space_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import ClientLayout from "./ClientLayout";
 
@@ -19,14 +20,40 @@ const spaceMono = Space_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Falah. | Backend Architect",
-    template: "%s | Falah.",
+    default: "Falah.dev | Backend Architect & API Specialist",
+    template: "%s | Falah.dev",
   },
-  description: "API Explorer Portfolio. Crafting Digital Experiences with Backend Precision.",
+  description: "Senior Backend Developer specializing in Laravel, MySQL, and High-Performance API Architectures. Explore the portfolio of Ahmad Mathlaul Falah.",
   authors: [{ name: "Ahmad Mathlaul Falah" }],
   creator: "Ahmad Mathlaul Falah",
   metadataBase: new URL("https://falah.dev"),
-  keywords: ["Next.js", "Backend Developer", "Laravel", "Portofolio", "Ahmad Falah", "API"],
+  keywords: [
+    "Ahmad Mathlaul Falah", "Backend Developer", "Laravel Expert", 
+    "API Architect", "Surabaya Developer", "Clean Architecture",
+    "MySQL Optimization", "Fullstack Portfolio", "Software Engineer"
+  ],
+  openGraph: {
+    title: "Falah.dev | Backend Architect",
+    description: "Crafting robust APIs and scalable server-side architectures.",
+    url: "https://falah.dev",
+    siteName: "Falah.dev Portfolio",
+    images: [
+      {
+        url: "/og-image.png", // Kita asumsikan ini ada atau akan dibuat
+        width: 1200,
+        height: 630,
+        alt: "Falah.dev Backend Architect",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Falah.dev | Backend Architect",
+    description: "Senior Backend Developer specializing in Laravel and API Architectures.",
+    images: ["/og-image.png"],
+  },
   icons: {
     icon: "/icon.png",
     apple: "/icon.png",
@@ -37,6 +64,8 @@ export const viewport: Viewport = {
   themeColor: "#0C0C0F",
   width: "device-width",
   initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 const ANTI_FLASH_SCRIPT = `
@@ -60,17 +89,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className="dark">
-      <head>
-        <script
-          id="anti-flash"
-          dangerouslySetInnerHTML={{ __html: ANTI_FLASH_SCRIPT }}
-          suppressHydrationWarning
-        />
-      </head>
+    <html lang="en" suppressHydrationWarning className="dark" data-scroll-behavior="smooth">
+      <head />
       <body
         className={`${syne.variable} ${spaceMono.variable} antialiased min-h-screen relative flex flex-col`}
       >
+        <Script
+          id="anti-flash"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: ANTI_FLASH_SCRIPT }}
+        />
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>

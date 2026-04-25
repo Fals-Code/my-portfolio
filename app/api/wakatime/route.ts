@@ -1,8 +1,21 @@
 export const dynamic = "force-dynamic";
 export const revalidate = 3600; // 1 jam
 
+// Simple In-Memory Cache to prevent slow dev reloads
+let cache: any = null;
+let lastCacheTime = 0;
+const CACHE_DURATION = 5 * 60 * 1000; // 5 menit
+
 export async function GET() {
   try {
+    const now = Date.now();
+    if (cache && (now - lastCacheTime < CACHE_DURATION)) {
+      return new Response(JSON.stringify(cache), {
+        status: 200,
+        headers: { "Content-Type": "application/json", "X-Cache": "HIT" }
+      });
+    }
+
     const apiKey = process.env.WAKATIME_API_KEY;
     if (!apiKey) {
       return new Response(
@@ -70,13 +83,17 @@ export async function GET() {
       };
     }
 
+    cache = { weeklyStats, todayStatus };
+    lastCacheTime = Date.now();
+
     return new Response(
-      JSON.stringify({ weeklyStats, todayStatus }),
+      JSON.stringify(cache),
       {
         status: 200,
         headers: {
           "Content-Type": "application/json",
           "Cache-Control": "s-maxage=60, stale-while-revalidate",
+          "X-Cache": "MISS"
         },
       }
     );

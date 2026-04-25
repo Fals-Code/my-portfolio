@@ -5,6 +5,7 @@ import { Theme } from "@/types";
 
 interface ThemeContextType {
   theme: Theme;
+  environment: 'day' | 'night';
   toggleTheme: (e?: React.MouseEvent) => void;
 }
 
@@ -19,10 +20,16 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  // Default "dark" — inline script di layout sudah apply class sebelum hydration
   const [theme, setTheme] = useState<Theme>("dark");
+  const [environment, setEnvironment] = useState<'day' | 'night'>('night');
 
   useEffect(() => {
+    // Detect Environment (Day/Night)
+    const hour = new Date().getHours();
+    const currentEnv = hour >= 6 && hour < 18 ? 'day' : 'night';
+    setEnvironment(currentEnv);
+    document.documentElement.classList.add(`env-${currentEnv}`);
+
     // Baca dari localStorage setelah mount, sinkronkan dengan state
     try {
       const saved = localStorage.getItem("falah-theme-v2") as Theme | null;
@@ -70,7 +77,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, environment, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );

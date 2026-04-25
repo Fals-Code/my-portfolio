@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // @ts-ignore - allowedDevOrigins is available in recent Next.js versions
+  allowedDevOrigins: ["*.ngrok-free.app", "*.ngrok.io", "localhost:3000", "192.168.1.8", "192.168.1.8:3000"],
   experimental: {
     optimizePackageImports: ['lucide-react', 'framer-motion'],
   },
