@@ -327,9 +327,12 @@ export default async function CaseStudyPage({ params }: { params: any }) {
                    <div className="flex flex-wrap justify-center gap-6 md:gap-10">
                     {cs.techStack.map((tech) => (
                       <div key={tech} className="relative group/tech">
-                        <img 
+                        <Image 
                           src={`https://skillicons.dev/icons?i=${tech}&theme=dark`}
                           alt={tech}
+                          width={64}
+                          height={64}
+                          loading="lazy"
                           className="w-12 h-12 md:w-16 md:h-16 grayscale opacity-40 group-hover/tech:grayscale-0 group-hover/tech:opacity-100 group-hover/tech:-translate-y-2 transition-all duration-300 cursor-default"
                         />
                         <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover/tech:opacity-100 transition-opacity text-[9px] font-bold uppercase tracking-widest text-accent">{tech}</div>

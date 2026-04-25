@@ -13,24 +13,27 @@ export default function CustomCursor() {
   const { theme } = useTheme();
   
   const cursorRef = useRef<HTMLDivElement>(null);
+  const rafId = useRef<number>(0);
 
   useEffect(() => {
     if (isMobileDevice) return;
 
     const updatePosition = (e: MouseEvent) => {
-      setPosition({ x: e.clientX, y: e.clientY });
-      setIsHidden(false); // Unconditionally show on movement
-      
-      // Check if hovering over clickable elements
-      const target = e.target as HTMLElement;
-      const isClickable = 
-        target.tagName === "BUTTON" || 
-        target.tagName === "A" || 
-        target.closest("button") || 
-        target.closest("a") ||
-        target.classList.contains("cursor-pointer");
-      
-      setIsHovering(!!isClickable);
+      cancelAnimationFrame(rafId.current);
+      rafId.current = requestAnimationFrame(() => {
+        setPosition({ x: e.clientX, y: e.clientY });
+        setIsHidden(false);
+
+        const target = e.target as HTMLElement;
+        const isClickable =
+          target.tagName === "BUTTON" ||
+          target.tagName === "A" ||
+          target.closest("button") ||
+          target.closest("a") ||
+          target.classList.contains("cursor-pointer");
+
+        setIsHovering(!!isClickable);
+      });
     };
 
     const handleMouseDown = () => setIsClicking(true);

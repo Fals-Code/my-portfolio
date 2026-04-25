@@ -4,12 +4,14 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
+import { usePerformance } from "@/hooks/usePerformance";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import HttpBadge from "../ui/HttpBadge";
 
 export default function Navbar() {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
+  const { isLow } = usePerformance();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -45,7 +47,11 @@ export default function Navbar() {
         className={`fixed top-0 w-full z-[120] transition-all duration-300 ${
           isScrolled || isOpen ? "border-b border-[var(--border)] py-4" : "py-6"
         }`}
-        style={(isScrolled || isOpen) ? { backgroundColor: 'var(--bg)', backdropFilter: 'blur(10px)', opacity: 1 } : { backgroundColor: 'transparent' }}
+        style={(isScrolled || isOpen) ? { 
+          backgroundColor: 'var(--bg)', 
+          backdropFilter: isLow ? 'none' : 'blur(10px)', 
+          opacity: 1 
+        } : { backgroundColor: 'transparent' }}
       >
         <div className="max-w-7xl mx-auto px-6 md:px-10 flex items-center justify-between">
           <Link href="/" className="text-xl md:text-2xl font-bold font-syne text-[var(--text)] tracking-tight hover:text-[var(--get)] transition-colors">

@@ -23,8 +23,21 @@ interface GitHubData {
   lastPushAt: string | null;
 }
 
-const CACHE_DURATION = 5 * 60 * 1000; // 5 menit
+const CACHE_DURATION = 60 * 60 * 1000; // 1 jam
 const REFRESH_INTERVAL = 5 * 60 * 1000; // auto-refresh setiap 5 menit
+const LS_CACHE_KEY = 'falah-github-cache';
+
+// Read from localStorage as initial memory cache
+function readLocalCache(): (GitHubData & { timestamp: number }) | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem(LS_CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (Date.now() - parsed.timestamp < CACHE_DURATION) return parsed;
+  } catch (_) {}
+  return null;
+}
 
 let memoryCache: (GitHubData & { timestamp: number }) | null = null;
 
@@ -56,6 +69,8 @@ export function useGitHub(autoRefresh = false) {
 
       const result = { ...json, timestamp: Date.now() };
       memoryCache = result;
+      // Persist to localStorage for offline/returning visits
+      try { localStorage.setItem(LS_CACHE_KEY, JSON.stringify(result)); } catch (_) {}
       setData(json);
       setError(null);
     } catch (err) {
@@ -67,6 +82,16 @@ export function useGitHub(autoRefresh = false) {
   }, []);
 
   useEffect(() => {
+    // Use localStorage cache first to avoid UI flicker on page load
+    if (!memoryCache) {
+      const lsCache = readLocalCache();
+      if (lsCache) {
+        memoryCache = lsCache;
+        setData({ stats: lsCache.stats, languages: lsCache.languages, projects: lsCache.projects, lastPushAt: lsCache.lastPushAt });
+        setIsLoading(false);
+        return;
+      }
+    }
     fetchData();
   }, [fetchData]);
 

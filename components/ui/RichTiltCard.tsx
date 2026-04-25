@@ -2,6 +2,7 @@
 
 import React, { useRef, MouseEvent } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { usePerformance } from "@/hooks/usePerformance";
 
 interface RichTiltCardProps {
   children: React.ReactNode;
@@ -9,6 +10,7 @@ interface RichTiltCardProps {
 }
 
 export default function RichTiltCard({ children, className }: RichTiltCardProps) {
+  const { isLow, isMobileDevice } = usePerformance();
   const ref = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -18,6 +20,15 @@ export default function RichTiltCard({ children, className }: RichTiltCardProps)
 
   const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["7.5deg", "-7.5deg"]);
   const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-7.5deg", "7.5deg"]);
+
+  // Skip 3D on low-tier devices — compositing layers are expensive
+  if (isLow || isMobileDevice) {
+    return (
+      <div className={`relative h-full w-full rounded-2xl overflow-hidden ${className}`}>
+        {children}
+      </div>
+    );
+  }
 
   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
     if (!ref.current) return;

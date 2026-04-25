@@ -6,7 +6,16 @@ import HttpBadge from "@/components/ui/HttpBadge";
 import { useGitHub } from "@/hooks/useGitHub";
 import { GitFork, Star, Users, BookOpen, AlertCircle } from "lucide-react";
 import dynamic from "next/dynamic";
-import ArchitectureDiagram from "@/components/ui/ArchitectureDiagram";
+
+const ArchitectureDiagram = dynamic(
+  () => import("@/components/ui/ArchitectureDiagram"),
+  { 
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-[450px] bg-[var(--bg-card)]/30 rounded-3xl border border-[var(--border)] animate-pulse my-4 lg:my-16" />
+    )
+  }
+);
 
 const WakaTimeSection = dynamic(
   () => import("@/components/sections/WakaTimeSection"),
