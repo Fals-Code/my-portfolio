@@ -47,13 +47,13 @@ export async function POST(req: Request) {
       (payload.ref === "refs/heads/main" ||
         payload.ref === "refs/heads/master")
     ) {
-      revalidateTag("github-data");
+      revalidateTag("github-data", "tag");
       console.log("[Webhook] Cache revalidated: github-data");
     }
 
     // Revalidate saat repo dibuat/diupdate
     if (event === "repository" || event === "create" || event === "delete") {
-      revalidateTag("github-data");
+      revalidateTag("github-data", "tag");
     }
 
     return new Response(JSON.stringify({ ok: true, event }), {

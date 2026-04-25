@@ -31,11 +31,11 @@ export async function GET() {
     const [statsRes, todayRes] = await Promise.allSettled([
       fetch("https://wakatime.com/api/v1/users/current/stats/last_7_days", {
         headers,
-        next: { revalidate: 3600 },
+        next: { tags: ["wakatime-data"], revalidate: 3600 },
       }),
       fetch("https://wakatime.com/api/v1/users/current/status_bar/today", {
         headers,
-        next: { revalidate: 60 }, // refresh tiap 1 menit untuk status live
+        next: { tags: ["wakatime-data"], revalidate: 60 }, // refresh tiap 1 menit untuk status live
       }),
     ]);
 

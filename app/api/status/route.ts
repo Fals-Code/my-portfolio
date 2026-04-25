@@ -30,7 +30,7 @@ export async function GET() {
           "https://wakatime.com/api/v1/users/current/status_bar/today",
           {
             headers: { Authorization: `Basic ${encoded}` },
-            next: { revalidate: 60 },
+            next: { tags: ["wakatime-data"], revalidate: 60 },
           }
         );
         if (res.ok) {
@@ -62,7 +62,7 @@ export async function GET() {
               Authorization: `Bearer ${githubToken}`,
               Accept: "application/vnd.github.v3+json",
             },
-            next: { revalidate: 300 },
+            next: { tags: ["github-data"], revalidate: 300 },
           }
         );
         if (res.ok) {
