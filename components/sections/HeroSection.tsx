@@ -1,18 +1,36 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Terminal from "../ui/Terminal";
 import HttpBadge from "../ui/HttpBadge";
+import LiveStatus from "../ui/LiveStatus";
+import { useGitHub } from "@/hooks/useGitHub";
 
 export default function HeroSection() {
+  const { stats } = useGitHub();
+  const [uptime, setUptime] = useState(99.98);
+
+  // Calculate Experience from GitHub account creation
+  const startYear = stats.createdAt ? new Date(stats.createdAt).getFullYear() : 2021;
+  const experienceYears = new Date().getFullYear() - startYear;
+
+  // Live Uptime simulation
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setUptime(99.97 + Math.random() * 0.02);
+    }, 2000); // Updated every 2s
+    return () => clearInterval(interval);
+  }, []);
+
   const terminalData = `{
   "name": "Ahmad Mathlaul Falah",
   "role": "Backend Developer",
-  "university": "Universitas Airlangga",
   "focus": "Laravel · MySQL · Clean Architecture",
-  "available": true,
-  "open_to": ["freelance", "collaboration"],
-  "location": "Gresik → Surabaya, ID",
+  "experience": "${experienceYears}+ years",
+  "github_stats": {
+    "repos": ${stats.repositories},
+    "stars": ${stats.stars}
+  },
   "status": "200 OK | Sistem Online ✓"
 }`;
 
@@ -22,10 +40,15 @@ export default function HeroSection() {
         
         {/* Left Column: Text & CTA */}
         <div className="flex flex-col items-start gap-6">
-          <div className="flex items-center gap-3 bg-[var(--bg-card)] px-4 py-2 rounded-full border border-[var(--border)]">
-            <span className="status-dot" />
-            <span className="font-mono text-xs text-[var(--muted)]">HTTP 200 | available for new projects</span>
-          </div>
+          <div className="flex items-center gap-3 flex-wrap">
+  <LiveStatus showLabel={true} />
+  <div className="flex items-center gap-3 bg-[var(--bg-card)] px-4 py-2 rounded-full border border-[var(--border)]">
+    <span className="status-dot" />
+    <span className="font-mono text-xs text-[var(--muted)]">
+      HTTP 200 | available for new projects
+    </span>
+  </div>
+</div>
 
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-syne leading-[1.1]">
             the<br/>
@@ -67,12 +90,18 @@ export default function HeroSection() {
 
           <div className="grid grid-cols-3 gap-4">
             {[
-              { label: "Projects", value: "20+", color: "var(--get)" },
-              { label: "Years Exp", value: "3+", color: "var(--post)" },
-              { label: "Uptime", value: "99.9%", color: "var(--patch)" }
+              { label: "Projects", value: `${stats.repositories}+`, color: "var(--get)" },
+              { label: "Years Exp", value: `${experienceYears}+`, color: "var(--post)" },
+              { label: "Total Stars", value: `${stats.stars}`, color: "var(--patch)", live: true }
             ].map((metric, i) => (
-              <div key={i} className="bg-[var(--bg-card)] border border-[var(--border)] p-4 rounded-lg flex flex-col items-center justify-center gap-1 hover:border-[var(--muted)] transition-colors">
-                <span className="font-mono text-xs text-[var(--muted)] uppercase tracking-wider">{metric.label}</span>
+              <div key={i} className="bg-[var(--bg-card)] border border-[var(--border)] p-4 rounded-lg flex flex-col items-center justify-center gap-1 hover:border-[var(--muted)] transition-colors relative group/metric overflow-hidden">
+                {metric.live && stats.stars > 0 && (
+                  <div className="absolute top-2 right-2 flex items-center gap-1">
+                    <span className="w-1 h-1 rounded-full bg-[var(--patch)] animate-pulse" />
+                    <span className="text-[8px] font-bold text-[var(--patch)] opacity-60">SYNCED</span>
+                  </div>
+                )}
+                <span className="font-mono text-[10px] text-[var(--muted)] uppercase tracking-wider">{metric.label}</span>
                 <span className="font-syne text-2xl font-bold" style={{ color: metric.color }}>{metric.value}</span>
               </div>
             ))}

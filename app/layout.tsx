@@ -2,9 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Syne, Space_Mono } from "next/font/google";
 import "./globals.css";
 import ClientLayout from "./ClientLayout";
-import { Toaster } from "sonner";
-import CustomCursor from "@/components/global/CustomCursor";
-import StatusBar from "@/components/global/StatusBar";
 
 const syne = Syne({
   variable: "--font-syne",
@@ -42,11 +39,6 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-/**
- * Anti-flash script — dijalankan SEBELUM React hydration.
- * Membaca localStorage dan langsung menerapkan class ke <html>,
- * mencegah "flash of wrong theme" (FOWT).
- */
 const ANTI_FLASH_SCRIPT = `
 (function() {
   try {
@@ -57,7 +49,6 @@ const ANTI_FLASH_SCRIPT = `
     html.classList.add(theme);
     html.setAttribute('data-theme', theme);
   } catch(e) {
-    // Fallback jika localStorage tidak tersedia
     document.documentElement.classList.add('dark');
   }
 })();
@@ -71,23 +62,16 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className="dark">
       <head>
-        {/*
-          Anti-flash script: harus blocking (tanpa async/defer)
-          agar theme diterapkan sebelum browser render konten pertama.
-        */}
-        <script dangerouslySetInnerHTML={{ __html: ANTI_FLASH_SCRIPT }} />
+        <script
+          id="anti-flash"
+          dangerouslySetInnerHTML={{ __html: ANTI_FLASH_SCRIPT }}
+          suppressHydrationWarning
+        />
       </head>
       <body
         className={`${syne.variable} ${spaceMono.variable} antialiased min-h-screen relative flex flex-col`}
       >
-        <CustomCursor />
-        <ClientLayout>
-          <Toaster position="top-center" richColors theme="dark" />
-          <main className="flex-grow">
-            {children}
-          </main>
-          <StatusBar />
-        </ClientLayout>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );

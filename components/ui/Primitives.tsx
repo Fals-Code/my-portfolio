@@ -65,7 +65,7 @@ export const GradientText = React.memo(({
   variant?: "silver" | "accent"
 }) => {
   return (
-    <span className={`text-white ${className}`}>
+    <span className={`text-[var(--text)] ${className}`}>
       {children}
     </span>
   );
@@ -83,7 +83,7 @@ export const GlassPanel = React.memo(({
   const { isLow } = usePerformance();
   
   return (
-    <div className={`rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur-sm transition-all duration-300 ${hoverEffect ? "hover:bg-white/[0.04] hover:border-white/20" : ""} ${className}`}>
+    <div className={`rounded-xl border border-[var(--border)] bg-[var(--bg-card)]/50 backdrop-blur-sm transition-all duration-300 ${hoverEffect ? "hover:bg-[var(--bg-card)] hover:border-[var(--muted)]" : ""} ${className}`}>
       {children}
     </div>
   );
@@ -109,7 +109,7 @@ export const EditorialHeading = React.memo(({
         {sub}
       </motion.div>
     )}
-    <h2 className="text-4xl md:text-6xl font-serif italic text-white tracking-tight leading-[1.1]">
+    <h2 className="text-4xl md:text-6xl font-serif italic text-[var(--text)] tracking-tight leading-[1.1]">
       {children}
     </h2>
   </div>
@@ -150,10 +150,10 @@ export const Button = React.memo(({
   const { playHover, playClick } = useSound();
   
   const variants = {
-    primary: "bg-white text-black hover:not-disabled:bg-neutral-200 active:scale-[0.98]",
-    secondary: "bg-accent text-white hover:not-disabled:bg-accent-hover active:scale-[0.98]",
-    outline: "border border-white/20 text-white hover:not-disabled:border-white/50 hover:not-disabled:bg-white/5 active:scale-[0.98]",
-    ghost: "text-white/70 hover:not-disabled:text-white active:scale-[0.98]"
+    primary: "bg-[var(--text)] text-[var(--bg)] hover:not-disabled:opacity-90 active:scale-[0.98]",
+    secondary: "bg-[var(--accent)] text-[var(--bg)] hover:not-disabled:opacity-90 active:scale-[0.98]",
+    outline: "border border-[var(--border)] text-[var(--text)] hover:not-disabled:bg-[var(--bg-card)] active:scale-[0.98]",
+    ghost: "text-[var(--muted)] hover:not-disabled:text-[var(--text)] active:scale-[0.98]"
   };
 
   const sizes = {

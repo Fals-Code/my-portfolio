@@ -19,9 +19,10 @@ export default function Terminal({
 }: TerminalProps) {
   const [displayedContent, setDisplayedContent] = useState("");
   const [isTyping, setIsTyping] = useState(typing);
+  const [hasTyped, setHasTyped] = useState(false);
 
   useEffect(() => {
-    if (!typing) {
+    if (!typing || hasTyped) {
       setDisplayedContent(content);
       return;
     }
@@ -40,11 +41,12 @@ export default function Terminal({
       if (i >= content.length) {
         clearInterval(intervalId);
         setIsTyping(false);
+        setHasTyped(true);
       }
     }, typingSpeed);
 
     return () => clearInterval(intervalId);
-  }, [content, typing, typingSpeed]);
+  }, [content, typing, typingSpeed, hasTyped]);
 
   // Simple syntax highlighter for JSON
   const renderHighlightedJson = (text: string) => {

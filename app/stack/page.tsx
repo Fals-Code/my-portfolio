@@ -5,149 +5,56 @@ import SkillBar from "@/components/ui/SkillBar";
 import HttpBadge from "@/components/ui/HttpBadge";
 import { useGitHub } from "@/hooks/useGitHub";
 import { GitFork, Star, Users, BookOpen, AlertCircle } from "lucide-react";
+import dynamic from "next/dynamic";
 
-const stackItems = [
-  { tech: "Laravel", icon: "🐘", percentage: 90, level: "Expert", color: "GET" },
-  { tech: "PHP", icon: "🐘", percentage: 85, level: "Advanced", color: "POST" },
-  { tech: "MySQL", icon: "🛢️", percentage: 80, level: "Advanced", color: "GET" },
-  { tech: "REST API", icon: "🔗", percentage: 95, level: "Expert", color: "POST" },
-  { tech: "Postman", icon: "🚀", percentage: 85, level: "Advanced", color: "PATCH" },
-  { tech: "Git / GitHub", icon: "🐙", percentage: 80, level: "Advanced", color: "PATCH" },
-  { tech: "Next.js", icon: "⚛️", percentage: 65, level: "Intermediate", color: "PUT" },
-  { tech: "Docker", icon: "🐳", percentage: 40, level: "Learning", color: "DELETE" },
-] as const;
+const WakaTimeSection = dynamic(
+  () => import("@/components/sections/WakaTimeSection"),
+  { ssr: false }
+);
 
-// ─── GitHub Stats Card ──────────────────────────────────────────────────────
-function GitHubStatsSection() {
+// Helper for mapping icons and colors based on tech name
+const getTechConfig = (name: string) => {
+  const configs: Record<string, { icon: string, method: "GET" | "POST" | "PATCH" | "DELETE" | "PUT" }> = {
+    PHP: { icon: "🐘", method: "POST" },
+    JavaScript: { icon: "JS", method: "GET" },
+    TypeScript: { icon: "TS", method: "GET" },
+    HTML: { icon: "HTML", method: "PATCH" },
+    CSS: { icon: "CSS", method: "PATCH" },
+    Vue: { icon: "V", method: "POST" },
+    React: { icon: "R", method: "PUT" },
+    Blade: { icon: "B", method: "DELETE" },
+    Laravel: { icon: "L", method: "POST" },
+    MySQL: { icon: "SQL", method: "GET" },
+  };
+  return configs[name] || { icon: "{}", method: "PATCH" };
+};
+
+const getLevel = (percentage: number) => {
+  if (percentage > 70) return "Expert";
+  if (percentage > 40) return "Advanced";
+  if (percentage > 10) return "Intermediate";
+  return "Learning";
+};
+
+export default function StackPage() {
   const { stats, languages, isLoading, error } = useGitHub();
 
-  if (error) {
-    return (
-      <div className="mt-12 bg-[var(--bg-card2)] border border-[var(--delete)]/30 rounded-lg p-5 flex items-center gap-3 font-mono text-sm text-[var(--delete)]">
-        <AlertCircle className="w-4 h-4 shrink-0" />
-        <span>
-          <span className="font-bold">[WARN]</span> GitHub API sync failed — {error}
-        </span>
-      </div>
-    );
-  }
+  // Combine GitHub languages with potential extra items (like frameworks)
+  // In a real scenario, you could also check topics/names to detect Laravel etc.
+  const dynamicStack = languages.map(lang => {
+    const config = getTechConfig(lang.name);
+    return {
+      tech: lang.name,
+      icon: config.icon,
+      percentage: Math.round(lang.percentage),
+      level: getLevel(lang.percentage),
+      color: config.method
+    };
+  });
 
-  return (
-    <div className="mt-16 scroll-reveal" style={{ animationDelay: "0.3s" }}>
-      {/* Section Label */}
-      <div className="mb-8 font-mono text-xs text-[var(--muted)] uppercase tracking-widest border-b border-[var(--border)] pb-2 inline-block">
-        GitHub Activity
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-3 gap-4 mb-10">
-        {[
-          {
-            label: "Repositories",
-            value: stats.repositories,
-            icon: <BookOpen className="w-4 h-4" />,
-            color: "var(--get)",
-          },
-          {
-            label: "Stars",
-            value: stats.stars,
-            icon: <Star className="w-4 h-4" />,
-            color: "var(--patch)",
-          },
-          {
-            label: "Followers",
-            value: stats.followers,
-            icon: <Users className="w-4 h-4" />,
-            color: "var(--post)",
-          },
-        ].map(({ label, value, icon, color }) => (
-          <div
-            key={label}
-            className="bg-[var(--bg-card)] border border-[var(--border)] rounded-lg p-4 flex flex-col items-center justify-center gap-2 hover:border-[var(--muted)] transition-colors"
-          >
-            <div style={{ color }} className="opacity-70">
-              {icon}
-            </div>
-            {isLoading ? (
-              <div className="h-7 w-12 bg-[var(--border)] animate-pulse rounded" />
-            ) : (
-              <span
-                className="font-syne text-2xl font-bold"
-                style={{ color }}
-              >
-                {value}
-              </span>
-            )}
-            <span className="font-mono text-[0.65rem] text-[var(--muted)] uppercase tracking-wider">
-              {label}
-            </span>
-          </div>
-        ))}
-      </div>
-
-      {/* Language Distribution */}
-      {(isLoading || languages.length > 0) && (
-        <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-lg p-6">
-          <div className="font-mono text-xs text-[var(--muted)] uppercase tracking-widest mb-5">
-            Language Distribution
-          </div>
-
-          {isLoading ? (
-            <div className="space-y-4">
-              {[80, 60, 45, 30].map((w, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <div className="h-3 w-3 rounded-full bg-[var(--border)] animate-pulse" />
-                  <div
-                    className="h-3 bg-[var(--border)] animate-pulse rounded"
-                    style={{ width: `${w}%` }}
-                  />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <>
-              {/* Bar chart */}
-              <div className="flex h-3 rounded-full overflow-hidden mb-5 gap-0.5">
-                {languages.map((lang) => (
-                  <div
-                    key={lang.name}
-                    title={`${lang.name} ${lang.percentage.toFixed(1)}%`}
-                    className="h-full transition-all duration-700"
-                    style={{
-                      width: `${lang.percentage}%`,
-                      backgroundColor: lang.color,
-                    }}
-                  />
-                ))}
-              </div>
-
-              {/* Legend */}
-              <div className="flex flex-wrap gap-x-5 gap-y-2">
-                {languages.map((lang) => (
-                  <div key={lang.name} className="flex items-center gap-2">
-                    <span
-                      className="w-2.5 h-2.5 rounded-full shrink-0"
-                      style={{ backgroundColor: lang.color }}
-                    />
-                    <span className="font-mono text-xs text-[var(--text)]">
-                      {lang.name}
-                    </span>
-                    <span className="font-mono text-xs text-[var(--muted)]">
-                      {lang.percentage.toFixed(1)}%
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ─── Main Page ───────────────────────────────────────────────────────────────
-export default function StackPage() {
+  // If we have PHP but no Laravel item, and we know we use Laravel, we could inject it
+  // or just let GitHub data speak for itself.
+  
   return (
     <div className="max-w-7xl mx-auto px-6 md:px-10 py-12 min-h-[80vh]">
       {/* Header */}
@@ -160,32 +67,73 @@ export default function StackPage() {
         />
       </div>
 
-      {/* Skill Bars */}
+      {/* System Requirements (Dynamic Stack) */}
       <div className="scroll-reveal" style={{ animationDelay: "0.2s" }}>
-        <div className="mb-8 font-mono text-xs text-[var(--muted)] uppercase tracking-widest border-b border-[var(--border)] pb-2 inline-block">
-          System Requirements
+        <div className="flex items-center justify-between mb-8">
+          <div className="font-mono text-xs text-[var(--muted)] uppercase tracking-widest border-b border-[var(--border)] pb-2 inline-block">
+            System Requirements (Synced)
+          </div>
+          <span className="font-mono text-[10px] text-[var(--patch)] animate-pulse">● LIVE FROM GITHUB</span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16">
-          {stackItems.map((item) => (
-            <div
-              key={item.tech}
-              className="bg-[var(--bg-card)] border border-[var(--border)] p-6 rounded-lg hover:border-[var(--muted)] transition-colors"
-            >
-              <SkillBar
-                techName={item.tech}
-                icon={item.icon}
-                percentage={item.percentage}
-                level={item.level}
-                colorMethod={item.color}
-              />
+        {error ? (
+          <div className="bg-[var(--bg-card2)] border border-[var(--delete)]/30 rounded-lg p-5 flex items-center gap-3 font-mono text-sm text-[var(--delete)]">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span>[ERROR] Failed to sync dynamic stack — {error}</span>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16">
+            {isLoading ? (
+              // Loading Skeletons
+              Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="bg-[var(--bg-card)] border border-[var(--border)] p-6 rounded-lg animate-pulse h-24" />
+              ))
+            ) : (
+              dynamicStack.map((item) => (
+                <div
+                  key={item.tech}
+                  className="bg-[var(--bg-card)] border border-[var(--border)] p-6 rounded-lg hover:border-[var(--muted)] transition-colors"
+                >
+                  <SkillBar
+                    techName={item.tech}
+                    icon={item.icon}
+                    percentage={item.percentage}
+                    level={item.level}
+                    colorMethod={item.color}
+                  />
+                </div>
+              ))
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* GitHub Activity */}
+      <div className="mt-16 scroll-reveal" style={{ animationDelay: "0.3s" }}>
+        <div className="mb-8 font-mono text-xs text-[var(--muted)] uppercase tracking-widest border-b border-[var(--border)] pb-2 inline-block">
+          GitHub Activity
+        </div>
+
+        <div className="grid grid-cols-3 gap-4 mb-10">
+          {[
+            { label: "Repositories", value: stats.repositories, icon: <BookOpen className="w-4 h-4" />, color: "var(--get)" },
+            { label: "Stars", value: stats.stars, icon: <Star className="w-4 h-4" />, color: "var(--patch)" },
+            { label: "Followers", value: stats.followers, icon: <Users className="w-4 h-4" />, color: "var(--post)" },
+          ].map(({ label, value, icon, color }) => (
+            <div key={label} className="bg-[var(--bg-card)] border border-[var(--border)] rounded-lg p-4 flex flex-col items-center justify-center gap-2 hover:border-[var(--muted)] transition-colors">
+              <div style={{ color }} className="opacity-70">{icon}</div>
+              {isLoading ? (
+                <div className="h-7 w-12 bg-[var(--border)] animate-pulse rounded" />
+              ) : (
+                <span className="font-syne text-2xl font-bold" style={{ color }}>{value}</span>
+              )}
+              <span className="font-mono text-[0.65rem] text-[var(--muted)] uppercase tracking-wider">{label}</span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* GitHub Stats */}
-      <GitHubStatsSection />
+      <WakaTimeSection />
 
       {/* Warning Footer */}
       <div
@@ -197,9 +145,7 @@ export default function StackPage() {
           <span className="text-[var(--text)]">System continuously evolving</span>
         </div>
         <p className="text-[var(--muted)] pl-14">
-          Tech stack is monitored and updated regularly. Currently researching
-          deeper implementations of CI/CD pipelines and advanced Docker
-          orchestration.
+          Data sinkronisasi otomatis dari GitHub. Keahlian dihitung berdasarkan distribusi kode di seluruh repositori publik.
         </p>
       </div>
     </div>

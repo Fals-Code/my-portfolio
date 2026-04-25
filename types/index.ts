@@ -15,6 +15,10 @@ export interface Project {
   iconBg?: string;
   iconColor?: string;
   tech?: string[];
+  kpi?: string;
+  stars?: number;
+  forks?: number; 
+  language?: string;
 }
 
 export interface TimelineItem {
@@ -37,6 +41,7 @@ export interface GitHubStats {
   repositories: number;
   followers: number;
   stars: number;
+  createdAt?: string;
 }
 
 export interface GitHubLanguage {

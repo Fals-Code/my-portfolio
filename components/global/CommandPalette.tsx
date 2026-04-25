@@ -84,7 +84,7 @@ export default function CommandPalette() {
             initial={{ opacity: 0, scale: 0.95, y: -20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -20 }}
-            className="fixed top-[15%] left-1/2 -translate-x-1/2 w-full max-w-xl glass-panel z-[10000] overflow-hidden rounded-3xl border-accent/20 shadow-2xl bg-bg/95"
+            className="fixed top-[15%] left-1/2 -translate-x-1/2 w-full max-w-xl glass-panel z-[10000] overflow-hidden rounded-3xl border-[var(--accent)]/20 shadow-2xl bg-[var(--bg)]/95"
           >
             {/* Search Header */}
             <div className="p-6 border-b border-black/5 dark:border-white/5 flex items-center gap-4">
@@ -92,19 +92,19 @@ export default function CommandPalette() {
                 {isAiLoading ? (
                   <Loader2 className="w-5 h-5 text-accent animate-spin" />
                 ) : (
-                  <Search className="w-5 h-5 text-text-muted" />
+                  <Search className="w-5 h-5 text-[var(--muted)]" />
                 )}
               </div>
               <input
                 autoFocus
                 placeholder="Ask AI or search anything..."
-                className="bg-transparent border-none outline-none text-text w-full placeholder:text-text-muted font-syne text-lg"
+                className="bg-transparent border-none outline-none text-[var(--text)] w-full placeholder:text-[var(--muted)] font-syne text-lg"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
               />
               <div className="flex items-center gap-1.5 px-3 py-1.5 bg-black/5 dark:bg-white/5 rounded-xl border border-black/5 dark:border-white/10">
-                <Command className="w-3 h-3 text-text-muted" />
-                <span className="text-[10px] text-text-muted font-bold">K</span>
+                <Command className="w-3 h-3 text-[var(--muted)]" />
+                <span className="text-[10px] text-[var(--muted)] font-bold">K</span>
               </div>
             </div>
 
@@ -123,8 +123,8 @@ export default function CommandPalette() {
                         <div className="p-2 bg-black/5 dark:bg-white/5 rounded-lg group-hover:bg-accent/10 group-hover:text-accent transition-colors">
                           {item.icon}
                         </div>
-                        <span className="font-syne font-medium text-text">{item.name}</span>
-                        <ArrowRight className="ml-auto w-4 h-4 text-text-muted opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0" />
+                        <span className="font-syne font-medium text-[var(--text)]">{item.name}</span>
+                        <ArrowRight className="ml-auto w-4 h-4 text-[var(--muted)] opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0" />
                       </button>
                     ))}
                   </div>
@@ -135,8 +135,8 @@ export default function CommandPalette() {
               {query.length >= 3 && (
                 <div className="mt-4 pt-4 border-t border-black/5 dark:border-white/5">
                   <div className="flex items-center gap-2 px-4 mb-4">
-                    <Sparkles className="w-3.5 h-3.5 text-accent animate-pulse" />
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-text-muted">AI Insights</p>
+                    <Sparkles className="w-3.5 h-3.5 text-[var(--accent)] animate-pulse" />
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--muted)]">AI Insights</p>
                   </div>
                   
                   <div className="mx-4 p-5 rounded-[1.5rem] bg-accent/5 border border-accent/20 relative overflow-hidden">
@@ -150,7 +150,7 @@ export default function CommandPalette() {
                       </div>
                     ) : lastAiResponse ? (
                       <div className="space-y-3">
-                        <p className="text-sm font-medium leading-relaxed text-text">
+                        <p className="text-sm font-medium leading-relaxed text-[var(--text)]">
                           {lastAiResponse.role === 'assistant' ? lastAiResponse.content : "Calculating..."}
                         </p>
                         {lastAiResponse.content.includes('/') && (
@@ -174,12 +174,12 @@ export default function CommandPalette() {
             </div>
 
             {/* Footer Commands */}
-            <div className="p-4 bg-black/5 dark:bg-black/40 border-t border-black/5 dark:border-white/5 flex items-center justify-between text-[10px] text-text-muted font-bold uppercase tracking-widest px-8">
+            <div className="p-4 bg-black/5 dark:bg-black/40 border-t border-black/5 dark:border-white/5 flex items-center justify-between text-[10px] text-[var(--muted)] font-bold uppercase tracking-widest px-8">
               <div className="flex items-center gap-4">
                  <span>Type to search</span>
                  <span>↑↓ to navigate</span>
               </div>
-              <div className="flex items-center gap-2 text-accent/60">
+              <div className="flex items-center gap-2 text-[var(--accent)]/60">
                  <Sparkles className="w-3 h-3" />
                  <span>AI Powered Center</span>
               </div>

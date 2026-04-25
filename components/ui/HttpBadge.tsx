@@ -57,7 +57,7 @@ export default function HttpBadge({
       </span>
       <span
         className={`font-mono text-sm transition-colors duration-300 ${
-          isActive ? "text-white" : "text-white/60 group-hover:text-white"
+          isActive ? "text-[var(--bg)]" : "text-[var(--muted)] group-hover:text-[var(--text)]"
         }`}
       >
         {endpoint}

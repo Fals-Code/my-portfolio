@@ -2,11 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import { usePerformance } from "@/hooks/usePerformance";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function CustomCursor() {
   const [position, setPosition] = useState({ x: -100, y: -100 });
   const [isHidden, setIsHidden] = useState(true);
   const { isMobileDevice } = usePerformance();
+  const { theme } = useTheme();
 
   useEffect(() => {
     // Disable custom cursor on mobile devices
@@ -42,7 +44,7 @@ export default function CustomCursor() {
         transform: "translate(-50%, -50%)",
         opacity: isHidden ? 0 : 1,
         transition: "opacity 0.2s ease",
-        mixBlendMode: "screen",
+        mixBlendMode: theme === "dark" ? "screen" : "normal",
       }}
     >
       {/* Outer Ring */}

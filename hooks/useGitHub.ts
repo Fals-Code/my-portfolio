@@ -1,53 +1,100 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { GitHubStats, GitHubLanguage } from "@/types";
 
-// User specific constants
-// User specific constants
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+interface GitHubProject {
+  id: string;
+  title: string;
+  description: string;
+  tech: string[];
+  stars: number;
+  forks: number;
+  language: string;
+  github: string;
+  homepage: string | null;
+  updatedAt: string;
+}
 
-// Module-level cache to persist data during session
-let memoryCache: { stats: GitHubStats; languages: GitHubLanguage[]; timestamp: number } | null = null;
+interface GitHubData {
+  stats: GitHubStats;
+  languages: GitHubLanguage[];
+  projects: GitHubProject[];
+  lastPushAt: string | null;
+}
 
-export function useGitHub() {
-  const [data, setData] = useState<{ stats: GitHubStats; languages: GitHubLanguage[] } | null>(memoryCache ? { stats: memoryCache.stats, languages: memoryCache.languages } : null);
-  const [isLoading, setIsLoading] = useState(!memoryCache || Date.now() - memoryCache.timestamp > CACHE_DURATION);
+const CACHE_DURATION = 5 * 60 * 1000; // 5 menit
+const REFRESH_INTERVAL = 5 * 60 * 1000; // auto-refresh setiap 5 menit
+
+let memoryCache: (GitHubData & { timestamp: number }) | null = null;
+
+export function useGitHub(autoRefresh = false) {
+  const [data, setData] = useState<GitHubData | null>(
+    memoryCache ? {
+      stats: memoryCache.stats,
+      languages: memoryCache.languages,
+      projects: memoryCache.projects,
+      lastPushAt: memoryCache.lastPushAt,
+    } : null
+  );
+  const [isLoading, setIsLoading] = useState(
+    !memoryCache || Date.now() - memoryCache.timestamp > CACHE_DURATION
+  );
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      // Check cache validity
-      if (memoryCache && Date.now() - memoryCache.timestamp < CACHE_DURATION) {
-        setIsLoading(false);
-        return;
-      }
+  const fetchData = useCallback(async (force = false) => {
+    if (!force && memoryCache && Date.now() - memoryCache.timestamp < CACHE_DURATION) {
+      setIsLoading(false);
+      return;
+    }
 
-      setIsLoading(true);
-      try {
-        const res = await fetch("/api/github");
-        if (!res.ok) throw new Error("Failed to fetch Github data");
-        const json = await res.json();
-        
-        const result = { stats: json.stats, languages: json.languages, timestamp: Date.now() };
-        memoryCache = result;
-        setData({ stats: result.stats, languages: result.languages });
-        setError(null);
-      } catch (err) {
-        console.error("GitHub Fetch Error:", err);
-        setError("Error syncing with GitHub API");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/github", { cache: "no-store" });
+      if (!res.ok) throw new Error("Failed to fetch GitHub data");
+      const json: GitHubData = await res.json();
 
-    fetchData();
+      const result = { ...json, timestamp: Date.now() };
+      memoryCache = result;
+      setData(json);
+      setError(null);
+    } catch (err) {
+      console.error("GitHub Fetch Error:", err);
+      setError("Error syncing with GitHub API");
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
-  return { 
-    stats: data?.stats || { repositories: 0, followers: 0, stars: 0 }, 
-    languages: data?.languages || [], 
-    isLoading, 
-    error 
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Auto-refresh polling
+  useEffect(() => {
+    if (!autoRefresh) return;
+    const interval = setInterval(() => fetchData(true), REFRESH_INTERVAL);
+    return () => clearInterval(interval);
+  }, [autoRefresh, fetchData]);
+
+  // Refresh ketika tab kembali aktif
+  useEffect(() => {
+    if (!autoRefresh) return;
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") fetchData();
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibility);
+  }, [autoRefresh, fetchData]);
+
+  return {
+    stats: data?.stats || { repositories: 0, followers: 0, stars: 0 },
+    languages: data?.languages || [],
+    projects: data?.projects || [],
+    lastPushAt: data?.lastPushAt || null,
+    isLoading,
+    error,
+    refresh: () => fetchData(true),
   };
 }

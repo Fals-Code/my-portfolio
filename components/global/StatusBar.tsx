@@ -2,7 +2,7 @@ import React from "react";
 
 export default function StatusBar() {
   return (
-    <div className="fixed bottom-0 left-0 w-full bg-[#0C0C0F]/90 backdrop-blur-md border-t border-[var(--border)] z-50 px-4 py-2 flex items-center justify-between text-[0.65rem] sm:text-xs font-mono text-[var(--muted)]">
+    <div className="fixed bottom-0 left-0 w-full bg-[var(--bg)]/90 backdrop-blur-md border-t border-[var(--border)] z-50 px-4 py-2 flex items-center justify-between text-[0.65rem] sm:text-xs font-mono text-[var(--muted)]">
       <div className="flex items-center gap-3 sm:gap-6 overflow-x-auto whitespace-nowrap hide-scrollbar">
         <div className="flex items-center gap-2 text-[var(--get)]">
           <span className="w-2 h-2 rounded-full bg-[var(--get)] animate-pulse" />
