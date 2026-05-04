@@ -8,6 +8,11 @@ import { useGitHub } from "@/hooks/useGitHub";
 import { useTheme } from "@/context/ThemeContext";
 import { usePerformance } from "@/hooks/usePerformance";
 import { Sun, Moon, Sunrise, Sunset, Music } from "lucide-react";
+import AsciiImage from "../ui/AsciiImage";
+import dynamic from "next/dynamic";
+
+const Terminal = dynamic(() => import("../ui/Terminal"), { ssr: false });
+const AbstractCanvas = dynamic(() => import("../ui/AbstractCanvas"), { ssr: false });
 
 export default function HeroSection() {
   const { stats } = useGitHub();
@@ -54,8 +59,8 @@ export default function HeroSection() {
 }`;
 
   return (
-    <section id="hero" className="min-h-[85vh] flex items-center pt-10 pb-20 relative">
-      <div className="max-w-7xl mx-auto px-6 md:px-10 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center scroll-reveal">
+    <section id="hero" className="min-h-[85vh] flex items-center pt-10 pb-20 relative overflow-x-hidden">
+      <div className="max-w-7xl mx-auto px-6 md:px-10 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center scroll-reveal min-w-0">
         
         {/* Left Column: Text & CTA */}
         <div className="flex flex-col items-start gap-6">
@@ -74,7 +79,7 @@ export default function HeroSection() {
             <span>{greeting.text}, Traveler</span>
           </div>
 
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-syne leading-[1.1]">
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-syne leading-[1.1] break-words">
             the<br/>
             <span className="glitch-wrapper text-[var(--get)]">
               <span className="glitch-text" data-text="Backend">Backend</span>
@@ -84,7 +89,7 @@ export default function HeroSection() {
           </h1>
 
           <div className="pl-4 border-l-2 border-[var(--get)] my-4">
-            <p className="text-[var(--muted)] font-mono max-w-md">
+            <p className="text-[var(--muted)] max-w-md">
               Crafting robust APIs, scalable databases, and seamless server-side architectures from Surabaya, ID.
             </p>
           </div>
@@ -93,7 +98,8 @@ export default function HeroSection() {
             <HttpBadge 
               method="GET" 
               endpoint="/projects" 
-              href="#projects" 
+              label="View Portfolio"
+              href="/projects" 
               className="text-base px-5 py-2.5" 
               isLoading={isProjectsLoading}
               onClick={() => setIsProjectsLoading(true)}
@@ -101,6 +107,7 @@ export default function HeroSection() {
             <HttpBadge 
               method="POST" 
               endpoint="/contact" 
+              label="Get In Touch"
               href="/contact" 
               className="text-base px-5 py-2.5" 
               isLoading={isContactLoading}
@@ -132,14 +139,19 @@ export default function HeroSection() {
         </div>
 
         {/* Right Column: Terminal & Metrics */}
-        <div className="w-full flex flex-col gap-6">
-          <Terminal 
-            title="bash - falah@backend-server"
-            content={terminalData}
-            typing={!isLow}
-            typingSpeed={15}
-            className="w-full shadow-2xl shadow-[var(--get)]/5"
-          />
+        <div className="w-full flex flex-col gap-6 relative">
+          
+          <AbstractCanvas />
+          
+          <div className="relative z-10">
+            <Terminal 
+              title="bash - falah@backend-server"
+              content={terminalData}
+              typing={!isLow}
+              typingSpeed={15}
+              className="w-full shadow-2xl shadow-[var(--get)]/5"
+            />
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {[

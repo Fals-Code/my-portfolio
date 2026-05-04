@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
 import { usePerformance } from "@/hooks/usePerformance";
-import { Menu, X, Sun, Moon } from "lucide-react";
+import { Menu, X, Sun, Moon, Terminal as TerminalIcon } from "lucide-react";
 import HttpBadge from "../ui/HttpBadge";
 
 export default function Navbar() {
@@ -35,10 +35,10 @@ export default function Navbar() {
   }, [isOpen]);
 
   const navLinks = [
-    { method: "GET" as const, endpoint: "/about", href: "/about" },
-    { method: "POST" as const, endpoint: "/projects", href: "/projects" },
-    { method: "PATCH" as const, endpoint: "/stack", href: "/stack" },
-    { method: "DELETE" as const, endpoint: "/contact", href: "/contact" },
+    { method: "GET" as const, endpoint: "/about", href: "/about", label: "Biography" },
+    { method: "POST" as const, endpoint: "/projects", href: "/projects", label: "Case Studies" },
+    { method: "PATCH" as const, endpoint: "/stack", href: "/stack", label: "Tech Stack" },
+    { method: "DELETE" as const, endpoint: "/contact", href: "/contact", label: "Say Hello" },
   ];
 
   return (
@@ -65,6 +65,7 @@ export default function Navbar() {
                 key={link.href}
                 method={link.method}
                 endpoint={link.endpoint}
+                label={link.label}
                 href={link.href}
                 active={pathname === link.href}
               />
@@ -73,6 +74,13 @@ export default function Navbar() {
 
           {/* Desktop Actions */}
           <div className="hidden lg:flex items-center gap-4">
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent('toggle-terminal'))}
+              className="p-2 rounded-md text-[var(--muted)] hover:text-[var(--get)] hover:bg-[var(--bg-card)] transition-all border border-transparent hover:border-[var(--border)]"
+              title="Open Terminal (`)"
+            >
+              <TerminalIcon className="w-4 h-4" />
+            </button>
             <button
               onClick={toggleTheme}
               className="p-2 rounded-md text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--bg-card)] transition-all border border-transparent hover:border-[var(--border)]"
@@ -105,9 +113,10 @@ export default function Navbar() {
               <HttpBadge 
                 method={link.method}
                 endpoint={link.endpoint}
+                label={link.label}
                 href={link.href}
                 active={pathname === link.href}
-                className="w-full justify-start py-3 text-lg"
+                className="w-full justify-start py-2 text-base"
               />
             </div>
           ))}
@@ -121,6 +130,17 @@ export default function Navbar() {
             >
               {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
               <span className="font-mono text-sm uppercase tracking-widest font-bold">Toggle Theme</span>
+            </button>
+
+            <button
+              onClick={() => {
+                window.dispatchEvent(new CustomEvent('toggle-terminal'));
+                setIsOpen(false);
+              }}
+              className="w-full flex items-center gap-3 text-[var(--get)] hover:opacity-80 transition-colors py-2"
+            >
+              <TerminalIcon className="w-5 h-5" />
+              <span className="font-mono text-sm uppercase tracking-widest font-bold">Open Terminal</span>
             </button>
 
             <button

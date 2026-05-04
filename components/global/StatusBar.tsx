@@ -29,7 +29,7 @@ export default function StatusBar() {
       <div className="flex items-center gap-4 sm:gap-6">
         <AudioStatus />
         <div className="hidden md:block pl-4 border-l border-[var(--border)] whitespace-nowrap">
-          © 2026 falah.dev
+          © {new Date().getFullYear()} falah.dev
         </div>
       </div>
     </div>

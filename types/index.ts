@@ -27,7 +27,7 @@ export interface TimelineItem {
   title: string;
   place: string;
   description: string;
-  type: "work" | "education";
+  type: "work" | "education" | "coursework";
 }
 
 export interface Service {

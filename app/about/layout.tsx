@@ -1,18 +1,18 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "About",
-  description: "Learn more about Ahmad Mathlaul Falah, a Backend Developer focusing on Laravel ecosystem, Clean Architecture, and ACID compliance.",
+  title: "About Ahmad Mathlaul Falah",
+  description: "Pelajari lebih lanjut tentang Ahmad Mathlaul Falah, seorang Backend Developer yang berfokus pada ekosistem Laravel, Clean Architecture, dan ACID compliance di Surabaya/Gresik.",
   openGraph: {
-    title: "About | Falah.",
-    description: "Learn more about Ahmad Mathlaul Falah, a Backend Developer focusing on Laravel ecosystem, Clean Architecture, and ACID compliance.",
-    images: ["/assets/imgs/falah.jpeg"],
+    title: "About | Falah.dev",
+    description: "Backend Developer specializing in Laravel and scalable architectures. Student at UNAIR.",
+    images: ["/icon.png"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "About | Falah.",
-    description: "Learn more about Ahmad Mathlaul Falah, a Backend Developer focusing on Laravel ecosystem, Clean Architecture, and ACID compliance.",
-    images: ["/assets/imgs/falah.jpeg"],
+    title: "About | Falah.dev",
+    description: "Backend Developer specializing in Laravel and scalable architectures.",
+    images: ["/icon.png"],
   }
 };
 

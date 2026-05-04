@@ -15,7 +15,7 @@ export const timeline: TimelineItem[] = [
     title: "RSHP — Hospital Info System",
     place: "Academic Project",
     description: "Digitalisasi manajemen data rumah sakit...",
-    type: "work"
+    type: "coursework"
   },
   {
     id: "proj-warehouse",
@@ -23,7 +23,7 @@ export const timeline: TimelineItem[] = [
     title: "Warehouse Inventory System",
     place: "Academic Project",
     description: "Proyek mata kuliah Pemrosesan Basis Data...",
-    type: "work"
+    type: "coursework"
   },
   {
     id: "proj-books",
@@ -31,6 +31,6 @@ export const timeline: TimelineItem[] = [
     title: "Book Collection Manager",
     place: "Framework Development Labs",
     description: "Eksperimen mendalam dengan Laravel...",
-    type: "work"
+    type: "coursework"
   }
 ];

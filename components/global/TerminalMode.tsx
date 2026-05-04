@@ -11,6 +11,14 @@ interface LogEntry {
   content: string | React.ReactNode;
 }
 
+interface Achievement {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  unlocked: boolean;
+}
+
 export default function TerminalMode() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
@@ -100,7 +108,7 @@ export default function TerminalMode() {
               <div className="my-4 space-y-3">
                 <p className="text-[var(--get)] font-bold uppercase tracking-widest text-[10px]">System Achievements</p>
                 <div className="grid grid-cols-1 gap-3">
-                  {achievements.map((a: any) => (
+                  {achievements.map((a: Achievement) => (
                     <div key={a.id} className={`flex items-center gap-3 p-2 border ${a.unlocked ? 'border-[var(--get)]/30 bg-[var(--get)]/5' : 'border-white/5 opacity-40'}`}>
                       <div className={a.unlocked ? 'text-[var(--get)]' : 'text-[var(--muted)]'}>
                         {a.icon}
@@ -129,7 +137,9 @@ export default function TerminalMode() {
                 <div><span className="text-[var(--get)]">help</span> - Show this message</div>
                 <div><span className="text-[var(--get)]">ls</span> - List all pages</div>
                 <div><span className="text-[var(--get)]">cd [path]</span> - Navigate to a page</div>
+                <div><span className="text-[var(--get)]">cat [file]</span> - Read a file (try: skills.json)</div>
                 <div><span className="text-[var(--get)]">whoami</span> - Display user info</div>
+                <div><span className="text-[var(--get)]">ping [host]</span> - Send ICMP ECHO_REQUEST</div>
                 <div><span className="text-[var(--get)]">achievements</span> - View your badges</div>
                 <div><span className="text-[var(--get)]">clear</span> - Clear terminal screen</div>
                 <div><span className="text-[var(--get)]">exit</span> - Close terminal</div>
@@ -196,6 +206,58 @@ export default function TerminalMode() {
             ),
           },
         ]);
+        break;
+
+      case "cat":
+        if (args[0] === "skills.json") {
+          setLogs((prev) => [
+            ...prev,
+            {
+              type: "output",
+              content: (
+                <div className="my-2 space-y-1 text-[var(--get)] font-mono whitespace-pre">
+{`{
+  "languages": ["PHP", "TypeScript", "JavaScript", "SQL"],
+  "frameworks": ["Laravel", "Next.js", "React", "Express"],
+  "databases": ["MySQL", "PostgreSQL", "Redis"],
+  "tools": ["Docker", "Git", "Postman", "Linux"],
+  "architecture": ["REST", "Microservices", "Clean Architecture"]
+}`}
+                </div>
+              ),
+            },
+          ]);
+        } else if (!args[0]) {
+          setLogs((prev) => [...prev, { type: "error", content: "cat: missing file operand" }]);
+        } else {
+          setLogs((prev) => [...prev, { type: "error", content: `cat: ${args[0]}: No such file or directory` }]);
+        }
+        break;
+
+      case "ping":
+        const targetHost = args[0] || "falah.dev";
+        setLogs((prev) => [...prev, { type: "system", content: `PING ${targetHost} (192.168.1.1): 56 data bytes` }]);
+        
+        let pings = 0;
+        const pingInterval = setInterval(() => {
+          pings++;
+          const time = (Math.random() * 20 + 5).toFixed(1);
+          setLogs((prev) => [
+            ...prev,
+            { type: "output", content: `64 bytes from ${targetHost}: icmp_seq=${pings} ttl=64 time=${time} ms` }
+          ]);
+          
+          if (pings >= 4) {
+            clearInterval(pingInterval);
+            setTimeout(() => {
+              setLogs((prev) => [
+                ...prev,
+                { type: "system", content: `--- ${targetHost} ping statistics ---` },
+                { type: "system", content: `4 packets transmitted, 4 packets received, 0.0% packet loss` }
+              ]);
+            }, 500);
+          }
+        }, 800);
         break;
 
       case "projects":

@@ -4,6 +4,7 @@ import React from "react";
 import TimelineSection from "@/components/sections/TimelineSection";
 import Terminal from "@/components/ui/Terminal";
 import HttpBadge from "@/components/ui/HttpBadge";
+import AsciiImage from "@/components/ui/AsciiImage";
 
 export default function AboutPage() {
   const philosophyJson = `{
@@ -30,11 +31,41 @@ export default function AboutPage() {
         
         {/* Left Column: Philosophy & Text */}
         <div className="flex flex-col gap-10 scroll-reveal">
-          <div className="space-y-6 text-[var(--muted)] font-mono text-sm leading-relaxed">
+          {/* Profile Section */}
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-8 p-6 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] relative overflow-hidden group/about-photo">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-[var(--patch)]/5 blur-3xl rounded-full -mr-16 -mt-16" />
+            
+            <div className="relative shrink-0">
+              <div className="absolute inset-0 bg-[var(--patch)] rounded-2xl blur-2xl opacity-15 group-hover/about-photo:opacity-30 transition-opacity" />
+              <div className="relative w-64 h-64 md:w-72 md:h-72 rounded-2xl border-2 border-[var(--patch)]/40 overflow-hidden p-1 bg-[var(--bg)]">
+                <AsciiImage 
+                  src="/assets/imgs/falah.jpeg" 
+                  alt="Ahmad Mathlaul Falah" 
+                  resolution={60}
+                />
+              </div>
+              <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-[var(--bg-card)] border border-[var(--border)] flex items-center justify-center">
+                 <div className="w-2 h-2 rounded-full bg-[var(--patch)] animate-pulse" />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <h2 className="font-syne text-2xl font-bold">Ahmad Mathlaul Falah</h2>
+              <div className="flex flex-wrap gap-2">
+                 <span className="font-mono text-[9px] uppercase bg-[var(--patch)]/10 text-[var(--patch)] px-2 py-0.5 rounded border border-[var(--patch)]/20">Lead Developer</span>
+                 <span className="font-mono text-[9px] uppercase bg-[var(--get)]/10 text-[var(--get)] px-2 py-0.5 rounded border border-[var(--get)]/20">Backend Expert</span>
+              </div>
+              <p className="font-mono text-xs text-[var(--muted)] mt-2">
+                "Building the invisible foundations of digital experiences."
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-6 text-[var(--muted)] text-sm leading-relaxed">
             <p>
               I believe that great backend architecture is invisible. It's the silent foundation that allows a product to scale, endure heavy loads, and remain secure.
             </p>
-            <p className="border-l-2 border-[var(--patch)] pl-4">
+            <p className="border-l-2 border-[var(--patch)] pl-4 italic">
               "Fokus utama saya selalu pada ekosistem backend. Merancang struktur database yang aman, membangun RESTful API yang terstruktur, dan memastikan arsitektur Laravel yang scalable."
             </p>
           </div>

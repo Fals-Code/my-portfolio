@@ -26,10 +26,11 @@ interface MusicContextType {
 const MusicContext = createContext<MusicContextType | undefined>(undefined);
 
 const PLAYLIST: Track[] = [
-  { id: "y4zdDXPYo0I", title: "Viva La Vida", artist: "Coldplay" },
-  { id: "k5mX3NkA7jM", title: "Mary On A Cross", artist: "Ghost" },
+  // Menggunakan versi yang mengizinkan embed (bukan official MV yang dibatasi label)
+  { id: "dvgZkm1xWPE", title: "Viva La Vida", artist: "Coldplay" },
+  { id: "SvyEniVMiYM", title: "Mary On A Cross", artist: "Ghost" },
   { id: "RbeR2qLYzS8", title: "Beggin'", artist: "Måneskin" },
-  { id: "us3tczsrKQc", title: "Danza Kuduro", artist: "Extended Remix" },
+  { id: "7zp1TbLFPp8", title: "Danza Kuduro", artist: "Extended Remix" },
 ];
 
 declare global {
@@ -39,27 +40,30 @@ declare global {
   }
 }
 
-// Ensure YouTube IFrame API script is loaded once
 let ytScriptLoaded = false;
 function loadYTScript(): Promise<void> {
   return new Promise((resolve) => {
+    if (typeof window === 'undefined') { resolve(); return; }
     if (window.YT && window.YT.Player) {
       resolve();
       return;
     }
-    if (ytScriptLoaded) {
-      // Script is loading, wait for the callback
-      const prev = window.onYouTubeIframeAPIReady;
-      window.onYouTubeIframeAPIReady = () => {
-        if (prev) prev();
-        resolve();
-      };
-      return;
-    }
+
+    const prevCallback = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => {
+      if (prevCallback) prevCallback();
+      resolve();
+    };
+
+    if (ytScriptLoaded) return;
     ytScriptLoaded = true;
-    window.onYouTubeIframeAPIReady = () => resolve();
+
     const tag = document.createElement("script");
     tag.src = "https://www.youtube.com/iframe_api";
+    tag.onerror = () => {
+      console.error("MusicContext: Failed to load YouTube IFrame API");
+      resolve();
+    };
     document.head.appendChild(tag);
   });
 }
@@ -77,95 +81,150 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const currentTrackIndexRef = useRef(currentTrackIndex);
   currentTrackIndexRef.current = currentTrackIndex;
 
-  // Keep a ref to the nextTrack function for use inside YT callbacks
   const nextTrackFn = useRef<() => void>(() => {});
-
-  // Create the hidden player container once on mount
-  useEffect(() => {
-    if (containerRef.current) return;
-    const div = document.createElement("div");
-    div.id = "yt-player-host";
-    div.style.cssText = "position:fixed;bottom:5px;right:5px;width:1px;height:1px;opacity:0.01;pointer-events:none;z-index:1;";
-    document.body.appendChild(div);
-    containerRef.current = div;
-    return () => { div.remove(); };
-  }, []);
 
   const createPlayer = useCallback((trackId: string, playImmediately: boolean) => {
     return new Promise<void>((resolve) => {
-      if (!containerRef.current) { resolve(); return; }
+      if (typeof window === 'undefined' || !containerRef.current || !window.YT || !window.YT.Player) {
+        console.warn("MusicContext: Cannot create player - missing dependencies", { 
+          hasContainer: !!containerRef.current, 
+          hasYT: !!window?.YT, 
+          hasPlayer: !!window?.YT?.Player 
+        });
+        resolve();
+        return;
+      }
 
-      // Destroy existing player if any
       if (playerRef.current) {
         try { playerRef.current.destroy(); } catch (_) {}
         playerRef.current = null;
       }
 
-      // Reset the inner div
       const inner = document.createElement("div");
       inner.id = "yt-player-inner";
       containerRef.current.innerHTML = "";
       containerRef.current.appendChild(inner);
 
-      playerRef.current = new window.YT.Player("yt-player-inner", {
-        height: "1",
-        width: "1",
-        videoId: trackId,
-        playerVars: {
-          autoplay: playImmediately ? 1 : 0,
-          mute: 0,
-          controls: 0,
-          disablekb: 1,
-          fs: 0,
-          modestbranding: 1,
-          rel: 0,
-          enablejsapi: 1,
-          origin: window.location.origin,
-        },
-        events: {
-          onReady: (event: any) => {
-            event.target.setVolume(volume * 100);
-            if (playImmediately) {
-              event.target.playVideo();
-              setIsPlaying(true);
-            }
-            setIsPlayerReady(true);
-            resolve();
+      const timeout = setTimeout(() => {
+        console.warn("MusicContext: Player initialization timed out for track:", trackId);
+        resolve();
+      }, 8000);
+
+      try {
+        playerRef.current = new window.YT.Player("yt-player-inner", {
+          height: "1",
+          width: "1",
+          videoId: trackId,
+          playerVars: {
+            autoplay: playImmediately ? 1 : 0,
+            mute: 0,
+            controls: 0,
+            disablekb: 1,
+            fs: 0,
+            modestbranding: 1,
+            rel: 0,
+            enablejsapi: 1,
+            origin: typeof window !== 'undefined' ? window.location.origin : undefined,
+            widget_referrer: typeof window !== 'undefined' ? window.location.origin : undefined,
           },
-          onStateChange: (event: any) => {
-            // YT.PlayerState: PLAYING=1, PAUSED=2, ENDED=0
-            if (event.data === 1) setIsPlaying(true);
-            else if (event.data === 2) setIsPlaying(false);
-            else if (event.data === 0) nextTrackFn.current();
+          events: {
+            onReady: (event: any) => {
+              clearTimeout(timeout);
+              event.target.unMute();
+              event.target.setVolume(volume * 100);
+              if (playImmediately) {
+                // Some browsers require an extra unmute call right before play
+                event.target.unMute();
+                event.target.playVideo();
+                setIsPlaying(true);
+              }
+              setIsPlayerReady(true);
+              resolve();
+            },
+            onStateChange: (event: any) => {
+              if (event.data === 1) setIsPlaying(true);
+              else if (event.data === 2) setIsPlaying(false);
+              else if (event.data === 0) nextTrackFn.current();
+            },
+            onError: (event: any) => {
+              clearTimeout(timeout);
+              const errorCode = event.data || "unknown";
+              const currentTrack = PLAYLIST[currentTrackIndexRef.current];
+              
+              if ([101, 150].includes(errorCode)) {
+                 console.warn(`MusicContext: Video restricted by owner (Code ${errorCode}). Skipping "${currentTrack.title}"...`);
+              } else {
+                 console.error(`MusicContext: YouTube Player Error [Code: ${errorCode}]`, event);
+              }
+              
+              resolve();
+              // Use a small delay before skipping to avoid rapid loops
+              setTimeout(() => {
+                nextTrackFn.current();
+              }, 1500);
+            },
           },
-          onError: () => {
-            // Skip errored track
-            nextTrackFn.current();
-          },
-        },
-      });
+        });
+      } catch (e) {
+        clearTimeout(timeout);
+        console.error("MusicContext: Exception during player creation:", e);
+        resolve();
+      }
     });
   }, [volume]);
 
-  // togglePlay: this MUST be called directly from a user gesture on mobile
+  // Initialize on mount
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    if (!containerRef.current) {
+      const div = document.createElement("div");
+      div.id = "yt-player-host";
+      // Using a small but not 1x1 size to avoid being blocked by aggressive throttlers
+      div.style.cssText = "position:fixed;bottom:-100px;right:-100px;width:200px;height:200px;opacity:0.001;pointer-events:none;z-index:-100;overflow:hidden;";
+      document.body.appendChild(div);
+      containerRef.current = div;
+    }
+
+    // On mount, just load the script, don't create player yet (Safari/Mobile requirement)
+    loadYTScript();
+
+    return () => {
+      if (containerRef.current) {
+        containerRef.current.remove();
+        containerRef.current = null;
+      }
+    };
+  }, [createPlayer]);
+
   const togglePlay = useCallback(async () => {
+    // If not ready, this first click will initialize the player (User Gesture)
     if (!isPlayerReady || !playerRef.current) {
-      // First play: load API then create player synchronously inside gesture
+      setIsPlaying(true); // Optimistic UI
       try {
         await loadYTScript();
         await createPlayer(PLAYLIST[currentTrackIndexRef.current].id, true);
       } catch (e) {
-        console.error("MusicContext: Failed to start player", e);
+        console.error("MusicContext: Failed to start player manually", e);
+        setIsPlaying(false);
       }
       return;
     }
 
-    if (isPlaying) {
-      playerRef.current.pauseVideo?.();
-    } else {
-      playerRef.current.unMute?.();
-      playerRef.current.setVolume?.(volume * 100);
-      playerRef.current.playVideo?.();
+    try {
+      if (isPlaying) {
+        playerRef.current.pauseVideo?.();
+        setIsPlaying(false);
+      } else {
+        playerRef.current.unMute?.();
+        playerRef.current.setVolume?.(volume * 100);
+        playerRef.current.playVideo?.();
+        setIsPlaying(true);
+      }
+    } catch (e) {
+      console.error("MusicContext: TogglePlay execution error", e);
+      // Fallback: re-create player tied to this gesture
+      await createPlayer(PLAYLIST[currentTrackIndexRef.current].id, true);
     }
   }, [isPlaying, isPlayerReady, createPlayer, volume]);
 
@@ -175,8 +234,10 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (isPlayerReady && playerRef.current) {
       playerRef.current.loadVideoById?.(PLAYLIST[nextIndex].id);
       setIsPlaying(true);
+    } else {
+      createPlayer(PLAYLIST[nextIndex].id, true);
     }
-  }, [isPlayerReady]);
+  }, [isPlayerReady, createPlayer]);
 
   const prevTrack = useCallback(() => {
     const prevIndex = (currentTrackIndexRef.current - 1 + PLAYLIST.length) % PLAYLIST.length;
@@ -184,11 +245,22 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (isPlayerReady && playerRef.current) {
       playerRef.current.loadVideoById?.(PLAYLIST[prevIndex].id);
       setIsPlaying(true);
+    } else {
+      createPlayer(PLAYLIST[prevIndex].id, true);
     }
-  }, [isPlayerReady]);
+  }, [isPlayerReady, createPlayer]);
 
-  // Keep ref in sync
   nextTrackFn.current = nextTrack;
+
+  // Watcher to ensure audio is never accidentally muted when playing
+  useEffect(() => {
+    if (isPlaying && isPlayerReady && playerRef.current) {
+      try {
+        playerRef.current.unMute?.();
+        playerRef.current.setVolume?.(volume * 100);
+      } catch (e) {}
+    }
+  }, [isPlaying, isPlayerReady, volume]);
 
   const setVolume = useCallback((v: number) => {
     const vol = Math.max(0, Math.min(1, v));

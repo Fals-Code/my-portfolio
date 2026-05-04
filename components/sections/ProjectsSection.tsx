@@ -6,6 +6,7 @@ import { projects as staticProjects } from "@/data/projects";
 import { useGitHub } from "@/hooks/useGitHub";
 import HttpBadge from "../ui/HttpBadge";
 import { Star, GitFork, RefreshCw } from "lucide-react";
+import { motion } from "framer-motion";
 
 // Mapping GitHub repo name → case study URL (untuk proyek custom)
 const CASE_STUDY_MAP: Record<string, string> = {
@@ -22,12 +23,14 @@ function ProjectCard({ proj }: { proj: any }) {
   const slug = proj.id || proj.title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
   return (
-    <div className={`group flex flex-col bg-[var(--bg-card)] border rounded-lg overflow-hidden transition-all duration-300 ${
+    <motion.div 
+      whileHover={{ y: -5, transition: { duration: 0.2 } }}
+      className={`group flex flex-col bg-[var(--bg-card)] border rounded-lg overflow-hidden transition-all duration-300 ${
       isFeatured
-        ? "border-[var(--get)]/30 hover:border-[var(--get)] hover:shadow-[0_0_15px_rgba(0,229,160,0.05)]"
-        : "border-[var(--border)] hover:border-[var(--muted)]"
+        ? "border-[var(--get)]/30 hover:border-[var(--get)] hover:shadow-[0_0_20px_rgba(0,229,160,0.15)]"
+        : "border-[var(--border)] hover:border-[var(--muted)] hover:shadow-lg hover:shadow-[var(--border)]/20"
     }`}>
-      <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--border)] bg-[var(--bg-card2)] font-mono text-xs">
+      <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--border)] bg-[var(--bg-card2)] text-xs">
         <div className="flex items-center gap-3">
           <span className={`font-bold ${isWIP ? "text-[var(--patch)]" : isFeatured ? "text-[var(--get)]" : "text-[var(--post)]"}`}>
             [{isWIP ? "WIP" : method}]
@@ -51,7 +54,7 @@ function ProjectCard({ proj }: { proj: any }) {
           <h3 className="font-syne text-2xl font-bold text-[var(--text)] group-hover:text-[var(--get)] transition-colors mb-2">
             {proj.title}
           </h3>
-          <p className="text-[var(--muted)] font-mono text-sm leading-relaxed line-clamp-3">
+          <p className="text-[var(--muted)] text-sm leading-relaxed line-clamp-3">
             {proj.description}
           </p>
         </div>
@@ -74,21 +77,29 @@ function ProjectCard({ proj }: { proj: any }) {
             {proj.kpi && <span className="hidden sm:inline opacity-60 italic">{proj.kpi}</span>}
           </div>
 
-          <Link
-            href={
-              CASE_STUDY_MAP[proj.id] ||
-              proj.caseStudy ||
-              proj.homepage ||
-              proj.github ||
-              "#"
-            }
-            className="flex items-center gap-2 text-[var(--text)] group-hover:text-[var(--get)] font-bold transition-all"
-          >
-            <span>→ {CASE_STUDY_MAP[proj.id] ? "STUDY" : "VIEW"}</span>
-          </Link>
+          {/* Fix: Only render link if a valid URL exists — never use href="#" */}
+          {(CASE_STUDY_MAP[proj.id] || proj.caseStudy || proj.homepage || proj.github) ? (
+            <Link
+              href={
+                CASE_STUDY_MAP[proj.id] ||
+                proj.caseStudy ||
+                proj.homepage ||
+                proj.github ||
+                "/projects"
+              }
+              className="flex items-center gap-2 text-[var(--text)] group-hover:text-[var(--get)] font-bold transition-all"
+            >
+              <span>→ {CASE_STUDY_MAP[proj.id] ? "STUDY" : "VIEW"}</span>
+            </Link>
+          ) : (
+            // TODO: Add a case study or GitHub link for this project
+            <span className="flex items-center gap-2 text-[var(--muted)] font-bold opacity-40 cursor-not-allowed" title="No link available">
+              → PENDING
+            </span>
+          )}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

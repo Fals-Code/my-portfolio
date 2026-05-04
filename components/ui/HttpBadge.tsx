@@ -8,6 +8,7 @@ type HttpMethod = "GET" | "POST" | "PATCH" | "DELETE" | "PUT";
 interface HttpBadgeProps {
   method: HttpMethod;
   endpoint: string;
+  label?: string; // Optional descriptive label
   href?: string;
   onClick?: (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => void;
   active?: boolean;
@@ -34,6 +35,7 @@ const methodBgColors: Record<HttpMethod, string> = {
 export default function HttpBadge({
   method,
   endpoint,
+  label,
   href,
   onClick,
   active,
@@ -66,13 +68,20 @@ export default function HttpBadge({
           method
         )}
       </span>
-      <span
-        className={`font-mono text-sm transition-colors duration-300 ${
-          isActive ? "text-[var(--bg)]" : "text-[var(--muted)] group-hover:text-[var(--text)]"
-        }`}
-      >
-        {endpoint}
-      </span>
+      <div className="flex flex-col items-start">
+        <span
+          className={`font-mono text-sm transition-colors duration-300 leading-tight ${
+            isActive ? "text-[var(--bg)]" : "text-[var(--muted)] group-hover:text-[var(--text)]"
+          }`}
+        >
+          {endpoint}
+        </span>
+        {label && (
+          <span className={`text-[9px] uppercase tracking-tighter font-bold opacity-0 group-hover:opacity-70 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0 ${isActive ? "text-[var(--bg)]" : "text-[var(--muted)]"}`}>
+            {label}
+          </span>
+        )}
+      </div>
     </span>
   );
 

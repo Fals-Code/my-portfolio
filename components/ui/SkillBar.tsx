@@ -24,6 +24,14 @@ export default function SkillBar({
   colorMethod,
 }: SkillBarProps) {
   const color = colorMap[colorMethod];
+  
+  // Calculate ASCII blocks
+  const totalBlocks = 15;
+  const filledCount = Math.round((percentage / 100) * totalBlocks);
+  const emptyCount = totalBlocks - filledCount;
+  
+  const filledStr = "█".repeat(filledCount);
+  const emptyStr = "░".repeat(emptyCount);
 
   return (
     <div className="w-full flex flex-col gap-2 group">
@@ -40,17 +48,23 @@ export default function SkillBar({
         </div>
       </div>
       
-      {/* Track */}
-      <div className="h-1.5 w-full bg-[var(--bg-card2)] rounded-full overflow-hidden">
-        {/* Fill */}
-        <div 
-          className="h-full rounded-full transition-all duration-1000 ease-out"
-          style={{ 
-            width: `${percentage}%`,
-            backgroundColor: color,
-            boxShadow: `0 0 10px ${color}80`
-          }}
-        />
+      {/* ASCII Track */}
+      <div className="font-mono text-xs mt-1 w-full flex items-center justify-between">
+        <span className="text-[var(--muted)] opacity-50">[</span>
+        <div className="flex-1 px-1 flex items-center tracking-widest relative overflow-hidden">
+          <span 
+            style={{ 
+              color: color, 
+              textShadow: `0 0 8px ${color}80` 
+            }}
+          >
+            {filledStr}
+          </span>
+          <span className="text-[var(--muted)] opacity-30">
+            {emptyStr}
+          </span>
+        </div>
+        <span className="text-[var(--muted)] opacity-50">]</span>
       </div>
     </div>
   );

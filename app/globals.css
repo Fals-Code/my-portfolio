@@ -3,6 +3,17 @@
 @theme {
   --font-syne: var(--font-syne);
   --font-mono: var(--font-mono);
+  --font-inter: var(--font-inter);
+  
+  --color-get: var(--get);
+  --color-post: var(--post);
+  --color-patch: var(--patch);
+  --color-delete: var(--delete);
+  --color-put: var(--put);
+  --color-card: var(--bg-card);
+  --color-card2: var(--bg-card2);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
 }
 
 @layer base {
@@ -16,7 +27,7 @@
     --bg-card2: #1A1A22;
     --border: #2A2A35;
     --text: #F0EEE8;
-    --muted: #888890;
+    --muted: #A1A1AA; /* Increased brightness for better dark mode contrast (Zinc-400) */
 
     /* HTTP Method Colors */
     --get: #00E5A0;
@@ -78,15 +89,25 @@
     background-color: var(--bg);
     background-image: radial-gradient(circle at center, var(--ambient-glow) 0%, transparent 70%);
     color: var(--text);
-    font-family: var(--font-mono);
+    font-family: var(--font-inter), system-ui, sans-serif;
     transition: background-color 0.5s ease, color 0.5s ease;
     width: 100%;
     overflow-x: hidden;
     position: relative;
     -webkit-font-smoothing: antialiased;
-    font-size: 0.85rem;
+    font-size: 0.875rem; /* Balanced between 0.85rem and 0.9375rem */
     line-height: 1.6;
     cursor: none;
+  }
+
+  /* Fix: Prevent any element from bleeding past the viewport on mobile */
+  *, *::before, *::after {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  img, video, canvas, svg {
+    max-width: 100%;
   }
 
   body::before {
@@ -115,6 +136,11 @@
     body {
       cursor: auto;
     }
+  }
+
+  body.show-default-cursor,
+  body.show-default-cursor * {
+    cursor: auto !important;
   }
 
   html {

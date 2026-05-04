@@ -2,7 +2,7 @@
 
 import React from "react";
 import { timeline } from "@/data/timeline";
-import { Briefcase, GraduationCap, Clock } from "lucide-react";
+import { Briefcase, GraduationCap, Clock, BookOpen } from "lucide-react";
 
 export default function TimelineSection() {
   return (
@@ -10,8 +10,8 @@ export default function TimelineSection() {
       <div className="absolute -left-[1px] top-0 bottom-0 w-[2px] bg-gradient-to-b from-[var(--patch)] via-[var(--get)] to-transparent" />
       
       {timeline.map((item, index) => {
-        const Icon = item.type === "work" ? Briefcase : GraduationCap;
-        const color = item.type === "work" ? "var(--post)" : "var(--patch)";
+        const Icon = item.type === "work" ? Briefcase : (item.type === "education" ? GraduationCap : BookOpen);
+        const color = item.type === "work" ? "var(--post)" : (item.type === "education" ? "var(--patch)" : "var(--put)");
 
         return (
           <div key={item.id} className="relative group transition-all duration-300">

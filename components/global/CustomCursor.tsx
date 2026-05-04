@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { usePerformance } from "@/hooks/usePerformance";
 import { useTheme } from "@/context/ThemeContext";
+import { motion } from "framer-motion";
 
 export default function CustomCursor() {
   const [position, setPosition] = useState({ x: -100, y: -100 });
@@ -21,10 +22,23 @@ export default function CustomCursor() {
     const updatePosition = (e: MouseEvent) => {
       cancelAnimationFrame(rafId.current);
       rafId.current = requestAnimationFrame(() => {
+        const target = e.target as HTMLElement;
+        const isInput = 
+          target.tagName === "INPUT" || 
+          target.tagName === "TEXTAREA" || 
+          target.isContentEditable ||
+          target.closest('.no-custom-cursor');
+
+        if (isInput) {
+          setIsHidden(true);
+          document.body.classList.add('show-default-cursor');
+          return;
+        }
+
+        document.body.classList.remove('show-default-cursor');
         setPosition({ x: e.clientX, y: e.clientY });
         setIsHidden(false);
 
-        const target = e.target as HTMLElement;
         const isClickable =
           target.tagName === "BUTTON" ||
           target.tagName === "A" ||
@@ -61,30 +75,41 @@ export default function CustomCursor() {
   return (
     <div
       ref={cursorRef}
-      className="fixed pointer-events-none z-[99999]"
+      className="fixed pointer-events-none z-[99999] flex items-center justify-center"
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
-        transform: `translate(-50%, -50%) scale(${isClicking ? 0.8 : isHovering ? 1.5 : 1})`,
+        transform: `translate(-50%, -50%) scale(${isClicking ? 0.8 : isHovering ? 1.4 : 1})`,
         opacity: isHidden ? 0 : 1,
-        transition: "opacity 0.2s ease, transform 0.15s ease-out",
-        mixBlendMode: theme === "dark" ? "difference" : "normal",
+        transition: "opacity 0.2s ease, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
       }}
     >
-      {/* Outer Ring */}
+      {/* Main Outer Ring */}
       <div 
-        className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full border border-[var(--get)] transition-opacity duration-300 ${isHovering ? 'opacity-100 bg-[var(--get)]/10' : 'opacity-30'}`} 
+        className={`w-8 h-8 rounded-full border border-[var(--get)] transition-all duration-300 ${
+          isHovering 
+            ? 'bg-[var(--get)]/20 border-[var(--get)] scale-110' 
+            : 'bg-transparent border-[var(--get)]/30 scale-100'
+        }`} 
       />
       
-      {/* Inner Dot */}
+      {/* Center Dot */}
       <div 
-        className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[var(--get)] shadow-[0_0_10px_var(--get)] transition-all duration-300 ${isHovering ? 'scale-0' : 'scale-100'}`} 
+        className={`absolute w-1.5 h-1.5 rounded-full bg-[var(--get)] shadow-[0_0_12px_var(--get)] transition-transform duration-300 ${
+          isHovering ? 'scale-0' : 'scale-100'
+        }`} 
       />
 
-      {/* Hover Effect Label (Optional/Micro-detail) */}
+      {/* Execute Label for interactive items */}
       {isHovering && (
-        <div className="absolute top-10 left-1/2 -translate-x-1/2 whitespace-nowrap">
-           <span className="text-[8px] font-mono text-[var(--get)] font-bold uppercase tracking-widest bg-black/40 px-1 rounded">EXECUTE</span>
+        <div className="absolute top-10 whitespace-nowrap overflow-hidden">
+          <motion.span 
+            initial={{ y: 5, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            className="text-[7px] font-mono text-[var(--get)] font-black uppercase tracking-[0.2em] bg-black/80 px-1.5 py-0.5 rounded border border-[var(--get)]/20"
+          >
+            EXECUTE
+          </motion.span>
         </div>
       )}
     </div>

@@ -86,40 +86,38 @@ export function AchievementProvider({ children }: { children: React.ReactNode })
 
   const unlockAchievement = useCallback((id: string) => {
     if (triggeredToasts.current.has(id)) return;
+    triggeredToasts.current.add(id);
+
+    const achievement = INITIAL_ACHIEVEMENTS.find(a => a.id === id);
+    if (!achievement) return;
+
+    // Trigger toast side-effect
+    toast.custom((t) => (
+      <div className="bg-[#0c0c0f] border-2 border-[var(--get)] p-4 rounded-xl shadow-[0_0_20px_rgba(0,229,160,0.2)] flex items-center gap-4 animate-in slide-in-from-right-full duration-500">
+        <div className="bg-[var(--get)]/10 p-2 rounded-lg border border-[var(--get)]/30">
+          <Trophy className="w-6 h-6 text-[var(--get)]" />
+        </div>
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--get)] mb-0.5">Achievement Unlocked</p>
+          <h4 className="font-syne font-bold text-white leading-tight">{achievement.title}</h4>
+          <p className="text-xs text-[var(--muted)]">{achievement.description}</p>
+        </div>
+      </div>
+    ), {
+      duration: 5000,
+      position: "bottom-right",
+    });
 
     setAchievements((prev) => {
-      const achievement = prev.find((a) => a.id === id);
-      if (achievement && !achievement.unlocked) {
-        triggeredToasts.current.add(id);
-        
-        // Trigger toast
-        toast.custom((t) => (
-          <div className="bg-[#0c0c0f] border-2 border-[var(--get)] p-4 rounded-xl shadow-[0_0_20px_rgba(0,229,160,0.2)] flex items-center gap-4 animate-in slide-in-from-right-full duration-500">
-            <div className="bg-[var(--get)]/10 p-2 rounded-lg border border-[var(--get)]/30">
-              <Trophy className="w-6 h-6 text-[var(--get)]" />
-            </div>
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-[var(--get)] mb-0.5">Achievement Unlocked</p>
-              <h4 className="font-syne font-bold text-white leading-tight">{achievement.title}</h4>
-              <p className="text-xs text-[var(--muted)]">{achievement.description}</p>
-            </div>
-          </div>
-        ), {
-          duration: 5000,
-          position: "bottom-right",
-        });
-
-        const newAchievements = prev.map((a) =>
-          a.id === id ? { ...a, unlocked: true } : a
-        );
-        
-        // Save to localStorage
-        const unlockedIds = newAchievements.filter(a => a.unlocked).map(a => a.id);
-        localStorage.setItem("falah-achievements", JSON.stringify(unlockedIds));
-        
-        return newAchievements;
-      }
-      return prev;
+      const newAchievements = prev.map((a) =>
+        a.id === id ? { ...a, unlocked: true } : a
+      );
+      
+      // Save to localStorage
+      const unlockedIds = newAchievements.filter(a => a.unlocked).map(a => a.id);
+      localStorage.setItem("falah-achievements", JSON.stringify(unlockedIds));
+      
+      return newAchievements;
     });
   }, []);
 

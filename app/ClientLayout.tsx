@@ -26,6 +26,8 @@ const CommandPalette = dynamic(() => import("@/components/global/CommandPalette"
 const TerminalMode = dynamic(() => import("@/components/global/TerminalMode"), { ssr: false });
 const BackToTop = dynamic(() => import("@/components/global/BackToTop"), { ssr: false });
 const Preloader = dynamic(() => import("@/components/global/Preloader"), { ssr: false });
+const ServerLogsBackground = dynamic(() => import("@/components/global/ServerLogsBackground"), { ssr: false });
+const AIChatWidget = dynamic(() => import("@/components/global/AIChatWidget"), { ssr: false });
 
 import { useTheme } from "@/context/ThemeContext";
 
@@ -108,6 +110,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     <ThemeProvider>
       <MusicProvider>
         <AchievementProvider>
+          <ServerLogsBackground />
           <Preloader />
           <Toaster position="top-center" richColors theme="dark" />
           <MainContent>{children}</MainContent>
@@ -115,6 +118,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
           <BackToTop />
           <CommandPalette />
           <TerminalMode />
+          <AIChatWidget />
         </AchievementProvider>
       </MusicProvider>
     </ThemeProvider>
